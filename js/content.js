@@ -70,6 +70,7 @@ window.BOOK_CONTENT = {
         { title: "Blue", artist: "Yungkai",
           img: "song-5.jpg",
           big: "blue — all because of you" },
+        { title: "a little extra song for you", artist: "our soundtrack", img: "song-6.jpeg", big: "one more for the playlist ♡" },
         { title: "Something About You", artist: "Eyedress",
           img: "song-3.jpg",
           big: "there's something about you…" }
@@ -161,28 +162,43 @@ window.BOOK_CONTENT = {
       title: "Ten Things I Hate About You",
       sub: "…my version ♡",
       stanzas: [
-        { t: "I hate the little things you do,\nThe things that make me think of you." },
-        { t: "I hate the way you make me laugh,\nThen leave me smiling at our past.", i: true },
-        { t: "I hate how you can make me laugh when I'm determined not to smile,\nThen somehow leave me missing you for quite a little while.", i: true },
-        { t: "I hate the things you say and do,\nThat somehow make a bad day new" },
-        { t: "I hate the way our books lost bits of every outer side,\nA tiny crime against the pages that you never even tried to hide." },
-        { t: "I hate the way you know me well,\nThe things I never have to tell." },
-        { t: "I hate how you could make me stay,\nEven when I wanted to walk away." },
-        { t: "I hate how you kept reaching out when I'd told you we were through,\nAnd how some stubborn part of me kept waiting there for you." },
-        { t: "I hate how you became someone\nI couldn't bear to lose and run." },
-        { t: "I hate that I once thought we'd end,\nThat you'd become a stranger, not my friend.", i: true },
-        { t: "I hate how much I've learned from all the things we made it through,\nAnd how the girl I nearly lost is still the girl I run to.", i: true },
-        { t: "And most of all, I hate it's true:\nI could never hate the girl who's you." },
-        { t: "Because I hate the thought of days gone by,\nWhen I almost let our friendship die." },
-        { t: "I hate that I can't go back and do\nAll the things I wish I'd done for you." },
-        { t: "But if I had one thing to say,\nI'd hate to ever lose you that way." },
-        { t: "And maybe that's the worst part, too—" }
-      ],
-      coda: [
-        "I have ten things I hate about you.",
-        "But not one of them",
-        "Could make me stop loving you."
-      ] },
+        {
+                "t": "I hate how you stayed when I told you to go,\nHow you kept reaching out when I gave you a no."
+        },
+        {
+                "t": "I hate how you made it so hard to pretend,\nThat you were just someone I'd lose in the end."
+        },
+        {
+                "t": "I hate how you kept finding your way back,\nWhen I'd convinced myself that what we had lacked."
+        },
+        {
+                "t": "I hate how you made me look back and see,\nThe person I was, and who I didn't want to be."
+        },
+        {
+                "t": "I hate how you taught me that feelings aren't right,\nIf I use them as reasons to hurt you in spite."
+        },
+        {
+                "t": "I hate how you showed me that friendships can stay,\nEven when there's a month, or a year in the way."
+        },
+        {
+                "t": "I hate how I guarded you, scared I'd be replaced,\nLike someone else's presence could erase my place."
+        },
+        {
+                "t": "I hate that I almost let you become the past,\nWhen all I wanted was for us to last."
+        },
+        {
+                "t": "I hate that you live in the thoughts I don't share,\nIn the days we don't talk, you're still somehow there."
+        },
+        {
+                "t": "And most of all, I hate that it's true—\nThat after everything, I still choose you."
+        },
+        {
+                "t": "I hate that I can't hate you, not even a little,\nNot after we made it through something so brittle."
+        },
+        {
+                "t": "Not after the days when I thought we were through.\nNot after all that.\nI just hate—\nThat I ever almost lost you."
+        }
+] },
 
     { n: 14, key: "quiz",
       title: "Do you love me?",
