@@ -142,6 +142,113 @@ window.Pages = (() => {
     return node;
   }
 
+  /* ================================================================
+     STICKER SCATTER · pasted, not aligned.
+     A real sticker page has three scales: little ones tucked into a
+     corner, normal ones on the edge of the paper, and one or two a
+     bit bigger than normal that bleed off the page. Slots are kept
+     away from the top-left title, and each page starts at a different
+     slot so no two spreads repeat the same arrangement.
+     ================================================================ */
+  const SCATTER_SLOTS = [
+    { x: 67,   y: 1,    s: "sm", r: -13 },
+    { x: 84,   y: 4,    s: "lg", r: 10 },
+    { x: 91,   y: 21,   s: "xs", r: -8 },
+    { x: 1.5,  y: 14,   s: "xs", r: 12 },
+    { x: 1,    y: 33,   s: "md", r: -9 },
+    { x: 90,   y: 41,   s: "md", r: 9 },
+    { x: 1,    y: 54,   s: "sm", r: 13 },
+    { x: 88,   y: 59,   s: "sm", r: -11 },
+    { x: 2,    y: 71,   s: "lg", r: 7 },
+    { x: 29,   y: 89,   s: "xs", r: -9 },
+    { x: 61,   y: 86,   s: "sm", r: 11 },
+    { x: 78,   y: 77,   s: "lg", r: -6 }
+  ];
+
+  function noise(seed) {
+    const raw = Math.sin(seed * 12.9898 + 78.233) * 43758.5453;
+    return raw - Math.floor(raw);
+  }
+
+  /* one pasted sticker inside a .sticker-scatter layer */
+  function pastedSticker(layer, key, o) {
+    const im = sticker(key, "scatter-stk tier-" + (o.s || "md") + (o.cls ? " " + o.cls : ""));
+    im.style.setProperty("--x", o.x + "%");
+    im.style.setProperty("--y", o.y + "%");
+    im.style.setProperty("--r", (o.r || 0) + "deg");
+    if (o.w) im.style.setProperty("--w", o.w + "em");
+    if (o.z != null) im.style.zIndex = String(o.z);
+    layer.append(im);
+    return im;
+  }
+
+  function scatterLayer(host, cls) {
+    const layer = el("div", "sticker-scatter" + (cls ? " " + cls : ""));
+    layer.setAttribute("aria-hidden", "true");
+    host.append(layer);
+    return layer;
+  }
+
+  function scatterStickers(host, seed, count, slots) {
+    if (!STICKER_LIBRARY.length) return null;
+    const layer = scatterLayer(host);
+    const pool = slots || SCATTER_SLOTS;
+    const total = Math.min(count == null ? 6 : count, pool.length);
+    const start = slots ? 0 : Math.floor(noise(seed * 1.7) * pool.length);
+    const step = slots ? 1 : 5;
+    for (let i = 0; i < total; i++) {
+      const slot = pool[(start + i * step) % pool.length];
+      const entry = STICKER_LIBRARY[(Math.floor(seed * 5) + i * 7) % STICKER_LIBRARY.length];
+      pastedSticker(layer, [entry.png, entry.jpg].filter(Boolean), {
+        x: slot.x + (noise(seed + i * 3.1) * 3 - 1.5),
+        y: slot.y + (noise(seed + i * 7.7) * 3 - 1.5),
+        s: slot.s,
+        r: slot.r + (noise(seed + i * 2.3) * 8 - 4),
+        z: 3 + (i % 2)
+      });
+    }
+    return layer;
+  }
+
+  /* some pages have a lot of writing — fewer stickers there */
+  const SCATTER_COUNTS = {
+    1: 0, 2: 3, 3: 5, 4: 5, 5: 5, 6: 3, 7: 5, 8: 3, 9: 5,
+    10: 5, 11: 5, 12: 3, 13: 3, 14: 6, 15: 5, 16: 5, 17: 6
+  };
+
+  /* pages whose artwork fills almost every corner get their own little
+     set of hand-picked slots, so nothing lands on top of a caption */
+  const EDGE_SLOTS = [
+    { x: .5, y: 3,  s: "xs", r: -10 },
+    { x: 93, y: 7,  s: "xs", r: 11 },
+    { x: .5, y: 44, s: "xs", r: 7 },
+    { x: 94, y: 62, s: "xs", r: -8 }
+  ];
+  const SCATTER_OVERRIDES = {
+    6: EDGE_SLOTS,
+    7: [
+      { x: 0,  y: 2,  s: "sm", r: -11 },
+      { x: 92, y: 1,  s: "xs", r: 12 },
+      { x: 0,  y: 76, s: "sm", r: 8 },
+      { x: 92, y: 84, s: "sm", r: -7 }
+    ],
+    9: [
+      { x: 0,  y: 2,  s: "xs", r: -8 },
+      { x: 92, y: 1,  s: "sm", r: 10 },
+      { x: 0,  y: 47, s: "xs", r: 6 },
+      { x: 94, y: 55, s: "xs", r: -9 }
+    ],
+    12: EDGE_SLOTS,
+    13: EDGE_SLOTS,
+    17: [
+      { x: .5, y: 3,  s: "xs", r: -10 },
+      { x: 93, y: 6,  s: "sm", r: 11 },
+      { x: .5, y: 42, s: "xs", r: 7 },
+      { x: 94, y: 55, s: "xs", r: -8 },
+      { x: 1,  y: 82, s: "sm", r: 9 }
+    ]
+  };
+
   /* ---------------- shared sticker doodles ---------------- */
 
   const STK = {
@@ -249,6 +356,10 @@ window.Pages = (() => {
           '<path d="M22 4 C34 3 41 10 40 20 C39 31 30 37 20 36 C9 35 3 27 4 17 C5 8 12 4 22 4Z" ' +
           'fill="none" stroke="#b23a48" stroke-width="3" stroke-linecap="round"/>' +
           '<path d="M33 6 l1.2 3 3 1.2 -3 1.2 -1.2 3 -1.2 -3 -3 -1.2 3 -1.2z" fill="#c8a05e"/>'));
+        /* the "favorite person" sticker is pasted ON the 28th itself,
+           not floating above the calendar — the number peeks out
+           underneath the little label. */
+        cell.append(sticker("favp", "cal__favp"));
         cell.append(el("span", "cal__bday-note", "the big day"));
       }
       cell.addEventListener("click", () => {
@@ -284,18 +395,18 @@ window.Pages = (() => {
       '<circle cx="50" cy="80" r="2.4" fill="#cf959b"/><circle cx="120" cy="30" r="2" fill="#c8a05e"/>' +
       '<circle cx="90" cy="105" r="2" fill="#e8a7ab"/>'));
 
-    /* the favourite sticker, pinned on the two blank leading days,
-       right above the 28th */
-    frame.append(sticker("favp", "cal__favp"));
-
-    /* birthday stickers + friends in a little row along the bottom */
-    const band = el("div", "cal__band");
-    ["bday", "1ef728e7cd81d64903bddc5330c5d48c.jpg", "sitcker1.jpg",
-     "bday1", "07898c8fabd8c50047af31afffd9bb60.jpg",
-     "bd22102ef58d3dae000ce5e58b48cd69.jpg"].forEach((key, i) => {
-      band.append(sticker(key, "cal__band-p cal__band-p--" + i));
-    });
-    s.append(band);
+    /* birthday stickers tumble around the edges of the page instead of
+       standing in one straight row — little, normal, and a bit bigger */
+    const calStickers = scatterLayer(s, "sticker-scatter--cal");
+    [
+      { key: "bday",                    x: 87, y: 24, s: "lg", r: 11, w: 3.3 },
+      { key: "bday1",                   x: 0,  y: 41, s: "md", r: -12 },
+      { key: "stk-stars.png",           x: 91, y: 5,  s: "xs", r: 9 },
+      { key: "stk-hug.png",             x: 2,  y: 72, s: "md", r: 8 },
+      { key: "stk-pixel-heart.png",     x: 34, y: 87, s: "sm", r: -6 },
+      { key: "tulips",                  x: 72, y: 74, s: "lg", r: -9, w: 3.5 },
+      { key: "stk-heart.png",           x: 52, y: 91, s: "xs", r: 12 }
+    ].forEach((o) => pastedSticker(calStickers, o.key, o));
     return s;
   }
 
@@ -492,58 +603,172 @@ window.Pages = (() => {
   }
 
   /* ================================================================
-     7 · PHOTO BOOTH — tap a frame to flip it
+     7 · PHOTO BOOTH — a whole little booth, not just a photo strip:
+     curtains + bulb marquee, a camera, a 3-pose strip you can fill
+     with your own photos, a countdown with a flash, and a ticket stub.
      ================================================================ */
   function photoBooth(p) {
-    const s = sheet("p-booth");
+    const s = sheet("p-booth2");
 
-    const strip = el("div", "booth");
-    strip.append(clip());
+    const booth = el("div", "pb");
+    booth.append(el("div", "pb__curtain pb__curtain--l"),
+                 el("div", "pb__curtain pb__curtain--r"),
+                 el("div", "pb__floor"));
+
+    /* --- marquee sign --- */
+    const sign = el("div", "pb__sign");
+    sign.append(el("span", "pb__bulbs"));
+    sign.append(el("h2", "pb__sign-t", p.marquee));
+    sign.append(el("span", "pb__sign-sub", p.kicker));
+    booth.append(sign);
+
+    const scene = el("div", "pb__scene");
+
+    /* --- the printed photo strip --- */
+    const strip = el("div", "pb__strip");
+    strip.append(el("span", "pb__strip-no", p.stripNo));
+
     p.photos.forEach((ph, i) => {
-      const frame = el("button", "booth__frame");
-      frame.type = "button";
-      frame.setAttribute("aria-label", "tap to flip photo " + (i + 1));
-      const flip = el("div", "booth__flip");
-      const front = el("div", "booth__face booth__face--front");
-      front.append(el("span", "photo__ph", ph));
-      front.append(el("span", "booth__tap", p.tapHint));
-      const back = el("div", "booth__face booth__face--back");
-      back.append(el("p", "booth__msg", p.message));
-      back.append(el("span", "booth__msg-heart", "♡"));
+      const frame = el("div", "pb__frame");
+      frame.setAttribute("role", "button");
+      frame.setAttribute("tabindex", "0");
+      frame.setAttribute("aria-label", "flip photo " + (i + 1));
+
+      const flip = el("div", "pb__flip");
+      const front = el("div", "pb__face pb__face--front");
+      const image = el("img", "pb__photo");
+      image.alt = "";
+      front.append(image, el("span", "pb__ph", ph),
+                   el("span", "pb__tap", p.tapHint));
+
+      /* a tiny label lets you develop your own photo into the frame */
+      const add = el("label", "pb__add", p.addHint);
+      const input = el("input", "pb__input");
+      input.type = "file";
+      input.accept = "image/*";
+      input.setAttribute("aria-label", "add photo " + (i + 1));
+      add.append(input);
+      add.addEventListener("click", (e) => e.stopPropagation());
+      input.addEventListener("change", () => {
+        const file = input.files[0];
+        if (!file || !file.type.startsWith("image/")) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          image.src = reader.result;
+          frame.classList.add("has-photo");
+        };
+        reader.readAsDataURL(file);
+      });
+      front.append(add);
+
+      const back = el("div", "pb__face pb__face--back");
+      back.append(el("p", "pb__msg", p.message));
+      back.append(el("span", "pb__msg-h", "♡"));
+
       flip.append(front, back);
       frame.append(flip);
       frame.addEventListener("click", () => frame.classList.toggle("is-flipped"));
+      frame.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          frame.classList.toggle("is-flipped");
+        }
+      });
       strip.append(frame);
     });
-    s.append(strip);
 
-    const cap = el("div", "booth__cap");
-    cap.append(washi("washi--mini"));
-    cap.append(writeLine(p.caption));
-    s.append(cap);
+    const foot = el("div", "pb__strip-foot");
+    foot.append(el("span", "pb__foot-t", p.caption));
+    foot.append(el("span", "pb__bars"));
+    foot.append(el("span", "pb__foot-date", p.date));
+    strip.append(foot);
+    scene.append(strip);
 
-    const vt = el("h2", "ttl ttl--vertical");
-    vt.textContent = p.title;
-    s.append(vt);
+    /* --- the machine, the button and the ticket --- */
+    const side = el("div", "pb__side");
+    side.append(svg("pb__camera", "0 0 130 92",
+      '<rect x="7" y="20" width="116" height="65" rx="8" fill="#f4e4cd" stroke="#5a3b3d" stroke-width="3"/>' +
+      '<rect x="7" y="20" width="116" height="18" rx="7" fill="#b23a48" stroke="#5a3b3d" stroke-width="3"/>' +
+      '<rect x="16" y="24" width="24" height="10" rx="3" fill="#f7e3d2"/>' +
+      '<circle cx="105" cy="29" r="4" fill="#e8cf9f" stroke="#5a3b3d" stroke-width="1.6"/>' +
+      '<circle cx="62" cy="56" r="21" fill="#cdb79c" stroke="#5a3b3d" stroke-width="3"/>' +
+      '<circle cx="62" cy="56" r="13" fill="#7d615c" stroke="#e8cf9f" stroke-width="3"/>' +
+      '<circle cx="57" cy="51" r="3.4" fill="#f6e3b8" opacity=".8"/>' +
+      '<path d="M24 14 L40 14 L36 6 L28 6 Z" fill="#c8a05e" stroke="#5a3b3d" stroke-width="2"/>' +
+      '<rect x="88" y="76" width="26" height="14" rx="1.5" fill="#fbf6ec" stroke="#5a3b3d" stroke-width="2" transform="rotate(-6 101 83)"/>'));
 
-    s.append(wiggleOnTap(STK.bow()).cloneNode(true));
-    const bow = s.lastElementChild;
-    bow.classList.add("bow-mini");
-    wiggleOnTap(bow);
+    const counter = el("div", "pb__counter", "press the button, then pose ♡");
+    side.append(counter);
 
-    const spark = wiggleOnTap(STK.sparkle());
-    spark.classList.add("booth__spark");
-    s.append(spark);
+    const shoot = el("button", "pb__shoot", p.shoot);
+    shoot.type = "button";
+    side.append(shoot);
 
-    /* right-hand sticker column fills the empty side */
-    scatter(s, [
-      { mk: STK.teacup,     cls: "booth__stk booth__stk--tea" },
-      { mk: STK.star,       cls: "booth__stk booth__stk--star" },
-      { mk: STK.heartTiny,  cls: "booth__stk booth__stk--heart" },
-      { mk: STK.cake,       cls: "booth__stk booth__stk--cake" }
-    ]);
-    s.append(el("span", "washi washi--mini washi--blush booth__washi"));
+    const ticket = el("div", "pb__ticket");
+    ticket.append(el("span", "pb__ticket-top", p.ticket));
+    ticket.append(el("span", "pb__ticket-date", p.date));
+    ticket.append(el("span", "pb__ticket-sub", p.ticketSub));
+    ticket.append(el("span", "pb__ticket-tear"));
+    side.append(ticket);
+
+    side.append(el("p", "pb__title", p.title));
+    side.append(el("p", "pb__note", p.note));
+    scene.append(side);
+
+    booth.append(scene);
+    booth.append(el("div", "pb__flash"));
+    s.append(booth);
+
+    /* --- shoot sequence: countdown → flash → developed strip --- */
+    let busy = false;
+    shoot.addEventListener("click", () => {
+      if (busy) return;
+      busy = true;
+      booth.classList.add("is-shooting");
+      strip.classList.remove("is-developed");
+      let i = 0;
+      counter.textContent = p.countdown[0];
+      const tick = setInterval(() => {
+        i += 1;
+        if (i < p.countdown.length) {
+          counter.textContent = p.countdown[i];
+          return;
+        }
+        clearInterval(tick);
+        counter.textContent = p.developing;
+        const flash = booth.querySelector(".pb__flash");
+        flash.classList.remove("is-flashing");
+        void flash.offsetWidth;
+        flash.classList.add("is-flashing");
+        setTimeout(() => {
+          flash.classList.remove("is-flashing");
+          counter.textContent = p.developed;
+          strip.classList.add("is-developed");
+          booth.classList.remove("is-shooting");
+          shoot.textContent = p.shootAgain;
+          boothConfetti(booth);
+          busy = false;
+        }, 470);
+      }, 650);
+    });
+
     return s;
+  }
+
+  function boothConfetti(host) {
+    const colours = ["#b23a48", "#e8a7ab", "#e8cf9f", "#c8a05e", "#fbf6ec"];
+    for (let i = 0; i < 22; i++) {
+      const bit = el("span", "pb__confetti-bit", i % 3 === 0 ? "✦" : "♡");
+      bit.style.left = (8 + Math.random() * 84) + "%";
+      bit.style.top = (12 + Math.random() * 24) + "%";
+      bit.style.color = colours[i % colours.length];
+      bit.style.setProperty("--dx", (Math.random() * 260 - 130) + "px");
+      bit.style.setProperty("--dy", (140 + Math.random() * 260) + "px");
+      bit.style.setProperty("--spin", (Math.random() * 720 - 360) + "deg");
+      bit.style.setProperty("--d", (Math.random() * .3) + "s");
+      host.append(bit);
+      setTimeout(() => bit.remove(), 2400);
+    }
   }
 
   /* ================================================================
@@ -585,37 +810,64 @@ window.Pages = (() => {
   }
 
   /* ================================================================
-     9 · US IN EVERY UNIVERSE — 9 doodle pairs
+     9 · US IN EVERY UNIVERSE — a taped-down moodboard collage.
+     Same idea as the songs spreads: nothing in a straight line —
+     different sizes, small tilts, some overlapping, all hand-placed.
      ================================================================ */
-  function universes(p) {
-    const s = sheet("p-universe");
-    s.append(title(p.title, "ttl--star"));
-    s.append(el("p", "universe__sub", p.hint));
+  const UNI_LAYOUT = [
+    { x: 1,  y: 1,  w: 24, h: 27, r: -8 },
+    { x: 26, y: 6,  w: 21, h: 25, r: 7 },
+    { x: 48, y: 1,  w: 27, h: 28, r: -4 },
+    { x: 76, y: 7,  w: 22, h: 24, r: 10 },
+    { x: 4,  y: 34, w: 27, h: 28, r: 6 },
+    { x: 32, y: 30, w: 30, h: 30, r: -7 },
+    { x: 64, y: 35, w: 26, h: 27, r: 5 },
+    { x: 1,  y: 66, w: 25, h: 28, r: -9 },
+    { x: 28, y: 69, w: 28, h: 27, r: 4 },
+    { x: 59, y: 64, w: 31, h: 31, r: -5 }
+  ];
 
-    const grid = el("div", "uni__grid");
+  function universes(p) {
+    const s = sheet("p-universe2");
+
+    const head = el("div", "uni2__head");
+    head.append(title(p.title, "ttl--star uni2__title"));
+    head.append(el("p", "uni2__sub", p.hint));
+    s.append(head);
+
+    const collage = el("div", "uni2__collage");
+    /* a wandering pencil line ties the little universes together */
+    collage.append(svg("uni2__thread", "0 0 100 100",
+      '<path d="M10 12 C28 4 38 22 52 14 C68 5 78 22 90 14 ' +
+      'M12 48 C30 38 44 58 62 46 C76 36 84 54 92 46 ' +
+      'M10 82 C28 72 42 92 60 80 C74 70 84 88 92 80" ' +
+      'fill="none" stroke="#c8a05e" stroke-width=".45" stroke-dasharray="1.4 1.8" ' +
+      'stroke-linecap="round" opacity=".75"/>',
+      { preserveAspectRatio: "none" }));
+
     p.pairs.forEach((pair, i) => {
-      const card = el("div", "uni-card uni-card--" + (i % 3));
-      card.style.setProperty("--rot", (((i * 7) % 5) - 2) * 0.9 + "deg");
-      const art = el("img", "uni-art");
+      const L = UNI_LAYOUT[i % UNI_LAYOUT.length];
+      const card = el("figure", "uni2-card" + (i % 3 === 0 ? " uni2-card--taped" : ""));
+      card.style.left = L.x + "%";
+      card.style.top = L.y + "%";
+      card.style.width = L.w + "%";
+      card.style.height = L.h + "%";
+      card.style.setProperty("--rot", L.r + "deg");
+      card.style.zIndex = String(2 + (i % 3));
+
+      const art = el("img", "uni2-art");
       art.src = A + pair.img;
       art.alt = pair.label;
+      art.loading = "lazy";
       card.append(art);
-      card.append(el("span", "uni-label", pair.label));
+      if (i % 3 === 0) card.append(washi("washi--photo uni2-tape"));
+      if (i % 5 === 1) card.append(clip());
+      card.append(el("figcaption", "uni2-label", pair.label));
       wiggleOnTap(card);
-      grid.append(card);
+      collage.append(card);
     });
-    s.append(grid);
-
-    s.append(el("p", "uni__note", p.note));
-
-    /* bottom sticker meadow */
-    scatter(s, [
-      { mk: STK.star,      cls: "uni__stk uni__stk--1" },
-      { mk: STK.heartTiny, cls: "uni__stk uni__stk--2" },
-      { mk: STK.sparkle,   cls: "uni__stk uni__stk--3" },
-      { mk: STK.bow,       cls: "uni__stk uni__stk--4" },
-      { mk: STK.teacup,    cls: "uni__stk uni__stk--5" }
-    ]);
+    s.append(collage);
+    s.append(el("p", "uni2__note", p.note));
     return s;
   }
 
@@ -1209,6 +1461,7 @@ window.Pages = (() => {
     scrap.append(label);
     scrap.append(el("span", "endpaper__stamp", "the end of the pages, not of us ♡"));
     handmadeStickers(scrap, 0);
+    scatterStickers(scrap, 31.7, 6);
     return scrap;
   }
 
@@ -1231,9 +1484,9 @@ window.Pages = (() => {
     pasted.append(el("span", "ft-sheet__tape ft-sheet__tape--b"));
     pasted.append(heartSvg("ft-doodle-heart ft-doodle-heart--a"));
     pasted.append(heartSvg("ft-doodle-heart ft-doodle-heart--b"));
-    pasted.append(sticker("bd22102ef58d3dae000ce5e58b48cd69.jpg", "intro-p intro-p--a"));
-    pasted.append(sticker("9a30371b5059345faf779a2172b7f64b.jpg", "intro-p intro-p--b"));
-    pasted.append(sticker("sticker.jpg", "intro-p intro-p--c"));
+    pasted.append(sticker("stk-kitty.png", "intro-p intro-p--a tier-sm"));
+    pasted.append(sticker("stk-planet.png", "intro-p intro-p--b tier-md"));
+    pasted.append(sticker("stk-stars.png", "intro-p intro-p--c tier-lg"));
     pasted.append(window.Fortune.build(F));
     scrap.append(pasted);
 
@@ -1242,10 +1495,12 @@ window.Pages = (() => {
 
   function handmadeStickers(host, seed) {
     const library = STICKER_LIBRARY.length ? STICKER_LIBRARY : [{ jpg: "sitcker1.jpg" }];
+    const tiers = ["tier-md", "tier-sm", "tier-lg", "tier-sm", "tier-md", "tier-lg", "tier-xs"];
     host.querySelectorAll("svg.stk").forEach((old, i) => {
       const entry = library[(seed * 3 + i) % library.length];
       const image = sticker([entry.png, entry.jpg].filter(Boolean));
-      image.setAttribute("class", old.getAttribute("class") + " real-sticker");
+      image.setAttribute("class",
+        old.getAttribute("class") + " real-sticker " + tiers[(seed + i) % tiers.length]);
       image.style.cssText = old.style.cssText;
       old.replaceWith(image);
     });
@@ -1258,6 +1513,9 @@ window.Pages = (() => {
     const renderer = RENDERERS[page.key] || placeholderSheet;
     const scrap = renderer(page);
     handmadeStickers(scrap, n);
+    const override = SCATTER_OVERRIDES[n];
+    scatterStickers(scrap, n + 1.31,
+      override ? override.length : SCATTER_COUNTS[n], override);
     scrap.dataset.page = n;
     const num = el("div", "scrap__num", String(n).padStart(2, "0"));
     scrap.append(num);

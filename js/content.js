@@ -51,42 +51,46 @@ window.BOOK_CONTENT = {
   },
 
   /* ----------------------------------------------------------
-     STICKERS · drop new transparent PNGs into assets/ and list
-     them here. Each entry tries the PNG first, then falls back
-     to the older jpg, so the book never shows a broken image.
+     STICKERS · the transparent PNGs in assets/ come first, the
+     old flat jpgs stay as a fallback. `library` is the pool the
+     pages scatter stickers from — the order is intentional so
+     neighbouring stickers rarely repeat the same little drawing.
      ---------------------------------------------------------- */
   stickers: {
     named: {
-      favp:  { png: "favp.png",          fallback: "976d5c7bb460d587ae0580db19e69b65.jpg" },
+      /* the "favorite person" label — it belongs ON October 28 */
+      favp:  { png: "favp.png",          fallback: "bd22102ef58d3dae000ce5e58b48cd69.jpg" },
       bday:  { png: "bday.png",          fallback: "1775ae2a8718a489721decd4fd3f2d83.jpg" },
       bday1: { png: "bday1.png",         fallback: "2e5b0227aa34495e8744b30146b1fb78.jpg" },
-      hand:  { png: "hand-removebg.png", fallback: "hand.jpg" }
+      hand:  { png: "hand-removebg.png", fallback: "hand.jpg" },
+      tulips:{ png: "stk-tulips.png",    fallback: "976d5c7bb460d587ae0580db19e69b65.jpg" }
     },
     library: [
-      { png: "favp.png",          jpg: "976d5c7bb460d587ae0580db19e69b65.jpg" },
-      { png: "bday.png",          jpg: "1775ae2a8718a489721decd4fd3f2d83.jpg" },
-      { png: "bday1.png",         jpg: "2e5b0227aa34495e8744b30146b1fb78.jpg" },
-      { jpg: "03087c3c7ec42ea017e125932366d4dc.jpg" },
-      { jpg: "07898c8fabd8c50047af31afffd9bb60.jpg" },
-      { jpg: "1ef728e7cd81d64903bddc5330c5d48c.jpg" },
-      { jpg: "310b90af033c68568b2347fbf88c6de3.jpg" },
-      { jpg: "312987af0984782fafad4243b761421a.jpg" },
-      { jpg: "44d26b2ee2704fe8c273e83730c1ec0e.jpg" },
-      { jpg: "48cd4401bdfa0ebe4c80fdeaffee11b2.jpg" },
-      { jpg: "5ab2e47e02d3dae411549c231aafa337.jpg" },
-      { jpg: "6711d24d4aa3a7a2ccab4701ec83b370.jpg" },
-      { jpg: "80170864e0b942580d87b520e9647670.jpg" },
-      { jpg: "93531682576dbb0ff07578ae32a43c69.jpg" },
-      { jpg: "9a30371b5059345faf779a2172b7f64b.jpg" },
-      { jpg: "ab77a76888df77924f4b18b90a4886a5.jpg" },
-      { jpg: "bc26229d8dd43fddb14b1963e1f32f5a.jpg" },
-      { jpg: "bd22102ef58d3dae000ce5e58b48cd69.jpg" },
-      { jpg: "cd55b0d7f094b1cf1fe063b54416bb04.jpg" },
-      { jpg: "d178aadd4723ef61824cda4784b01181.jpg" },
-      { jpg: "d449fa0f4adf7461e2b01b99a68fcc0b.jpg" },
-      { jpg: "f52d01dc3787797a0efca1cb6ba3f433.jpg" },
-      { jpg: "sitcker1.jpg" },
-      { jpg: "sticker.jpg" }
+      { png: "stk-heart.png",        jpg: "310b90af033c68568b2347fbf88c6de3.jpg" },
+      { png: "stk-star.png",         jpg: "6711d24d4aa3a7a2ccab4701ec83b370.jpg" },
+      { png: "stk-stars.png",        jpg: "sitcker1.jpg" },
+      { png: "stk-kitty.png",        jpg: "d449fa0f4adf7461e2b01b99a68fcc0b.jpg" },
+      { png: "stk-jellyfish.png",    jpg: "f52d01dc3787797a0efca1cb6ba3f433.jpg" },
+      { png: "stk-planet.png",       jpg: "9a30371b5059345faf779a2172b7f64b.jpg" },
+      { png: "stk-pixel-heart.png",  jpg: "312987af0984782fafad4243b761421a.jpg" },
+      { png: "stk-pixel-env.png",    jpg: "44d26b2ee2704fe8c273e83730c1ec0e.jpg" },
+      { png: "stk-pixel-kitty.png",  jpg: "d178aadd4723ef61824cda4784b01181.jpg" },
+      { png: "stk-bean.png",         jpg: "1ef728e7cd81d64903bddc5330c5d48c.jpg" },
+      { png: "stk-hug.png",          jpg: "2d49f0eb767593435c9ff56df489bec0.jpg" },
+      { png: "stk-doodle.png",       jpg: "ab77a76888df77924f4b18b90a4886a5.jpg" },
+      { png: "stk-heart-balloon.png",jpg: "03087c3c7ec42ea017e125932366d4dc.jpg" },
+      { png: "stk-cat.png",          jpg: "80170864e0b942580d87b520e9647670.jpg" },
+      { png: "stk-lily.png",         jpg: "93531682576dbb0ff07578ae32a43c69.jpg" },
+      { png: "stk-letter-g.png",     jpg: "48cd4401bdfa0ebe4c80fdeaffee11b2.jpg" },
+      { png: "stk-spider.png",       jpg: "5ab2e47e02d3dae411549c231aafa337.jpg" },
+      { png: "stk-pony.png",         jpg: "07898c8fabd8c50047af31afffd9bb60.jpg" },
+      { png: "stk-sunshine.png",     jpg: "bc26229d8dd43fddb14b1963e1f32f5a.jpg" },
+      { png: "stk-squiggle.png",     jpg: "sticker.jpg" },
+      { png: "stk-arrow.png",        jpg: "cd55b0d7f094b1cf1fe063b54416bb04.jpg" },
+      { png: "stk-tulips.png",       jpg: "976d5c7bb460d587ae0580db19e69b65.jpg" },
+      { png: "bday.png",             jpg: "1775ae2a8718a489721decd4fd3f2d83.jpg" },
+      { png: "bday1.png",            jpg: "2e5b0227aa34495e8744b30146b1fb78.jpg" },
+      { png: "hand-removebg.png",    jpg: "hand.jpg" }
     ]
   },
 
@@ -182,10 +186,23 @@ window.BOOK_CONTENT = {
 
     { n: 7,  key: "photo-booth",
       title: "Our little photo booth.",
-      photos: ["photo here", "photo here", "photo here"],
+      marquee: "PHOTO BOOTH",
+      kicker: "step inside, silly · 3 poses · 1 night",
+      stripNo: "strip no. 01",
+      date: "28 · 10",
+      photos: ["pose 1 · be silly", "pose 2 · be soft", "pose 3 · be us"],
       caption: "three frames, one night",
-      tapHint: "tap a photo ♡",
-      message: "i'll always remain grateful that i was with you that night" },
+      tapHint: "tap to flip ♡",
+      addHint: "+ add a photo",
+      message: "i'll always remain grateful that i was with you that night",
+      shoot: "take the pictures ♡",
+      shootAgain: "one more strip ♡",
+      countdown: ["3", "2", "1", "smile! ♡"],
+      developing: "developing your strip…",
+      developed: "printed just for us ♡",
+      ticket: "admit one",
+      ticketSub: "a little night, kept forever",
+      note: "the booth closes, the pictures stay ♡" },
 
     { n: 8,  key: "best-friend",
       title: "Why you're my dearest friend ♡",
