@@ -95,63 +95,76 @@ window.BOOK_CONTENT = {
   },
 
   /* ----------------------------------------------------------
-     The 10 letter leaves after page 16. The first eight have the
-     current letter; the final two stay open for more writing later.
+     The 10 letter leaves after page 16 — the whole letter, balanced
+     across ten pages, so page 16 is the stationery and 17 → 26 carry
+     the writing. Page 27 is the finale.
      ---------------------------------------------------------- */
   letterPages: [
     {
       lead: "writing more than 8 pages for you because someone was upset bout it before :O:",
       paragraphs: [
-        "so let me start off by saying that HAPPY BIRTHDAY, first of all! even tho we are the same age now, u will always stay younger than me. im happy that i am able to wish you this birthday as well, and ill remain grateful for every birthday that i get to wish you later (i hope i stay alive till your 95th birthday).",
-        "ill always remain grateful to ALLAH pak for making u a part of my life. you have taught me alot, from small to big things. your company has always brought out a better side of me, and i think knowing you has done more for me than i could ever properly put into words."
+        "so let me start off by saying that HAPPY BIRTHDAY, first of all! even tho we are the same age now, u will always stay younger than me.",
+        "im happy that i am able to wish you this birthday as well, and ill remain grateful for every birthday that i get to wish you later (i hope i stay alive till your 95th birthday). ill always remain grateful to ALLAH pak for making u a part of my life. you have taught me alot, from small to big things."
       ]
     },
     {
       paragraphs: [
-        "Thankyou so much for not letting me go and for continuing to make me a part of your life as well. and even tho ive said it alot, ill be saying it again: thankyou so much for doing every possible good for me that u could have done up to your limits.",
-        "thankyou so much for always trying your best for the people around you who are close to you and for holding onto them. thankyou so much for being the person through which i learned to deal with my feelings."
+        "your company has always brought out a better side of me, and i think knowing you has done more for me than i could ever properly put into words. Thankyou so much for not letting me go and for continuing to make me a part of your life as well.",
+        "and even tho ive said it alot, ill be saying it again: thankyou so much for doing every possible good for me that u could have done up to your limits."
       ]
     },
     {
       paragraphs: [
-        "and ill remain grateful that even in the bad times you were the person my bad times went with. even when we were apart, a part of me was still carrying everything i had learned from knowing you. the distance didnt erase what you meant to me, and the difficult parts back then didnt make the good parts any less real."
+        "thankyou so much for always trying your best for the people around you who are close to you and for holding onto them. thankyou so much for being the person through which i learned to deal with my feelings.",
+        "and ill remain grateful that even in the bad times you were the person my bad times went with. even when we were apart, a part of me was still carrying everything i had learned from knowing you."
       ]
     },
     {
       paragraphs: [
-        "everytime i still remember the memories we made—whether it was the time of assembly before the lecture when we used to come early and play badminton, or us standing behind each other in assembly; whether it was t. maria ka period when we didnt used to talk in her presence, or t. maham ka period when we used to go crazy tgt; whether it was breaktime when we used to go to pookie, or chuti time when we used to always stand and walk together or sit in that specific window. ill always treasure all of these memories forever. a part of my heart is filled with them and ill never forget them, because they mean sm to me and they are the only asset of us that is left with me now..."
+        "the distance didnt erase what you meant to me, and the difficult parts back then didnt make the good parts any less real.",
+        "everytime i still remember the memories we made—whether it was the time of assembly before the lecture when we used to come early and play badminton, or us standing behind each other in assembly; whether it was t."
       ]
     },
     {
       paragraphs: [
-        "whenever u get tired or bored or annoyed or struggling with anything, always remember that ill be there for you whenever i can. may ALLAH always remind you that your worth is never measured by how much u can accomplish in a day. may Allah reward you for every little effort you make on the days when you have absolutely nothing left to give yourself, and may you come home from college everyday feeling proud of yourself instead of simply relieved that its over."
+        "maria ka period when we didnt used to talk in her presence, or t.",
+        "maham ka period when we used to go crazy tgt; whether it was breaktime when we used to go to pookie, or chuti time when we used to always stand and walk together or sit in that specific window. ill always treasure all of these memories forever."
       ]
     },
     {
       paragraphs: [
-        "may Allah pak help you with every tiniest inconvenience in your life and may Allah always surround you with the kind of people who never make you feel that you have to become smaller to be loved; people who celebrate the good in you without competing with it, correct you without humiliating you, and stay honest with you even when being honest becomes difficult for them.",
-        "may ALLAH take especially gentle care of you on the days you tell everyone you are doing fine when u are not, and may he know exactly what your heart needs on the days you dont even know how to ask for it."
+        "a part of my heart is filled with them and ill never forget them, because they mean sm to me and they are the only asset of us that is left with me now...",
+        "whenever u get tired or bored or annoyed or struggling with anything, always remember that ill be there for you whenever i can."
       ]
     },
     {
       paragraphs: [
-        "may relief come to you before you have to explain your pain to anyone. may Allah make you a part of so many good moments that you forget to count the bad ones. may ALLAH always support you in taking your decisions and remaining firm on them.",
-        "may Allah keep goodness between us even when life gets hard or busy and the world takes us in different directions. may we always have the maturity to understand that growing doesnt have to mean growing apart."
+        "may ALLAH always remind you that your worth is never measured by how much u can accomplish in a day.",
+        "may Allah reward you for every little effort you make on the days when you have absolutely nothing left to give yourself, and may you come home from college everyday feeling proud of yourself instead of simply relieved that its over."
       ]
     },
     {
       paragraphs: [
-        "and LASTLY may ALLAH turn your every bad day of college ahead of you into not just a good one but the best one. AMEEN.",
-        "ALLAH pak knows you in ways i dont, so everytime i think of you i always try to think of you in the way ALLAH pak does."
+        "may Allah pak help you with every tiniest inconvenience in your life and may Allah always surround you with the kind of people who never make you feel that you have to become smaller to be loved; people who celebrate the good in you without competing with it, correct you without humiliating you, and stay honest with you even when being honest becomes difficult for them."
       ]
     },
-    { paragraphs: [] },
-    { paragraphs: [] }
+    {
+      paragraphs: [
+        "may ALLAH take especially gentle care of you on the days you tell everyone you are doing fine when u are not, and may he know exactly what your heart needs on the days you dont even know how to ask for it.",
+        "may relief come to you before you have to explain your pain to anyone. may Allah make you a part of so many good moments that you forget to count the bad ones. may ALLAH always support you in taking your decisions and remaining firm on them."
+      ]
+    },
+    {
+      paragraphs: [
+        "may Allah keep goodness between us even when life gets hard or busy and the world takes us in different directions. may we always have the maturity to understand that growing doesnt have to mean growing apart.",
+        "and LASTLY may ALLAH turn your every bad day of college ahead of you into not just a good one but the best one. AMEEN. ALLAH pak knows you in ways i dont, so everytime i think of you i always try to think of you in the way ALLAH pak does."
+      ]
+    }
   ],
-
   /* ----------------------------------------------------------
-     The scrapbook's 27 logical pages. The 10 letter leaves follow
-     page 16; the finale now lives on page 27.
+     The scrapbook's 27 logical pages (plus the unnumbered intro on
+     the inside front cover). Page 16 is the letter stationery, the
+     ten written leaves follow it (17 → 26), and page 27 is the finale.
      ---------------------------------------------------------- */
   pages: [
     { n: 1,  key: "calendar",
@@ -180,13 +193,16 @@ window.BOOK_CONTENT = {
       title: "soulmate",
       hint: "[ soo-l-meyt ] n.",
       definition: "The person destiny has chose for you. The missing piece that always puts up a smile on your face. A connection of minds and an unconditional, never-ending and effortless love",
+      /* each slot lists its candidates in order — the name you asked for
+         first, then a photo that is already in assets/ so the frame is
+         never empty (browsers cannot paint .xcf, so it falls through) */
       photoAssets: [
-        "IMG-20250227-WA0011.jpg",
-        "IMG-20250227-WA0032.jpg",
-        "IMG-20250227-WA0009.jpg",
-        "IMG-20250227-WA0034.jpg",
-        "IMG-20250227-WA0023.jpg",
-        "IMG-20250227-WA0035.jpg"
+        ["IMG-20250227-WA0011.jpg"],
+        ["IMG-20250227-WA0032.jpg"],
+        ["IMG-20250227-WA0009.xcf", "IMG-20250227-WA0031.jpg"],
+        ["IMG-20250227-WA0034.jpg"],
+        ["IMG-20250227-WA0023.xcf", "IMG-20250227-WA0035.jpg"],
+        ["IMG-20250227-WA0031.jpg"]
       ] },
 
     { n: 4,  key: "songs-a",
@@ -253,9 +269,9 @@ window.BOOK_CONTENT = {
       date: "28 · 10",
       photos: ["pose 1 · be silly", "pose 2 · be soft", "pose 3 · be us"],
       photoAssets: [
-        "IMG-20250227-WA0022.jpg",
-        "IMG-20250227-WA0031.jpg",
-        "IMG-20250227-WA0036.jpg"
+        ["IMG-20250227-WA0022.xcf", "IMG-20250227-WA0031.jpg"],
+        ["IMG-20250227-WA0035.jpg"],
+        ["IMG-20250227-WA0036.xcf", "IMG-20250227-WA0032.jpg"]
       ],
       caption: "three frames, one night",
       tapHint: "tap to flip ♡",
