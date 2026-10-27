@@ -1,0 +1,396 @@
+/* ============================================================
+   book.css · Layer B — the open-book reader
+   ============================================================ */
+
+.book-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: clamp(56px, 8vh, 74px) clamp(10px, 2vw, 26px) 12px;
+}
+
+/* ---------------- the physical book ---------------- */
+
+.book {
+  --cover-rim: clamp(7px, 0.9vw, 11px);
+  --page-fan: clamp(9px, 1.2vw, 15px);
+  position: relative;
+  width: min(1240px, 92vw, calc((100vh - 150px) * 1.52));
+  width: min(1240px, 92vw, calc((100dvh - 150px) * 1.52));
+  aspect-ratio: 3 / 2;
+  filter: drop-shadow(0 26px 42px rgba(70, 42, 46, .38))
+          drop-shadow(0 6px 12px rgba(70, 42, 46, .25));
+}
+
+/* ---- fanned page edges (outermost, like a chunky junk journal) ---- */
+
+.book__edge,
+.book__block {
+  position: absolute;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(to right,
+      #f7ecd6 0 3px,
+      #e0caa4 3px 4.4px,
+      #f2e3c6 4.4px 6px),
+    #eddfc0;
+  box-shadow: inset 0 0 6px rgba(75, 52, 42, .3);
+}
+
+.book__edge--left  { left: 0; top: 4px; bottom: 4px; width: var(--page-fan); border-radius: 4px 0 0 4px; }
+.book__edge--right { right: 0; top: 4px; bottom: 4px; width: var(--page-fan); border-radius: 0 4px 4px 0; }
+
+.book__block--top    { top: 0; left: 4px; right: 4px; height: calc(var(--page-fan) * .72);
+  background:
+    repeating-linear-gradient(to bottom,
+      #f7ecd6 0 3px,
+      #e0caa4 3px 4.4px,
+      #f2e3c6 4.4px 6px),
+    #eddfc0;
+  border-radius: 4px 4px 0 0; }
+
+.book__block--bottom { bottom: 0; left: 4px; right: 4px; height: calc(var(--page-fan) * .72);
+  background:
+    repeating-linear-gradient(to bottom,
+      #f7ecd6 0 3px,
+      #e0caa4 3px 4.4px,
+      #f2e3c6 4.4px 6px),
+    #eddfc0;
+  border-radius: 0 0 4px 4px; }
+
+/* left/right fan gets a warm shading (inner pages darker) */
+.book__edge--left  { background: repeating-linear-gradient(to right, #f7ecd6 0 3px, #d9bf98 3px 4.4px), linear-gradient(to right, #c9ab84, #efdfc0); }
+.book__edge--right { background: repeating-linear-gradient(to right, #f7ecd6 0 3px, #d9bf98 3px 4.4px), linear-gradient(to left, #c9ab84, #efdfc0); }
+
+/* ---- cover rim under the paper ---- */
+
+.book__coverframe {
+  position: absolute;
+  top: calc(var(--page-fan) * .34);
+  bottom: calc(var(--page-fan) * .34);
+  left: calc(var(--page-fan) * .6);
+  right: calc(var(--page-fan) * .6);
+  border-radius: 9px;
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, .14), transparent 40%),
+    radial-gradient(130% 130% at 30% 15%, #d9a3a7 0%, #c58e97 55%, #a86c77 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(75, 45, 50, .45),
+    inset 0 0 18px rgba(70, 40, 46, .35);
+}
+
+.book__coverframe::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 6px;
+  border: 1px solid rgba(200, 160, 94, .55);
+}
+
+/* ---- paper area (the two facing pages) ---- */
+
+.book__paper {
+  position: absolute;
+  top: calc(var(--page-fan) * .34 + var(--cover-rim));
+  bottom: calc(var(--page-fan) * .34 + var(--cover-rim));
+  left: calc(var(--page-fan) * .6 + var(--cover-rim));
+  right: calc(var(--page-fan) * .6 + var(--cover-rim));
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  isolation: isolate;
+  background: var(--cream);
+  border-radius: 3px;
+}
+
+/* paper grain + faint ruled warmth */
+.book__paper::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  opacity: .5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.26 0 0 0 0 0.17 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23p)'/%3E%3C/svg%3E");
+}
+
+/* ---- the leaves ---- */
+
+.leaf {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(140% 120% at 50% 40%, #f8eeda 0%, #f2e5cd 62%, #ecdcbe 100%);
+}
+
+/* static leaves are size containers for the scraps' cqh-based em scale
+   (NOT .leaf--turn: layout containment would force transform-style flat
+   and break backface culling on the turning faces) */
+.leaf--static { container-type: size; }
+
+.leaf--left {
+  grid-column: 1;
+  box-shadow:
+    inset -34px 0 34px -22px rgba(75, 52, 42, .5),
+    inset 0 8px 14px -10px rgba(75, 52, 42, .35),
+    inset 0 -8px 14px -10px rgba(75, 52, 42, .35);
+  border-radius: 3px 0 0 3px;
+}
+
+.leaf--right {
+  grid-column: 2;
+  box-shadow:
+    inset 34px 0 34px -22px rgba(75, 52, 42, .5),
+    inset 0 8px 14px -10px rgba(75, 52, 42, .35),
+    inset 0 -8px 14px -10px rgba(75, 52, 42, .35);
+  border-radius: 0 3px 3px 0;
+}
+
+/* ---- central spine valley ---- */
+
+.book__spine {
+  position: absolute;
+  left: calc(50% - 7%);
+  top: -2px;
+  bottom: -2px;
+  width: 14%;
+  z-index: 6;
+  pointer-events: none;
+  background:
+    linear-gradient(to right,
+      rgba(75, 52, 42, 0) 0%,
+      rgba(75, 52, 42, .10) 34%,
+      rgba(64, 42, 34, .42) 50%,
+      rgba(75, 52, 42, .10) 66%,
+      rgba(75, 52, 42, 0) 100%);
+}
+
+.book__spine::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  transform: translateX(-50%);
+  background: linear-gradient(to bottom,
+    rgba(75, 52, 42, .05),
+    rgba(75, 52, 42, .35) 12%,
+    rgba(75, 52, 42, .35) 88%,
+    rgba(75, 52, 42, .05));
+}
+
+/* ---------------- turning leaf ---------------- */
+
+.leaf--turn {
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  width: calc(50% + 1px);
+  z-index: 10;
+  transform-style: preserve-3d;
+  overflow: visible;                 /* CRITICAL: overflow≠visible would force the
+                                        used transform-style to flat and break
+                                        backface-visibility culling on the faces */
+  will-change: transform;
+  background: none;
+}
+
+/* forward: rests on the right half, hinges on the spine (its left edge) */
+.leaf--turn.is-forward {
+  left: calc(50% - 1px);
+  transform-origin: left center;
+}
+
+/* backward: rests on the left half, hinges on the spine (its right edge) */
+.leaf--turn.is-backward {
+  left: 0;
+  transform-origin: right center;
+}
+
+.leaf__face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  container-type: size;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background:
+    radial-gradient(140% 120% at 50% 40%, #f8eeda 0%, #f2e5cd 62%, #ecdcbe 100%);
+  box-shadow: 0 0 18px rgba(75, 52, 42, .35);
+}
+
+/* descendants paint on the face's plane — must hide with it
+   (Chromium keeps rendering visible children of a hidden backface otherwise) */
+.leaf__face *,
+.leaf__face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.leaf__face--back { transform: rotateY(180deg); }
+
+.leaf__face .scrap { box-shadow: none; }
+
+/* dynamic light across the swinging leaf */
+.leaf__shade {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(to left,
+    rgba(46, 30, 26, .46) 0%,
+    rgba(46, 30, 26, .16) 36%,
+    rgba(46, 30, 26, 0) 60%);
+}
+
+/* ---------------- page-turn animations ---------------- */
+
+.leaf--turn.is-forward {
+  animation: turn-forward var(--turn-dur, .82s) var(--ease-book) forwards;
+}
+
+.leaf--turn.is-backward {
+  animation: turn-backward var(--turn-dur, .82s) var(--ease-book) forwards;
+}
+
+.leaf--turn.is-forward .leaf__shade { animation: shade-fwd var(--turn-dur, .82s) linear forwards; }
+.leaf--turn.is-backward .leaf__shade { animation: shade-bwd var(--turn-dur, .82s) linear forwards; }
+
+@keyframes turn-forward {
+  0%   { transform: rotateY(0deg) translateZ(0); }
+  50%  { transform: rotateY(-90deg) translateZ(10px); }
+  100% { transform: rotateY(-180deg) translateZ(0); }
+}
+
+@keyframes turn-backward {
+  0%   { transform: rotateY(0deg) translateZ(0); }
+  50%  { transform: rotateY(90deg) translateZ(10px); }
+  100% { transform: rotateY(180deg) translateZ(0); }
+}
+
+@keyframes shade-fwd {
+  0%   { opacity: 0; }
+  45%  { opacity: 1; }
+  55%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes shade-bwd {
+  0%   { opacity: 0; background: linear-gradient(to right, rgba(46, 30, 26, .46) 0%, rgba(46, 30, 26, .16) 36%, rgba(46, 30, 26, 0) 60%); }
+  45%  { opacity: 1; background: linear-gradient(to right, rgba(46, 30, 26, .46) 0%, rgba(46, 30, 26, .16) 36%, rgba(46, 30, 26, 0) 60%); }
+  55%  { opacity: 1; }
+  100% { opacity: 0; background: linear-gradient(to right, rgba(46, 30, 26, .46) 0%, rgba(46, 30, 26, .16) 36%, rgba(46, 30, 26, 0) 60%); }
+}
+
+/* quick crossfade variant (reduced motion / single-page mode) */
+.leaf--turn.is-fading {
+  animation: leaf-fade var(--turn-dur, .2s) ease forwards;
+}
+
+@keyframes leaf-fade {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* ---------------- single-page mode (portrait, guard dismissed) ----------------
+   Never squeezes two pages side by side: one tall leaf fills the book. */
+
+body.is-single .book {
+  width: min(520px, 86vw, calc((100vh - 150px) * 0.74));
+  width: min(520px, 86vw, calc((100dvh - 150px) * 0.74));
+  aspect-ratio: 1 / 1.35;
+}
+
+body.is-single .book__paper {
+  grid-template-columns: 1fr;
+}
+
+body.is-single .leaf--left,
+body.is-single .book__spine,
+body.is-single .leaf--turn {
+  display: none;
+}
+
+body.is-single .leaf--right {
+  grid-column: 1;
+  border-radius: 3px;
+  box-shadow:
+    inset 0 8px 14px -10px rgba(75, 52, 42, .35),
+    inset 0 -8px 14px -10px rgba(75, 52, 42, .35);
+  transition: opacity .16s ease;
+}
+
+body.is-single .leaf--right.is-fading {
+  opacity: 0;
+}
+
+/* ---------------- dog-ear navigation ---------------- */
+
+.dogear {
+  position: absolute;
+  bottom: calc(var(--page-fan) * .34 + var(--cover-rim) - 4px);
+  width: clamp(46px, 5vw, 64px);
+  height: clamp(46px, 5vw, 64px);
+  z-index: 20;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dogear--prev { left: calc(var(--page-fan) * .6 + var(--cover-rim) - 4px); }
+.dogear--next { right: calc(var(--page-fan) * .6 + var(--cover-rim) - 4px); }
+
+.dogear__fold {
+  position: absolute;
+  inset: 0;
+  transition: transform .25s ease, filter .25s ease;
+  filter: drop-shadow(2px -2px 3px rgba(75, 52, 42, .4));
+}
+
+.dogear--next .dogear__fold {
+  background: linear-gradient(315deg, #e8d5b2 0%, #f4e8d0 45%, #fbf4e4 100%);
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  border-top: 1px solid rgba(110, 84, 62, .25);
+}
+
+.dogear--prev .dogear__fold {
+  background: linear-gradient(45deg, #e8d5b2 0%, #f4e8d0 45%, #fbf4e4 100%);
+  clip-path: polygon(0 0, 100% 100%, 0 100%);
+}
+
+.dogear--next:hover .dogear__fold,
+.dogear--next:focus-visible .dogear__fold {
+  transform: translate(-4px, -4px);
+  filter: drop-shadow(4px -4px 6px rgba(75, 52, 42, .45));
+}
+
+.dogear--prev:hover .dogear__fold,
+.dogear--prev:focus-visible .dogear__fold {
+  transform: translate(4px, -4px);
+  filter: drop-shadow(-2px -4px 6px rgba(75, 52, 42, .45));
+}
+
+.dogear[disabled] {
+  opacity: .3;
+  cursor: default;
+}
+
+.dogear[disabled]:hover .dogear__fold { transform: none; }
+
+/* subtle hint arrows inside the folds */
+.dogear--next .dogear__fold::after,
+.dogear--prev .dogear__fold::after {
+  position: absolute;
+  bottom: 14%;
+  font-family: var(--font-serif);
+  font-size: clamp(.85rem, 1.4vw, 1.05rem);
+  color: rgba(75, 52, 42, .55);
+}
+
+.dogear--next .dogear__fold::after { right: 18%; content: "›"; }
+.dogear--prev .dogear__fold::after { left: 18%; content: "‹"; }
+
+/* dragging state */
+.leaf--turn.is-dragging { animation: none; }

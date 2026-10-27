@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <title>A Scrapbook for Giffie</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/fonts/fonts.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/closed-book.css">
+  <link rel="stylesheet" href="css/book.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+  <!-- ============================ LAYER A · closed book ============================ -->
+  <main id="scene-closed" class="scene scene--closed">
+    <div class="closed-bg" aria-hidden="true">
+      <div class="closed-bg__halo"></div>
+      <div class="sparkles" id="sparkles"></div>
+    </div>
+
+    <div class="closed-stage">
+      <button type="button" class="closed-book" id="open-book-btn"
+              aria-label="Open the scrapbook for Giffie">
+        <span class="cb" aria-hidden="true">
+          <span class="cb__shadow"></span>
+          <span class="cb__float">
+            <span class="cb__box">
+              <!-- page block: cream leaves seen as one thick keepsake -->
+              <span class="cb__block cb__block--right"></span>
+              <span class="cb__block cb__block--bottom"></span>
+              <span class="cb__block cb__block--corner"></span>
+              <!-- inside cover, revealed while opening -->
+              <span class="cb__inner"></span>
+              <!-- the cover itself: container rides the swing; its two faces cull individually -->
+              <span class="cb__cover">
+                <span class="cb__cover-face">
+                  <span class="cb__cloth"></span>
+                  <span class="cb__spine-bands"></span>
+                  <svg class="cb__frame" viewBox="0 0 300 400" fill="none" aria-hidden="true">
+                    <rect x="16.5" y="16.5" width="267" height="367" rx="6"
+                          stroke="url(#coverGold)" stroke-width="2.4"/>
+                    <rect x="24.5" y="24.5" width="251" height="351" rx="4"
+                          stroke="url(#coverGold)" stroke-width="0.9" opacity=".8"/>
+                    <!-- corner flourishes -->
+                    <g stroke="url(#coverGold)" stroke-width="1.6" fill="none" stroke-linecap="round">
+                      <path d="M30 60 C30 42 42 30 60 30 M36 66 C36 50 50 36 66 36"/>
+                      <path d="M270 60 C270 42 258 30 240 30 M264 66 C264 50 250 36 234 36"/>
+                      <path d="M30 340 C30 358 42 370 60 370 M36 334 C36 350 50 364 66 364"/>
+                      <path d="M270 340 C270 358 258 370 240 370 M264 334 C264 350 250 364 234 364"/>
+                    </g>
+                    <!-- bow, centered above the title -->
+                    <g class="cb__bow" transform="translate(150 96)">
+                      <g fill="url(#coverGold)" stroke="#8a6636" stroke-width=".7">
+                        <path d="M0 4 C-16 -14 -44 -22 -52 -8 C-58 3 -46 14 -28 12 C-14 10.5 -4 8 0 4 Z"/>
+                        <path d="M0 4 C16 -14 44 -22 52 -8 C58 3 46 14 28 12 C14 10.5 4 8 0 4 Z"/>
+                        <path d="M-4 8 C-10 24 -18 34 -26 42 C-18 40 -8 34 0 26 Z"/>
+                        <path d="M4 8 C10 24 18 34 26 42 C18 40 8 34 0 26 Z"/>
+                        <ellipse cx="0" cy="4" rx="7" ry="6"/>
+                      </g>
+                      <circle cx="-52" cy="-6" r="2.4" fill="#f6e3b8"/>
+                      <circle cx="52" cy="-6" r="2.4" fill="#f6e3b8"/>
+                    </g>
+                    <defs>
+                      <linearGradient id="coverGold" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0" stop-color="#e8cf9f"/>
+                        <stop offset=".5" stop-color="#c8a05e"/>
+                        <stop offset="1" stop-color="#e8cf9f"/>
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  <span class="cb__title">for Giffie</span>
+                  <span class="cb__ornament" aria-hidden="true">❦</span>
+                  <!-- leather corner protectors -->
+                  <span class="cb__corner cb__corner--tl"></span>
+                  <span class="cb__corner cb__corner--tr"></span>
+                  <span class="cb__corner cb__corner--bl"></span>
+                  <span class="cb__corner cb__corner--br"></span>
+                  <!-- ribbon bookmark peeking out -->
+                  <span class="cb__ribbon"></span>
+                </span>
+                <!-- cover underside: rose endpaper, culled in until the swing passes 90° -->
+                <span class="cb__coverback"></span>
+              </span>
+            </span>
+          </span>
+        </span>
+      </button>
+
+      <p class="open-hint" id="open-hint"><span>tap to open</span> <span class="open-hint__heart">♡</span></p>
+    </div>
+  </main>
+
+  <!-- ============================ LAYER B · open reader ============================ -->
+  <div id="scene-reader" class="scene scene--reader" hidden>
+    <div class="reader-chrome reader-chrome--top">
+      <button type="button" class="close-book" id="close-book-btn" aria-label="Close the scrapbook">
+        <span class="close-book__tab">close the book&nbsp;&nbsp;×</span>
+      </button>
+    </div>
+
+    <div class="book-stage" id="book-stage" tabindex="-1">
+      <div class="book" id="book">
+        <div class="book__edge book__edge--left" aria-hidden="true"></div>
+        <div class="book__edge book__edge--right" aria-hidden="true"></div>
+        <div class="book__block book__block--top" aria-hidden="true"></div>
+        <div class="book__block book__block--bottom" aria-hidden="true"></div>
+
+        <div class="book__coverframe" aria-hidden="true"></div>
+
+        <div class="book__paper">
+          <div class="leaf leaf--static leaf--left" id="under-left"></div>
+          <div class="leaf leaf--static leaf--right" id="under-right"></div>
+          <div class="book__spine" aria-hidden="true"></div>
+
+          <!-- turning leaf (stage 2): occupies one half, flips through 3D -->
+          <div class="leaf leaf--turn" id="turn-leaf" hidden>
+            <div class="leaf__face leaf__face--front" id="turn-front"></div>
+            <div class="leaf__face leaf__face--back" id="turn-back"></div>
+            <div class="leaf__shade" id="turn-shade"></div>
+          </div>
+        </div>
+
+        <button type="button" class="dogear dogear--prev" id="prev-btn" aria-label="Previous pages">
+          <span class="dogear__fold" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="dogear dogear--next" id="next-btn" aria-label="Next pages">
+          <span class="dogear__fold" aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <div class="page-tab" id="page-tab" aria-live="polite">
+        <span class="page-tab__label" id="page-tab-label">p. 1</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ portrait rotate suggestion ============================ -->
+  <div id="rotate-overlay" class="rotate-overlay" hidden>
+    <div class="rotate-card">
+      <svg class="rotate-card__phone" viewBox="0 0 84 140" aria-hidden="true">
+        <rect x="6" y="4" width="72" height="132" rx="12" fill="none"
+              stroke="currentColor" stroke-width="3"/>
+        <rect x="14" y="18" width="56" height="100" rx="3" fill="currentColor" opacity=".15"/>
+        <path class="rotate-card__spin" d="M20 122 C34 132 54 132 68 120" fill="none"
+              stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        <path d="M62 114 L70 119 L64 127" fill="none" stroke="currentColor"
+              stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <p class="rotate-card__hand">turn me sideways&nbsp;♡</p>
+      <p class="rotate-card__text">the book opens best in landscape</p>
+      <button type="button" class="rotate-card__dismiss" id="rotate-dismiss">read it portrait anyway</button>
+    </div>
+  </div>
+
+  <script src="js/content.js"></script>
+  <script src="js/pages.js"></script>
+  <script src="js/book.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

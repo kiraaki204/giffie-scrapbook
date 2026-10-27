@@ -1,0 +1,1425 @@
+/* ============================================================
+   pages.js · Layer C — the 17 scrapbook page compositions
+   Each key in RENDERERS is its own handmade layout.
+   All personal strings come from BOOK_CONTENT.
+   ============================================================ */
+
+window.Pages = (() => {
+  const CONTENT = window.BOOK_CONTENT;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  /* ---------------- tiny DOM kit ---------------- */
+
+  function el(tag, cls, text) {
+    const node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text != null) node.textContent = text;
+    return node;
+  }
+
+  function svg(cls, viewBox, inner, attrs) {
+    const node = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    node.setAttribute("class", cls);
+    node.setAttribute("viewBox", viewBox);
+    node.setAttribute("aria-hidden", "true");
+    if (attrs) for (const k in attrs) node.setAttribute(k, attrs[k]);
+    node.innerHTML = inner;
+    return node;
+  }
+
+  function sheet(...cls) {
+    return el("div", "scrap " + cls.join(" "));
+  }
+
+  function title(text, cls) {
+    return el("h2", "ttl " + (cls || ""), text);
+  }
+
+  function washi(cls) {
+    return el("span", "washi " + (cls || "washi--blush"));
+  }
+
+  function photo(label, cls, tilt) {
+    const fig = el("figure", "photo " + (cls || ""));
+    if (tilt) fig.style.setProperty("--tilt", tilt + "deg");
+    fig.append(washi("washi--photo"));
+    const mat = el("div", "photo__mat");
+    mat.append(el("span", "photo__ph", label));
+    fig.append(mat);
+    return fig;
+  }
+
+  function writeLine(text, cls) {
+    const w = el("div", "wline " + (cls || ""));
+    if (text) w.append(el("span", "wline__t", text));
+    return w;
+  }
+
+  function stamp(text, cls) {
+    return el("span", "stamp " + (cls || ""), text);
+  }
+
+  const PAPERCLIP_SVG =
+    '<path d="M14 6 C9 3 4 6 4 12 L4 34 C4 42 11 47 18 47 C26 47 31 41 31 33 L31 12 C31 7 27 4 22 4 C17 4 13 8 13 13 L13 34 C13 37 15 39 18 39 C21 39 23 37 23 34 L23 14" ' +
+    'fill="none" stroke="#8f8f96" stroke-width="3.4" stroke-linecap="round"/>';
+
+  function clip() {
+    return svg("clipart", "0 0 36 52", PAPERCLIP_SVG);
+  }
+
+  function pin(color) {
+    return svg("pinart", "0 0 24 30",
+      '<circle cx="12" cy="10" r="8" fill="' + color + '" stroke="rgba(58,43,38,.45)" stroke-width="1.4"/>' +
+      '<circle cx="9" cy="7" r="2.6" fill="rgba(255,255,255,.55)"/>' +
+      '<path d="M12 17 L12 28" stroke="#7a6a5c" stroke-width="2" stroke-linecap="round"/>');
+  }
+
+  const A = "assets/";
+
+  /* real-photo sticker from the user's own sticker folder */
+  function sticker(src, cls) {
+    const im = el("img", "pstk " + (cls || ""));
+    im.src = A + src;
+    im.alt = "";
+    im.draggable = false;
+    im.loading = "lazy";
+    return wiggleOnTap(im);
+  }
+
+  function heartSvg(cls, fill, stroke) {
+    return svg(cls, "0 0 40 36",
+      '<path d="M20 33 C10 25 3 19 3 11 C3 5 8 2 13 3 C17 4 19 7 20 10 C21 7 23 4 27 3 C32 2 37 5 37 11 C37 19 30 25 20 33Z" ' +
+      'fill="' + (fill || "#e8a7ab") + '" stroke="' + (stroke || "#b23a48") + '" stroke-width="2.4"/>');
+  }
+
+  function heartBullet() {
+    return svg("hb", "0 0 20 18",
+      '<path d="M10 16 C5 11.5 1.5 8.5 1.5 5.5 C1.5 2.8 4 1.2 6.5 1.7 C8.2 2 9.4 3.4 10 5 C10.6 3.4 11.8 2 13.5 1.7 C16 1.2 18.5 2.8 18.5 5.5 C18.5 8.5 15 11.5 10 16Z" fill="#cf959b"/>');
+  }
+
+  /* tap-to-wiggle for decorative stickers */
+  function wiggleOnTap(node) {
+    node.classList.add("is-tappable");
+    node.addEventListener("click", () => {
+      node.classList.remove("wiggle");
+      void node.getBoundingClientRect();
+      node.classList.add("wiggle");
+      setTimeout(() => node.classList.remove("wiggle"), 500);
+    });
+    return node;
+  }
+
+  /* ---------------- shared sticker doodles ---------------- */
+
+  const STK = {
+    bow: () => svg("stk stk--bow", "0 0 64 44",
+      '<g fill="#e8a7ab" stroke="#b23a48" stroke-width="2">' +
+      '<path d="M30 22 C18 6 4 8 6 18 C7 25 20 26 30 22Z"/>' +
+      '<path d="M34 22 C46 6 60 8 58 18 C57 25 44 26 34 22Z"/>' +
+      '<path d="M28 24 C24 32 18 38 12 42 C20 41 27 36 31 30Z"/>' +
+      '<path d="M36 24 C40 32 46 38 52 42 C44 41 37 36 33 30Z"/>' +
+      '<ellipse cx="32" cy="22" rx="5.5" ry="4.5"/></g>'),
+    cake: () => svg("stk stk--cake", "0 0 70 70",
+      '<g stroke="#b23a48" stroke-width="2.2" stroke-linejoin="round">' +
+      '<rect x="12" y="40" width="46" height="20" rx="4" fill="#f2d0d2"/>' +
+      '<rect x="16" y="28" width="38" height="14" rx="3" fill="#f7e3d2"/>' +
+      '<path d="M12 46 q6 5 12 0 q6 5 12 0 q6 5 12 0 q5 4 10 0" fill="none"/>' +
+      '<path d="M35 28 L35 18" fill="none"/>' +
+      '<ellipse cx="35" cy="14" rx="4" ry="6" fill="#e8a7ab"/>' +
+      '<circle cx="35" cy="10" r="2.5" fill="#b23a48" stroke="none"/></g>'),
+    tulips: () => svg("stk stk--tulips", "0 0 60 70",
+      '<g stroke="#7d8a6a" stroke-width="2.2" fill="none" stroke-linecap="round">' +
+      '<path d="M22 66 C22 50 18 42 14 36"/><path d="M30 66 C30 48 30 40 30 32"/>' +
+      '<path d="M38 66 C38 50 42 42 46 36"/>' +
+      '<path d="M22 52 C14 50 10 46 8 42" /><path d="M38 52 C46 50 50 46 52 42"/></g>' +
+      '<g fill="#e8a7ab" stroke="#b23a48" stroke-width="1.8">' +
+      '<ellipse cx="14" cy="30" rx="7" ry="9"/><ellipse cx="30" cy="26" rx="7" ry="9"/>' +
+      '<ellipse cx="46" cy="30" rx="7" ry="9"/></g>' +
+      '<rect x="16" y="54" width="28" height="14" rx="3" fill="#f7e3d2" stroke="#b23a48" stroke-width="1.8"/>'),
+    bear: () => svg("stk stk--bear", "0 0 56 52",
+      '<g fill="#e2c49a" stroke="#8a6a48" stroke-width="2">' +
+      '<circle cx="14" cy="12" r="8"/><circle cx="42" cy="12" r="8"/>' +
+      '<circle cx="28" cy="28" r="18"/></g>' +
+      '<g fill="#8a6a48"><circle cx="22" cy="25" r="2.2"/><circle cx="34" cy="25" r="2.2"/>' +
+      '<ellipse cx="28" cy="33" rx="4" ry="3"/></g>' +
+      '<circle cx="18" cy="33" r="3.4" fill="#e8a7ab" opacity=".7"/>' +
+      '<circle cx="38" cy="33" r="3.4" fill="#e8a7ab" opacity=".7"/>'),
+    envelope: () => svg("stk stk--env", "0 0 56 40",
+      '<rect x="3" y="6" width="50" height="32" rx="3" fill="#fbf4e7" stroke="#96733c" stroke-width="2"/>' +
+      '<path d="M3 9 L28 26 L53 9" fill="none" stroke="#96733c" stroke-width="2"/>' +
+      '<path d="M22 22 c0-3 5-4 6-1 c1-3 6-2 6 1 c0 4-6 7-6 7 s-6-3-6-7z" fill="#e8a7ab"/>'),
+    star: () => svg("stk stk--star", "0 0 36 36",
+      '<path d="M18 2 l4 11 11 4 -11 4 -4 11 -4 -11 -11 -4 11 -4z" fill="#e8cf9f" stroke="#c8a05e" stroke-width="1.6" stroke-linejoin="round"/>'),
+    sparkle: () => svg("stk stk--sparkle", "0 0 28 28",
+      '<path d="M14 0c1 9 4 12 13 13 -9 1 -12 4 -13 13 -1 -9 -4 -12 -13 -13 9 -1 12 -4 13 -13z" fill="#e8cf9f"/>'),
+    headphones: () => svg("stk stk--hp", "0 0 52 48",
+      '<path d="M8 32 C8 16 16 8 26 8 C36 8 44 16 44 32" fill="none" stroke="#6f5a4e" stroke-width="3.4" stroke-linecap="round"/>' +
+      '<rect x="3" y="30" width="10" height="14" rx="4" fill="#cf959b" stroke="#b23a48" stroke-width="2"/>' +
+      '<rect x="39" y="30" width="10" height="14" rx="4" fill="#cf959b" stroke="#b23a48" stroke-width="2"/>'),
+    note16: () => svg("stk stk--note", "0 0 32 40",
+      '<path d="M12 4 L28 4 L28 30 L12 36 Z" fill="#f7e3d2" stroke="#96733c" stroke-width="2" stroke-linejoin="round"/>' +
+      '<path d="M12 4 L12 36" fill="none" stroke="#96733c" stroke-width="2"/>' +
+      '<circle cx="10" cy="30" r="5" fill="#cf959b" stroke="#b23a48" stroke-width="1.8"/>' +
+      '<path d="M15 30 L10 30" stroke="#b23a48" stroke-width="2"/>'),
+    heartTiny: () => svg("stk stk--htiny", "0 0 24 22",
+      '<path d="M12 20 C6 14 2 10.5 2 6.8 C2 3.6 4.6 1.6 7.4 2.2 C9.4 2.6 11 4.2 12 6 C13 4.2 14.6 2.6 16.6 2.2 C19.4 1.6 22 3.6 22 6.8 C22 10.5 18 14 12 20Z" fill="#e8a7ab" stroke="#b23a48" stroke-width="1.6"/>'),
+    teacup: () => svg("stk stk--tea", "0 0 52 46",
+      '<path d="M10 16 L40 16 L37 36 C36 40 32 42 25 42 C18 42 14 40 13 36 Z" fill="#fbf4e7" stroke="#6f5a4e" stroke-width="2.2"/>' +
+      '<path d="M40 20 C48 20 48 30 40 30" fill="none" stroke="#6f5a4e" stroke-width="2.2"/>' +
+      '<path d="M18 10 C18 6 22 6 22 2 M28 10 C28 6 32 6 32 2" fill="none" stroke="#b0a898" stroke-width="2" stroke-linecap="round"/>' +
+      '<path d="M14 24 L36 24" stroke="#e8a7ab" stroke-width="4" stroke-linecap="round"/>'),
+    cone: () => svg("stk stk--cone", "0 0 40 46",
+      '<path d="M20 4 L34 40 L6 40 Z" fill="#e8956b" stroke="#b23a48" stroke-width="2" stroke-linejoin="round"/>' +
+      '<path d="M13 24 L27 24 M10 33 L30 33" stroke="#fbf4e7" stroke-width="4"/>' +
+      '<rect x="3" y="40" width="34" height="5" rx="2" fill="#b23a48"/>'),
+    car: () => svg("stk stk--car", "0 0 70 34",
+      '<path d="M8 24 L14 14 C15 12 17 11 20 11 L44 11 C47 11 49 12 51 14 L58 24" fill="#e8a7ab" stroke="#b23a48" stroke-width="2.2" stroke-linejoin="round"/>' +
+      '<rect x="4" y="22" width="58" height="9" rx="4" fill="#cf959b" stroke="#b23a48" stroke-width="2.2"/>' +
+      '<circle cx="18" cy="31" r="5" fill="#4b342a"/><circle cx="48" cy="31" r="5" fill="#4b342a"/>' +
+      '<circle cx="18" cy="31" r="2" fill="#f1e4cc"/><circle cx="48" cy="31" r="2" fill="#f1e4cc"/>'),
+    tissue: () => svg("stk stk--tissue", "0 0 48 44",
+      '<rect x="6" y="18" width="36" height="22" rx="3" fill="#f2d0d2" stroke="#b23a48" stroke-width="2"/>' +
+      '<path d="M16 18 C16 10 22 6 24 10 C26 6 32 10 32 18" fill="#fbf4e7" stroke="#b23a48" stroke-width="2"/>' +
+      '<path d="M20 28 q4 4 8 0" fill="none" stroke="#b23a48" stroke-width="1.6" stroke-linecap="round"/>')
+  };
+
+  /* ================================================================
+     1 · BIRTHDAY CALENDAR — interactive October, the 28th
+     ================================================================ */
+  function calendar(p) {
+    const s = sheet("p-calendar");
+
+    const head = el("div", "cal__head");
+    const hWrap = el("div", "cal__headings");
+    hWrap.append(el("span", "cal__year", p.year));
+    hWrap.append(title(p.title, "ttl--cal"));
+    head.append(hWrap);
+    head.append(wiggleOnTap(STK.bow()));
+    s.append(head);
+
+    /* dashed stitched frame like the reference */
+    const frame = el("div", "cal__frame");
+
+    const grid = el("div", "cal__grid");
+    ["S", "M", "T", "W", "T", "F", "S"].forEach((d) => {
+      grid.append(el("span", "cal__dow", d));
+    });
+    for (let i = 0; i < 2; i++) grid.append(el("span", "cal__cell cal__cell--empty"));
+    for (let d = 1; d <= 31; d++) {
+      const cell = el("button", "cal__cell cal__cell--day");
+      cell.type = "button";
+      cell.setAttribute("aria-label", "october " + d);
+      cell.append(el("span", "cal__num", String(d)));
+      if (d === p.highlight) {
+        cell.classList.add("is-bday");
+        cell.append(svg("cal__ring", "0 0 44 40",
+          '<path d="M22 4 C34 3 41 10 40 20 C39 31 30 37 20 36 C9 35 3 27 4 17 C5 8 12 4 22 4Z" ' +
+          'fill="none" stroke="#b23a48" stroke-width="3" stroke-linecap="round"/>' +
+          '<path d="M33 6 l1.2 3 3 1.2 -3 1.2 -1.2 3 -1.2 -3 -3 -1.2 3 -1.2z" fill="#c8a05e"/>'));
+        cell.append(el("span", "cal__bday-note", "the big day"));
+      }
+      cell.addEventListener("click", () => {
+        cell.classList.remove("tap-pop");
+        void cell.offsetWidth;
+        cell.classList.add("tap-pop");
+        if (d === p.highlight) {
+          burstHearts(s, 9);
+          s.classList.add("is-hooray");
+          setTimeout(() => s.classList.remove("is-hooray"), 1600);
+        }
+      });
+      grid.append(cell);
+    }
+    frame.append(grid);
+    s.append(frame);
+
+    const notes = el("div", "cal__notes");
+    notes.append(el("p", "cal__note1", p.note1));
+    notes.append(el("p", "cal__note2", p.note2));
+    s.append(notes);
+
+    /* sticker scatter — fills the corners, reference-style */
+    const bear = wiggleOnTap(STK.bear());   bear.classList.add("cal__stk", "cal__stk--bear");
+    const cake = wiggleOnTap(STK.cake());   cake.classList.add("cal__stk", "cal__stk--cake");
+    const tulips = wiggleOnTap(STK.tulips()); tulips.classList.add("cal__stk", "cal__stk--tulips");
+    const env = wiggleOnTap(STK.envelope());  env.classList.add("cal__stk", "cal__stk--env");
+    s.append(bear, cake, tulips, env);
+
+    const hb = el("div", "cal__hb");
+    hb.append(el("span", null, "HAPPY"));
+    hb.append(el("span", null, "BIRTHDAY"));
+    hb.append(el("span", null, "to you ♡"));
+    s.append(hb);
+
+    s.append(svg("cal__sparkles", "0 0 200 120",
+      '<path d="M20 20 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z" fill="#c8a05e"/>' +
+      '<path d="M170 14 l2.5 6 6 2.5 -6 2.5 -2.5 6 -2.5 -6 -6 -2.5 6 -2.5z" fill="#e8a7ab"/>' +
+      '<path d="M150 90 l1.6 4 4 1.6 -4 1.6 -1.6 4 -1.6 -4 -4 -1.6 4 -1.6z" fill="#c8a05e"/>' +
+      '<circle cx="50" cy="80" r="2.4" fill="#cf959b"/><circle cx="120" cy="30" r="2" fill="#c8a05e"/>' +
+      '<circle cx="90" cy="105" r="2" fill="#e8a7ab"/>'));
+
+    /* real stickers filling the lower band */
+    s.append(sticker("976d5c7bb460d587ae0580db19e69b65.jpg", "cal__p cal__p--tulips"));
+    s.append(sticker("2e5b0227aa34495e8744b30146b1fb78.jpg", "cal__p cal__p--flowers"));
+    s.append(sticker("sitcker1.jpg", "cal__p cal__p--stars"));
+    return s;
+  }
+
+  /* ================================================================
+     2 · IN CASE I DIDN'T SAY IT ENOUGH — 10 thank-yous
+     ================================================================ */
+  function enough(p) {
+    const s = sheet("p-enough");
+
+    const strip = el("div", "enough__strip");
+    strip.append(title(p.title, "ttl--strip"));
+    strip.append(clip());
+    s.append(strip);
+
+    const grid = el("div", "enough__grid");
+    const tones = ["tone-a", "tone-b", "tone-c", "tone-d"];
+    p.items.forEach((t, i) => {
+      const n = el("div", "torn torn--sm " + tones[i % 4]);
+      n.style.setProperty("--rot", ((i % 3) - 1) * 1.1 + "deg");
+      n.append(heartBullet());
+      n.append(el("p", "torn__t", t));
+      if (i % 4 === 1) n.append(washi("washi--mini washi--cherry"));
+      if (i % 5 === 3) n.append(washi("washi--mini"));
+      grid.append(n);
+    });
+    s.append(grid);
+
+    s.append(wiggleOnTap(STK.heartTiny()).cloneNode(true));
+    const hs = s.lastElementChild;
+    hs.classList.add("enough__heart");
+    wiggleOnTap(hs);
+
+    /* bottom band — roses, hug, heart, arrow */
+    s.append(sticker("1775ae2a8718a489721decd4fd3f2d83.jpg", "en__p en__p--roses"));
+    s.append(sticker("2d49f0eb767593435c9ff56df489bec0.jpg", "en__p en__p--hug"));
+    s.append(sticker("310b90af033c68568b2347fbf88c6de3.jpg", "en__p en__p--heart"));
+    s.append(sticker("cd55b0d7f094b1cf1fe063b54416bb04.jpg", "en__p en__p--arrow"));
+    return s;
+  }
+
+  /* ================================================================
+     3 · SOULMATE — definition, photos orbiting around it
+     ================================================================ */
+  function soulmate(p) {
+    const s = sheet("p-soulmate");
+
+    const spots = [
+      { cls: "sm-p1", tilt: -6, label: "us, smiling ♡" },
+      { cls: "sm-p2", tilt: 4,  label: "us being us ♡" },
+      { cls: "sm-p3", tilt: -3, label: "that one photo" },
+      { cls: "sm-p4", tilt: 5,  label: "us again ♡" },
+      { cls: "sm-p5", tilt: -4, label: "your favourite" },
+      { cls: "sm-p6", tilt: 3,  label: "my favourite" }
+    ];
+    spots.forEach((sp) => {
+      const f = photo(sp.label, "photo--sm " + sp.cls, sp.tilt);
+      s.append(f);
+    });
+
+    const mid = el("div", "sm-mid");
+    mid.append(el("h3", "sm-word", p.title));
+    mid.append(el("span", "sm-pron", p.hint));
+    mid.append(el("p", "sm-def", p.definition));
+    mid.append(svg("sm-flourish", "0 0 160 18",
+      '<path d="M8 9 C40 2 60 16 80 9 C100 2 120 16 152 9" fill="none" stroke="#c8a05e" stroke-width="2" stroke-linecap="round"/>' +
+      '<path d="M80 5 c-3 -4 -8 -2 -8 2 c0 4 5 6 8 8 c3 -2 8 -4 8 -8 c0 -4 -5 -6 -8 -2z" fill="#b23a48"/>'));
+    s.append(mid);
+
+    s.append(svg("sm-stars", "0 0 220 80",
+      '<path d="M20 30 l2.4 6 6 2.4 -6 2.4 -2.4 6 -2.4 -6 -6 -2.4 6 -2.4z" fill="#c8a05e"/>' +
+      '<path d="M190 16 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z" fill="#e8a7ab"/>' +
+      '<path d="M110 60 l1.6 4 4 1.6 -4 1.6 -1.6 4 -1.6 -4 -4 -1.6 4 -1.6z" fill="#c8a05e"/>' +
+      '<circle cx="60" cy="60" r="2" fill="#cf959b"/><circle cx="160" cy="50" r="2.2" fill="#c8a05e"/>'));
+    return s;
+  }
+
+  /* ================================================================
+     4/5 · SONGS — spotify share-card style, 3 per page
+     ================================================================ */
+  const ALBUM_ART = {
+    "Love Me Not":
+      '<rect width="60" height="60" fill="#8a5a52"/>' +
+      '<path d="M8 42 C16 34 22 30 28 30" fill="none" stroke="#f1e4cc" stroke-width="3" stroke-linecap="round"/>' +
+      '<path d="M52 42 C44 34 38 30 32 30" fill="none" stroke="#f1e4cc" stroke-width="3" stroke-linecap="round"/>' +
+      '<circle cx="28" cy="30" r="2.4" fill="#f1e4cc"/><circle cx="32" cy="30" r="2.4" fill="#f1e4cc"/>' +
+      '<path d="M30 14 c-2.5 -3.5 -8 -1.5 -8 3 c0 4 5 6.5 8 9 c3 -2.5 8 -5 8 -9 c0 -4.5 -5.5 -6.5 -8 -3z" fill="#e8a7ab"/>',
+    "we fell in love in october":
+      '<rect width="60" height="60" fill="#a8703f"/>' +
+      '<path d="M18 12 C12 18 12 26 18 30 C24 26 24 18 18 12Z" fill="#e8cf9f"/>' +
+      '<path d="M40 20 C34 26 34 34 40 38 C46 34 46 26 40 20Z" fill="#f2d0d2"/>' +
+      '<path d="M26 38 C21 43 21 50 26 53 C31 50 31 43 26 38Z" fill="#e8a7ab"/>' +
+      '<path d="M30 24 c-3 -4.5 -9 -2 -9 3.5 c0 5 6 8 9 11 c3 -3 9 -6 9 -11 c0 -5.5 -6 -8 -9 -3.5z" fill="#b23a48"/>',
+    "It's You":
+      '<rect width="60" height="60" fill="#9a6b7a"/>' +
+      '<rect x="12" y="18" width="36" height="26" rx="3" fill="#fbf4e7"/>' +
+      '<path d="M12 21 L30 34 L48 21" fill="none" stroke="#96733c" stroke-width="2.2"/>' +
+      '<path d="M30 40 c-2 -3 -6.5 -1.5 -6.5 2.2 c0 3.4 4.3 5.5 6.5 7.3 c2.2 -1.8 6.5 -3.9 6.5 -7.3 c0 -3.7 -4.5 -5.2 -6.5 -2.2z" fill="#e8a7ab"/>',
+    "K":
+      '<rect width="60" height="60" fill="#5a5468"/>' +
+      '<path d="M38 12 A16 16 0 1 0 38 48 A13 16 0 1 1 38 12Z" fill="#e8cf9f"/>' +
+      '<path d="M46 16 l1.6 4 4 1.6 -4 1.6 -1.6 4 -1.6 -4 -4 -1.6 4 -1.6z" fill="#f1e4cc"/>' +
+      '<circle cx="18" cy="40" r="1.8" fill="#f1e4cc"/><circle cx="26" cy="18" r="1.4" fill="#f1e4cc"/>',
+    "Blue":
+      '<rect width="60" height="60" fill="#6d87a3"/>' +
+      '<path d="M16 28 C12 28 10 24 13 21 C13 16 20 14 23 18 C26 14 34 15 34 21 C38 21 38 28 33 28 Z" fill="#f1e4cc"/>' +
+      '<path d="M20 34 L17 42 M28 34 L25 44 M36 34 L33 42" stroke="#cfe0ee" stroke-width="2.4" stroke-linecap="round"/>' +
+      '<path d="M30 46 c-2 -3 -6 -1.5 -6 2 c0 3 4 5 6 6.6 c2 -1.6 6 -3.6 6 -6.6 c0 -3.5 -4 -5 -6 -2z" fill="#e8a7ab"/>',
+    "Something About You":
+      '<rect width="60" height="60" fill="#7d6b84"/>' +
+      '<path d="M30 12 C18 12 10 22 10 30 C10 38 18 48 30 48 C42 48 50 38 50 30 C50 22 42 12 30 12Z" fill="none" stroke="#f1e4cc" stroke-width="2.4"/>' +
+      '<circle cx="30" cy="30" r="8" fill="#e8cf9f"/>' +
+      '<circle cx="30" cy="30" r="3.4" fill="#4b342a"/>' +
+      '<path d="M44 12 l1.4 3.6 3.6 1.4 -3.6 1.4 -1.4 3.6 -1.4 -3.6 -3.6 -1.4 3.6 -1.4z" fill="#f1e4cc"/>'
+  };
+
+  function spotifyLogo() {
+    return svg("spot", "0 0 24 24",
+      '<circle cx="12" cy="12" r="11" fill="#191414"/>' +
+      '<path d="M6 9.5 C10 8 15 8.4 18.5 10.4" fill="none" stroke="#f1e4cc" stroke-width="1.9" stroke-linecap="round"/>' +
+      '<path d="M6.8 12.6 C10 11.4 14.2 11.7 17 13.4" fill="none" stroke="#f1e4cc" stroke-width="1.6" stroke-linecap="round"/>' +
+      '<path d="M7.6 15.4 C10 14.5 13.2 14.7 15.4 16" fill="none" stroke="#f1e4cc" stroke-width="1.3" stroke-linecap="round"/>');
+  }
+
+  function songCard(song, idx) {
+    const card = el("div", "songcard");
+    card.style.background = song.tint;
+    card.style.setProperty("--rot", ((idx % 3) - 1) * 0.8 + "deg");
+
+    const top = el("div", "songcard__top");
+    const art = svg("songcard__art", "0 0 60 60", ALBUM_ART[song.title] || ALBUM_ART["K"]);
+    top.append(art);
+    const meta = el("div", "songcard__meta");
+    meta.append(el("span", "songcard__title", song.title));
+    meta.append(el("span", "songcard__artist", song.artist));
+    top.append(meta);
+    card.append(top);
+
+    card.append(el("p", "songcard__big", song.big));
+
+    const bot = el("div", "songcard__bot");
+    bot.append(spotifyLogo());
+    bot.append(el("span", "songcard__brand", "Spotify"));
+    card.append(bot);
+    return card;
+  }
+
+  /* scatter decorative stickers from a placement list */
+  function scatter(s, list) {
+    list.forEach((pl) => {
+      const n = wiggleOnTap(pl.mk());
+      pl.cls.split(" ").forEach((c) => n.classList.add(c));
+      if (pl.rot != null) n.style.setProperty("--rot", pl.rot + "deg");
+      s.append(n);
+    });
+    return s;
+  }
+
+  function songsPage(p, side) {
+    const s = sheet("p-songs");
+    s.append(el("span", "side-tag" + (side === "B" ? " side-tag--b" : ""), p.side));
+    s.append(title(p.title, "ttl--hand"));
+
+    const stack = el("div", "songs__stack");
+    p.songs.forEach((song, i) => stack.append(songCard(song, i)));
+    s.append(stack);
+
+    s.append(wiggleOnTap(STK.headphones()).cloneNode(true));
+    const hp = s.lastElementChild;
+    hp.classList.add("songs__hp");
+    wiggleOnTap(hp);
+
+    const nt = wiggleOnTap(STK.note16());
+    nt.classList.add("songs__note16");
+    s.append(nt);
+
+    const heart = wiggleOnTap(STK.heartTiny());
+    heart.classList.add("songs__heart");
+    s.append(heart);
+
+    /* fill the bottom band */
+    s.append(el("span", "washi washi--mini washi--blush songs__washi"));
+    scatter(s, [
+      { mk: STK.star,      cls: "songs__star" },
+      { mk: STK.sparkle,   cls: "songs__spark" },
+      { mk: STK.teacup,    cls: "songs__tea" }
+    ]);
+    s.append(el("span", "songs__foot", side === "B" ? "…and a hundred more, one by one ♡" : "press play, think of me ♡"));
+    return s;
+  }
+
+  function songsA(p) { return songsPage(p, "A"); }
+  function songsB(p) { return songsPage(p, "B"); }
+
+  /* ================================================================
+     6 · 17 LITTLE THINGS
+     ================================================================ */
+  function littleThings(p) {
+    const s = sheet("p-little");
+
+    const head = el("div", "little__head");
+    const h = el("div", "little__titles");
+    h.append(title(p.title, "ttl--hand"));
+    h.append(el("p", "little__sub", p.sub));
+    head.append(h);
+    const badge = el("span", "little__17", "17");
+    head.append(badge);
+    s.append(head);
+
+    const grid = el("div", "little__grid");
+    const tones = ["tone-a", "tone-b", "tone-c", "tone-d"];
+    p.items.forEach((t, i) => {
+      const card = el("div", "lil " + tones[i % 4]);
+      card.style.setProperty("--rot", (((i * 7) % 5) - 2) * 0.7 + "deg");
+      card.append(el("span", "lil__no", String(i + 1)));
+      card.append(el("p", "lil__t", t));
+      if (i % 6 === 0) card.append(washi("washi--mini"));
+      if (i % 7 === 3) card.append(washi("washi--mini washi--cherry"));
+      grid.append(card);
+    });
+    s.append(grid);
+
+    s.append(el("span", "little-flourish", "· · · every tiny bit of us · · ·"));
+    return s;
+  }
+
+  /* ================================================================
+     7 · PHOTO BOOTH — tap a frame to flip it
+     ================================================================ */
+  function photoBooth(p) {
+    const s = sheet("p-booth");
+
+    const strip = el("div", "booth");
+    strip.append(clip());
+    p.photos.forEach((ph, i) => {
+      const frame = el("button", "booth__frame");
+      frame.type = "button";
+      frame.setAttribute("aria-label", "tap to flip photo " + (i + 1));
+      const flip = el("div", "booth__flip");
+      const front = el("div", "booth__face booth__face--front");
+      front.append(el("span", "photo__ph", ph));
+      front.append(el("span", "booth__tap", p.tapHint));
+      const back = el("div", "booth__face booth__face--back");
+      back.append(el("p", "booth__msg", p.message));
+      back.append(el("span", "booth__msg-heart", "♡"));
+      flip.append(front, back);
+      frame.append(flip);
+      frame.addEventListener("click", () => frame.classList.toggle("is-flipped"));
+      strip.append(frame);
+    });
+    s.append(strip);
+
+    const cap = el("div", "booth__cap");
+    cap.append(washi("washi--mini"));
+    cap.append(writeLine(p.caption));
+    s.append(cap);
+
+    const vt = el("h2", "ttl ttl--vertical");
+    vt.textContent = p.title;
+    s.append(vt);
+
+    s.append(wiggleOnTap(STK.bow()).cloneNode(true));
+    const bow = s.lastElementChild;
+    bow.classList.add("bow-mini");
+    wiggleOnTap(bow);
+
+    const spark = wiggleOnTap(STK.sparkle());
+    spark.classList.add("booth__spark");
+    s.append(spark);
+
+    /* right-hand sticker column fills the empty side */
+    scatter(s, [
+      { mk: STK.teacup,     cls: "booth__stk booth__stk--tea" },
+      { mk: STK.star,       cls: "booth__stk booth__stk--star" },
+      { mk: STK.heartTiny,  cls: "booth__stk booth__stk--heart" },
+      { mk: STK.cake,       cls: "booth__stk booth__stk--cake" }
+    ]);
+    s.append(el("span", "washi washi--mini washi--blush booth__washi"));
+    return s;
+  }
+
+  /* ================================================================
+     8 · WHY YOU'RE MY DEAREST FRIEND — text flows around photos
+     ================================================================ */
+  function bestFriend(p) {
+    const s = sheet("p-why");
+
+    const banner = el("div", "banner");
+    banner.append(el("span", "banner__ribbon", p.title));
+    s.append(banner);
+
+    const body = el("div", "why__body");
+
+    const f1 = photo(p.photo1, "photo--why photo--why-1", 2.5);
+    const f2 = photo(p.photo2, "photo--why photo--why-2", -3);
+    body.append(f1, f2);
+
+    p.paragraphs.forEach((t, i) => {
+      const para = el("p", "why__p", t);
+      body.append(para);
+      if (i === 1) {
+        const tape = el("div", "why__tape");
+        tape.append(svg("why__tape-art", "0 0 220 22",
+          '<rect width="220" height="22" fill="#f2d0d2" opacity=".9"/>' +
+          Array.from({ length: 11 }, (_, k) =>
+            '<path d="M' + (10 + k * 20) + ' 17 C' + (5 + k * 20) + ' 12 ' + (5 + k * 20) + ' 6 ' + (10 + k * 20) + ' 4 C' +
+            (15 + k * 20) + ' 6 ' + (15 + k * 20) + ' 12 ' + (10 + k * 20) + ' 17Z" fill="#b23a48"/>').join("")));
+        body.append(tape);
+      }
+    });
+    s.append(body);
+
+    s.append(wiggleOnTap(STK.heartTiny()).cloneNode(true));
+    const h1 = s.lastElementChild; h1.classList.add("why__h1"); wiggleOnTap(h1);
+    s.append(wiggleOnTap(STK.star()).cloneNode(true));
+    const h2 = s.lastElementChild; h2.classList.add("why__h2"); wiggleOnTap(h2);
+
+    /* bottom-left filler so the page doesn't feel empty */
+    s.append(el("span", "washi washi--mini washi--cherry why__washi"));
+    scatter(s, [
+      { mk: STK.bow,      cls: "why__stk why__stk--bow" },
+      { mk: STK.sparkle,  cls: "why__stk why__stk--spark" },
+      { mk: STK.teacup,   cls: "why__stk why__stk--tea" }
+    ]);
+    return s;
+  }
+
+  /* ================================================================
+     9 · US IN EVERY UNIVERSE — 9 doodle pairs
+     ================================================================ */
+  const PAIR_ART = {
+    spider: () =>
+      '<g stroke="#4b342a" stroke-width="2" stroke-linejoin="round">' +
+      '<path d="M14 30 C14 16 22 8 32 8 C42 8 50 16 50 30 C50 42 42 50 32 50 C22 50 14 42 14 30Z" fill="#c4505c"/>' +
+      '<path d="M22 26 C24 20 30 18 32 22 C34 18 40 20 42 26 C40 32 34 32 32 28 C30 32 24 32 22 26Z" fill="#f1e4cc" stroke="none"/>' +
+      '<path d="M62 30 C62 16 70 8 80 8 C90 8 98 16 98 30 C98 42 90 50 80 50 C70 50 62 42 62 30Z" fill="#cf7d95"/>' +
+      '<path d="M70 26 C72 20 78 18 80 22 C82 18 88 20 90 26 C88 32 82 32 80 28 C78 32 72 32 70 26Z" fill="#f1e4cc" stroke="none"/>' +
+      '<path d="M80 8 L80 2 M74 6 L80 2 L86 6" fill="none" stroke-linecap="round"/></g>',
+    alien: () =>
+      '<g stroke="#4b342a" stroke-width="2">' +
+      '<ellipse cx="30" cy="32" rx="16" ry="20" fill="#b8c9a0"/>' +
+      '<ellipse cx="24" cy="28" rx="4" ry="6" fill="#4b342a" stroke="none"/>' +
+      '<ellipse cx="36" cy="28" rx="4" ry="6" fill="#4b342a" stroke="none"/>' +
+      '<path d="M26 40 q4 3 8 0" fill="none" stroke-linecap="round"/>' +
+      '<path d="M22 14 L18 6 M38 14 L42 6" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="18" cy="5" r="2.5" fill="#e8a7ab"/><circle cx="42" cy="5" r="2.5" fill="#e8a7ab"/>' +
+      '<ellipse cx="72" cy="34" rx="14" ry="18" fill="#e8c3c4"/>' +
+      '<ellipse cx="67" cy="30" rx="3.4" ry="5" fill="#4b342a" stroke="none"/>' +
+      '<ellipse cx="77" cy="30" rx="3.4" ry="5" fill="#4b342a" stroke="none"/>' +
+      '<path d="M68 41 q4 3 8 0" fill="none" stroke-linecap="round"/>' +
+      '<path d="M65 18 L61 10 M79 18 L83 10" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="61" cy="9" r="2.5" fill="#e8cf9f"/><circle cx="83" cy="9" r="2.5" fill="#e8cf9f"/></g>',
+    toothless: () =>
+      '<g stroke="#4b342a" stroke-width="2" stroke-linejoin="round">' +
+      '<path d="M12 40 C12 24 22 14 34 14 C46 14 54 24 54 38 C54 48 46 54 34 54 C22 54 12 50 12 40Z" fill="#3a2b26"/>' +
+      '<path d="M20 16 L16 4 M30 12 L28 2 M42 14 L46 4" fill="none" stroke-linecap="round"/>' +
+      '<ellipse cx="26" cy="32" rx="5" ry="7" fill="#9aa487" stroke="none"/>' +
+      '<ellipse cx="42" cy="32" rx="5" ry="7" fill="#9aa487" stroke="none"/>' +
+      '<circle cx="26" cy="34" r="2" fill="#4b342a" stroke="none"/><circle cx="42" cy="34" r="2" fill="#4b342a" stroke="none"/>' +
+      '<path d="M30 44 q4 3 8 0" fill="none" stroke-linecap="round"/>' +
+      '<path d="M68 36 L84 30 L84 42 Z" fill="#fbf4e7"/>' +
+      '<path d="M62 34 C58 28 64 24 68 28 C68 22 76 22 76 28 C80 26 84 32 78 36 Z" fill="#f1e4cc"/>' +
+      '<path d="M74 20 L76 14 M78 22 L84 20" fill="none" stroke="#c8a05e" stroke-linecap="round"/>' +
+      '<circle cx="86" cy="12" r="2.4" fill="#e8cf9f"/></g>',
+    pony: () =>
+      '<g stroke="#4b342a" stroke-width="2" stroke-linejoin="round">' +
+      '<path d="M10 44 C10 30 18 22 30 22 C42 22 48 30 48 40 C48 48 42 52 30 52 C18 52 10 50 10 44Z" fill="#e8c3c4"/>' +
+      '<path d="M40 24 C48 12 56 16 52 26 C50 32 44 30 40 32" fill="#e8a7ab"/>' +
+      '<path d="M14 44 L8 52 M24 52 L24 60 M38 52 L38 60 M44 46 L50 54" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="34" cy="32" r="2.2" fill="#4b342a" stroke="none"/>' +
+      '<path d="M60 44 C60 30 68 22 80 22 C92 22 98 30 98 40 C98 48 92 52 80 52 C68 52 60 50 60 44Z" fill="#c9d3e8"/>' +
+      '<path d="M90 24 C98 12 106 16 102 26 C100 32 94 30 90 32" fill="#a9b8d8"/>' +
+      '<path d="M64 44 L58 52 M74 52 L74 60 M88 52 L88 60 M94 46 L100 54" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="84" cy="32" r="2.2" fill="#4b342a" stroke="none"/></g>',
+    ghost: () =>
+      '<g stroke="#4b342a" stroke-width="2" stroke-linejoin="round">' +
+      '<path d="M14 46 L14 26 C14 14 24 8 32 8 C40 8 50 14 50 26 L50 46 L44 40 L38 46 L32 40 L26 46 L20 40 Z" fill="#fbf4e7"/>' +
+      '<circle cx="26" cy="24" r="2.6" fill="#4b342a" stroke="none"/><circle cx="38" cy="24" r="2.6" fill="#4b342a" stroke="none"/>' +
+      '<path d="M28 32 q4 4 8 0" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="20" cy="30" r="3.4" fill="#e8c3c4" stroke="none" opacity=".8"/>' +
+      '<circle cx="44" cy="30" r="3.4" fill="#e8c3c4" stroke="none" opacity=".8"/>' +
+      '<path d="M62 46 L62 26 C62 14 72 8 80 8 C88 8 98 14 98 26 L98 46 L92 40 L86 46 L80 40 L74 46 L68 40 Z" fill="#f2e8f4"/>' +
+      '<circle cx="74" cy="24" r="2.6" fill="#4b342a" stroke="none"/><circle cx="86" cy="24" r="2.6" fill="#4b342a" stroke="none"/>' +
+      '<path d="M76 32 q4 4 8 0" fill="none" stroke-linecap="round"/>' +
+      '<path d="M50 30 C56 26 56 26 62 30" fill="none" stroke-linecap="round"/></g>',
+    cats: () =>
+      '<g stroke="#4b342a" stroke-width="2" stroke-linejoin="round">' +
+      '<path d="M14 34 L10 16 L24 26 C28 24 36 24 40 26 L54 16 L50 34 C54 42 48 52 32 52 C16 52 10 42 14 34Z" fill="#e2c49a"/>' +
+      '<circle cx="24" cy="36" r="2.4" fill="#4b342a" stroke="none"/><circle cx="40" cy="36" r="2.4" fill="#4b342a" stroke="none"/>' +
+      '<path d="M32 42 L32 45 M28 46 q4 3 8 0" fill="none" stroke-linecap="round"/>' +
+      '<path d="M16 40 L4 38 M16 44 L6 46 M48 40 L60 38 M48 44 L58 46" fill="none" stroke-linecap="round"/>' +
+      '<path d="M66 34 L62 16 L76 26 C80 24 88 24 92 26 L106 16 L102 34 C106 42 100 52 84 52 C68 52 62 42 66 34Z" fill="#cf959b"/>' +
+      '<circle cx="76" cy="36" r="2.4" fill="#4b342a" stroke="none"/><circle cx="92" cy="36" r="2.4" fill="#4b342a" stroke="none"/>' +
+      '<path d="M84 42 L84 45 M80 46 q4 3 8 0" fill="none" stroke-linecap="round"/>' +
+      '<path d="M68 40 L56 38 M68 44 L58 46 M100 40 L112 38 M100 44 L110 46" fill="none" stroke-linecap="round"/></g>',
+    roblox: () =>
+      '<g stroke="#4b342a" stroke-width="2" stroke-linejoin="round">' +
+      '<rect x="20" y="12" width="16" height="14" rx="2" fill="#e8cf9f"/>' +
+      '<rect x="22" y="30" width="12" height="16" rx="2" fill="#7f92aa"/>' +
+      '<rect x="12" y="30" width="8" height="12" rx="2" fill="#e8cf9f"/>' +
+      '<rect x="36" y="30" width="8" height="12" rx="2" fill="#e8cf9f"/>' +
+      '<rect x="22" y="48" width="5" height="10" rx="2" fill="#4b342a"/>' +
+      '<rect x="29" y="48" width="5" height="10" rx="2" fill="#4b342a"/>' +
+      '<circle cx="25" cy="18" r="1.6" fill="#4b342a" stroke="none"/><circle cx="31" cy="18" r="1.6" fill="#4b342a" stroke="none"/>' +
+      '<rect x="68" y="12" width="16" height="14" rx="2" fill="#e8c3c4"/>' +
+      '<rect x="70" y="30" width="12" height="16" rx="2" fill="#b23a48"/>' +
+      '<rect x="60" y="30" width="8" height="12" rx="2" fill="#e8c3c4"/>' +
+      '<rect x="84" y="30" width="8" height="12" rx="2" fill="#e8c3c4"/>' +
+      '<rect x="70" y="48" width="5" height="10" rx="2" fill="#4b342a"/>' +
+      '<rect x="77" y="48" width="5" height="10" rx="2" fill="#4b342a"/>' +
+      '<circle cx="73" cy="18" r="1.6" fill="#4b342a" stroke="none"/><circle cx="79" cy="18" r="1.6" fill="#4b342a" stroke="none"/>' +
+      '<path d="M52 24 L56 28 M56 24 L52 28" stroke="#c8a05e" stroke-linecap="round"/></g>',
+    dumpling: () =>
+      '<g stroke="#8a6a48" stroke-width="2" stroke-linejoin="round">' +
+      '<path d="M12 40 C12 26 22 18 32 18 C42 18 52 26 52 40 C52 48 44 52 32 52 C20 52 12 48 12 40Z" fill="#fbf4e7"/>' +
+      '<path d="M18 30 q4 -6 8 0 q4 -6 8 0 q4 -6 8 0" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="26" cy="40" r="2" fill="#4b342a" stroke="none"/><circle cx="38" cy="40" r="2" fill="#4b342a" stroke="none"/>' +
+      '<path d="M28 45 q4 3 8 0" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="20" cy="44" r="3" fill="#e8c3c4" stroke="none" opacity=".8"/>' +
+      '<circle cx="44" cy="44" r="3" fill="#e8c3c4" stroke="none" opacity=".8"/>' +
+      '<path d="M62 40 C62 26 72 18 82 18 C92 18 102 26 102 40 C102 48 94 52 82 52 C70 52 62 48 62 40Z" fill="#f7e3d2"/>' +
+      '<path d="M68 30 q4 -6 8 0 q4 -6 8 0 q4 -6 8 0" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="76" cy="40" r="2" fill="#4b342a" stroke="none"/><circle cx="88" cy="40" r="2" fill="#4b342a" stroke="none"/>' +
+      '<path d="M78 45 q4 3 8 0" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="70" cy="44" r="3" fill="#e8c3c4" stroke="none" opacity=".8"/>' +
+      '<circle cx="94" cy="44" r="3" fill="#e8c3c4" stroke="none" opacity=".8"/></g>',
+    sunmoon: () =>
+      '<g stroke="#c8a05e" stroke-width="2.2" stroke-linejoin="round">' +
+      '<circle cx="32" cy="30" r="14" fill="#e8cf9f"/>' +
+      '<path d="M32 8 L32 2 M32 58 L32 52 M10 30 L4 30 M60 30 L54 30 M16 14 L12 10 M48 14 L52 10 M16 46 L12 50 M48 46 L52 50" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="27" cy="28" r="1.8" fill="#4b342a" stroke="none"/><circle cx="37" cy="28" r="1.8" fill="#4b342a" stroke="none"/>' +
+      '<path d="M28 35 q4 3 8 0" fill="none" stroke="#b23a48" stroke-linecap="round"/>' +
+      '<path d="M92 16 A16 18 0 1 0 92 48 A13 18 0 1 1 92 16Z" fill="#f1e4cc" stroke="#96733c"/>' +
+      '<circle cx="80" cy="28" r="1.8" fill="#4b342a" stroke="none"/>' +
+      '<path d="M74 36 q3 2 6 0" fill="none" stroke="#b23a48" stroke-linecap="round"/>' +
+      '<path d="M70 18 l1.2 3 3 1.2 -3 1.2 -1.2 3 -1.2 -3 -3 -1.2 3 -1.2z" fill="#e8cf9f"/></g>'
+  };
+
+  function universes(p) {
+    const s = sheet("p-universe");
+    s.append(title(p.title, "ttl--star"));
+    s.append(el("p", "universe__sub", p.hint));
+
+    const grid = el("div", "uni__grid");
+    p.pairs.forEach((pair, i) => {
+      const card = el("div", "uni-card uni-card--" + (i % 3));
+      card.style.setProperty("--rot", (((i * 5) % 5) - 2) * 0.9 + "deg");
+      const art = svg("uni-art", "0 0 112 64", (PAIR_ART[pair.id] || PAIR_ART.alien)());
+      card.append(art);
+      card.append(el("span", "uni-label", pair.label));
+      wiggleOnTap(card);
+      grid.append(card);
+    });
+    s.append(grid);
+
+    s.append(el("p", "uni__note", p.note));
+
+    /* bottom sticker meadow */
+    scatter(s, [
+      { mk: STK.star,      cls: "uni__stk uni__stk--1" },
+      { mk: STK.heartTiny, cls: "uni__stk uni__stk--2" },
+      { mk: STK.sparkle,   cls: "uni__stk uni__stk--3" },
+      { mk: STK.bow,       cls: "uni__stk uni__stk--4" },
+      { mk: STK.teacup,    cls: "uni__stk uni__stk--5" }
+    ]);
+    return s;
+  }
+
+  /* ================================================================
+     10 · TRAFFIC — interactive light, cutesy fills
+     ================================================================ */
+  function traffic(p) {
+    const s = sheet("p-traffic");
+    s.append(stamp(p.title, "stamp--traffic"));
+
+    const lightBtn = el("button", "lights-btn");
+    lightBtn.type = "button";
+    lightBtn.setAttribute("aria-label", "tap to change the light");
+    const lights = svg("lights", "0 0 74 200",
+      '<rect x="6" y="4" width="62" height="192" rx="16" fill="#4b342a" stroke="#3a2b26" stroke-width="3"/>' +
+      '<circle class="lamp lamp--stop" cx="37" cy="44" r="21" fill="#b23a48"/>' +
+      '<circle cx="31" cy="38" r="7" fill="rgba(255,255,255,.35)"/>' +
+      '<circle class="lamp lamp--wait" cx="37" cy="100" r="21" fill="#d8a44f"/>' +
+      '<circle cx="31" cy="94" r="7" fill="rgba(255,255,255,.35)"/>' +
+      '<circle class="lamp lamp--go" cx="37" cy="156" r="21" fill="#9aa487"/>' +
+      '<circle cx="31" cy="150" r="7" fill="rgba(255,255,255,.35)"/>');
+    lightBtn.append(lights);
+    s.append(lightBtn);
+
+    const lamps = [...lights.querySelectorAll(".lamp")];
+    let lit = 0;
+    function setLit(i) {
+      lit = i;
+      lamps.forEach((c, j) => c.classList.toggle("is-lit", j === i));
+    }
+    setLit(0);
+    lightBtn.addEventListener("click", () => setLit((lit + 1) % 3));
+    if (!reduceMotion.matches) {
+      setInterval(() => { if (document.contains(lights)) setLit((lit + 1) % 3); }, 1900);
+    }
+
+    const panels = el("div", "tpanels");
+    const data = [
+      { cls: "stop", word: "STOP", text: p.stop, stk: STK.cone },
+      { cls: "wait", word: "WAIT", text: p.wait, stk: STK.tissue },
+      { cls: "go", word: "GO", text: p.go, stk: STK.car }
+    ];
+    data.forEach((d) => {
+      const pan = el("div", "tpanel tpanel--" + d.cls);
+      pan.append(el("span", "tpanel__chip", d.word));
+      pan.append(writeLine(d.text));
+      const st = wiggleOnTap(d.stk());
+      st.classList.add("tpanel__stk");
+      pan.append(st);
+      panels.append(pan);
+    });
+    s.append(panels);
+
+    s.append(el("span", "traffic__note", "worth every red light, always ♡"));
+    s.append(svg("traffic__road", "0 0 400 24",
+      '<path d="M0 12 H400" stroke="#c9b594" stroke-width="6" stroke-dasharray="22 16" stroke-linecap="round"/>'));
+
+    /* fill the empty lower band */
+    scatter(s, [
+      { mk: STK.bow,       cls: "traffic__stk traffic__stk--bow" },
+      { mk: STK.cone,      cls: "traffic__stk traffic__stk--cone" },
+      { mk: STK.star,      cls: "traffic__stk traffic__stk--star" },
+      { mk: STK.heartTiny, cls: "traffic__stk traffic__stk--heart" },
+      { mk: STK.sparkle,   cls: "traffic__stk traffic__stk--spark" }
+    ]);
+    s.append(el("span", "washi washi--mini washi--blush traffic__washi"));
+    return s;
+  }
+
+  /* ================================================================
+     11 · RED STRING THEORY — two hands, one cherry thread
+     ================================================================ */
+  function redString(p) {
+    const s = sheet("p-string");
+
+    s.append(title(p.title, "ttl--hand ttl--string"));
+    s.append(el("p", "string__belief", p.belief));
+
+    /* two sketchy hands reaching for each other + the thread */
+    s.append(svg("hands", "0 0 420 300",
+      /* left hand, palm down, index reaching right */
+      '<g fill="#f6ecd7" stroke="#4b342a" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round">' +
+      '<path d="M18 150 C18 138 30 130 52 128 L120 124 C132 123 138 128 138 134 C138 140 132 144 122 145 L96 148 ' +
+      'C110 148 140 148 158 150 C172 152 178 158 176 164 C174 170 164 172 152 171 L120 168 ' +
+      'C134 170 150 174 158 180 C164 185 160 192 150 192 C142 192 128 188 116 184 L92 178 ' +
+      'C104 182 116 190 118 197 C120 204 112 209 102 206 C88 202 70 192 58 182 C40 168 18 164 18 150Z"/>' +
+      /* right hand, palm down, index reaching left */
+      '<path d="M402 150 C402 138 390 130 368 128 L300 124 C288 123 282 128 282 134 C282 140 288 144 298 145 L324 148 ' +
+      'C310 148 280 148 262 150 C248 152 242 158 244 164 C246 170 256 172 268 171 L300 168 ' +
+      'C286 170 270 174 262 180 C256 185 260 192 270 192 C278 192 292 188 304 184 L328 178 ' +
+      'C316 182 304 190 302 197 C300 204 308 209 318 206 C332 202 350 192 362 182 C380 168 402 164 402 150Z"/></g>' +
+      /* sketch shading strokes */
+      '<g fill="none" stroke="#4b342a" stroke-width="1" opacity=".45" stroke-linecap="round">' +
+      '<path d="M40 152 C60 146 90 144 110 146"/><path d="M46 162 C66 156 92 154 112 158"/>' +
+      '<path d="M380 152 C360 146 330 144 310 146"/><path d="M374 162 C354 156 328 154 308 158"/>' +
+      '<path d="M30 144 C34 138 42 134 52 133"/><path d="M390 144 C386 138 378 134 368 133"/></g>' +
+      /* the cherry thread: wraps left index, sags across, wraps right wrist */
+      '<path d="M52 196 C40 186 44 170 60 168 C78 166 92 178 96 190 ' +
+      'C104 176 118 168 134 170 C120 158 124 144 140 142 C156 140 168 152 166 164 ' +
+      'C190 158 230 156 254 164 C252 152 264 140 280 142 C296 144 300 158 286 170 ' +
+      'C302 168 316 176 324 190 C328 178 342 166 360 168 C376 170 380 186 368 196" ' +
+      'fill="none" stroke="#b23a48" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>' +
+      /* little heart where the threads would meet */
+      '<path d="M210 196 c-5 -7 -13 -3 -13 4 c0 6 8 10 13 14 c5 -4 13 -8 13 -14 c0 -7 -8 -11 -13 -4z" fill="#b23a48"/>'));
+
+    s.append(el("p", "string__note", p.note));
+
+    /* two little hearts tied together — bottom flourish */
+    s.append(svg("string__flourish", "0 0 260 80",
+      '<path d="M20 20 C70 60 100 10 130 40 C160 70 190 20 240 55" ' +
+      'fill="none" stroke="#b23a48" stroke-width="2.8" stroke-linecap="round"/>' +
+      '<path d="M78 40 c-4 -6 -11 -2.5 -11 3.2 c0 5 7 8.4 11 11.8 c4 -3.4 11 -6.8 11 -11.8 c0 -5.7 -7 -9.2 -11 -3.2z" fill="#e8a7ab" stroke="#b23a48" stroke-width="1.6"/>' +
+      '<path d="M182 36 c-4 -6 -11 -2.5 -11 3.2 c0 5 7 8.4 11 11.8 c4 -3.4 11 -6.8 11 -11.8 c0 -5.7 -7 -9.2 -11 -3.2z" fill="#b23a48"/>'));
+
+    s.append(el("span", "washi washi--mini washi--cherry string__washi"));
+
+    /* scattered tiny hearts, reference-style */
+    const hearts = el("div", "string__hearts");
+    for (let i = 0; i < 18; i++) {
+      const h = heartSvg("string__h");
+      h.style.left = (6 + (i * 37) % 88) + "%";
+      h.style.top = (8 + (i * 53) % 84) + "%";
+      h.style.animationDelay = (i * 0.35) + "s";
+      hearts.append(h);
+    }
+    s.append(hearts);
+    return s;
+  }
+
+  /* ================================================================
+     12 · REMINDERS — tap-to-check pad
+     ================================================================ */
+  function reminders(p) {
+    const s = sheet("p-remind");
+    const pad = el("div", "pad");
+    pad.append(el("div", "pad__bind"));
+    pad.append(el("h3", "pad__title", p.title));
+    p.items.forEach((it) => {
+      const row = el("button", "check");
+      row.type = "button";
+      row.setAttribute("aria-pressed", "false");
+      const box = svg("check__box", "0 0 30 30",
+        '<path d="M4 5 C10 3 22 4 26 5 C27 11 27 20 26 25 C19 27 9 26 4 25 C3 19 3 11 4 5Z" ' +
+        'fill="none" stroke="#6f5a4e" stroke-width="2.4" stroke-linejoin="round"/>' +
+        '<path class="check__tick" d="M8 15 L13 21 L23 9" fill="none" stroke="#b23a48" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>');
+      row.append(box);
+      row.append(el("span", "check__t", it));
+      row.addEventListener("click", () => {
+        const on = row.classList.toggle("is-checked");
+        row.setAttribute("aria-pressed", String(on));
+      });
+      pad.append(row);
+    });
+    pad.append(el("div", "pad__foot", "· · · keep this list close · · ·"));
+    s.append(pad);
+
+    const p1 = pin("#b23a48").cloneNode(true);
+    p1.classList.add("pad__pin");
+    s.append(p1);
+
+    const tea = wiggleOnTap(STK.teacup());
+    tea.classList.add("remind__tea");
+    s.append(tea);
+    const ht = wiggleOnTap(STK.heartTiny());
+    ht.classList.add("remind__heart");
+    s.append(ht);
+
+    scatter(s, [
+      { mk: STK.star,     cls: "remind__stk remind__stk--star" },
+      { mk: STK.sparkle,  cls: "remind__stk remind__stk--spark" },
+      { mk: STK.bow,      cls: "remind__stk remind__stk--bow" },
+      { mk: STK.envelope, cls: "remind__stk remind__stk--env" }
+    ]);
+    return s;
+  }
+
+  /* ================================================================
+     13 · A HUG FOR YOU
+     ================================================================ */
+  function hug(p) {
+    const s = sheet("p-hug");
+
+    const ribbonTitle = el("div", "hug__ribbon");
+    ribbonTitle.append(el("span", null, p.title));
+    s.append(ribbonTitle);
+
+    s.append(svg("heart-big", "0 0 300 270",
+      '<path d="M150 246 C40 166 12 118 12 74 C12 34 42 10 78 14 C112 18 138 44 150 70 ' +
+      'C162 44 188 18 222 14 C258 10 288 34 288 74 C288 118 260 166 150 246Z" ' +
+      'fill="#ecc5c4" stroke="#b23a48" stroke-width="5"/>' +
+      '<path d="M150 70 C146 130 148 190 150 246" fill="none" stroke="#c77b80" stroke-width="3" ' +
+      'stroke-dasharray="7 9" opacity=".8"/>'));
+
+    const voucher = el("div", "voucher");
+    voucher.append(el("span", "voucher__stub", "HUG"));
+    const vb = el("div", "voucher__body");
+    vb.append(el("span", "voucher__text", p.voucher));
+    vb.append(writeLine(null, "wline--short"));
+    voucher.append(vb);
+    s.append(voucher);
+
+    s.append(writeLine(p.note, "hug__note"));
+    s.append(el("span", "hug__perf", "✂ - - - - - - - - - - - -"));
+    return s;
+  }
+
+  /* ================================================================
+     14 · DO YOU LOVE ME? — every answer is correct
+     ================================================================ */
+  function quiz(p) {
+    const s = sheet("p-quiz");
+    s.append(title(p.title, "ttl--quiz"));
+
+    const card = el("div", "quiz");
+    card.append(el("span", "quiz__qmark", "?"));
+    const opts = el("div", "quiz__opts");
+    p.options.forEach((label, i) => {
+      const b = el("button", "qopt qopt--yes");
+      b.type = "button";
+      b.textContent = label;
+      b.setAttribute("aria-label", "answer " + label);
+      b.addEventListener("click", () => {
+        fb.hidden = false;
+        fb.className = "quiz__fb is-yes";
+        fb.textContent = p.feedback[i] || p.feedback[0];
+        opts.classList.remove("shake");
+        void opts.offsetWidth;
+        burstHearts(s, 10);
+      });
+      opts.append(b);
+    });
+    card.append(opts);
+
+    const fb = el("p", "quiz__fb");
+    fb.setAttribute("aria-live", "polite");
+    card.append(fb);
+    s.append(card);
+
+    s.append(stamp("no wrong answers here ♡", "quiz__stamp"));
+
+    /* heart border + stickers so it matches the book */
+    const deco = el("div", "quiz__deco");
+    for (let i = 0; i < 10; i++) {
+      const h = heartSvg("quiz__h");
+      h.style.left = (4 + (i * 29) % 90) + "%";
+      h.style.top = i % 2 ? "3%" : "93%";
+      h.style.animationDelay = (i * 0.4) + "s";
+      deco.append(h);
+    }
+    s.append(deco);
+
+    const cup = wiggleOnTap(STK.heartTiny());
+    cup.classList.add("quiz__stk");
+    s.append(cup);
+
+    /* more deco so the lower half isn't bare */
+    s.append(el("span", "washi washi--mini washi--blush quiz__washi"));
+    scatter(s, [
+      { mk: STK.bow,      cls: "quiz__stk2 quiz__stk2--bow" },
+      { mk: STK.teacup,   cls: "quiz__stk2 quiz__stk2--tea" },
+      { mk: STK.star,     cls: "quiz__stk2 quiz__stk2--star" },
+      { mk: STK.sparkle,  cls: "quiz__stk2 quiz__stk2--spark" },
+      { mk: STK.cake,     cls: "quiz__stk2 quiz__stk2--cake" }
+    ]);
+    s.append(el("p", "quiz__psst", "psst — pick any of them. every single one is right ♡"));
+    return s;
+  }
+
+  function burstHearts(host, n) {
+    for (let i = 0; i < (n || 7); i++) {
+      const h = el("span", "flying-heart", "♥");
+      h.style.setProperty("--dx", (Math.random() * 120 - 60) + "px");
+      h.style.setProperty("--d", (0.1 * i) + "s");
+      host.append(h);
+      setTimeout(() => h.remove(), 1500);
+    }
+  }
+
+  /* ================================================================
+     15 · CONNECT THE DOTS-ILY — spells "i love you"
+     ================================================================ */
+  /* dot pattern: block letters I · LOVE / YOU, angular single-stroke */
+  const ILY_DOTS = [
+    /* I */
+    [50, 70], [50, 180],
+    /* L */
+    [95, 70], [95, 180], [140, 180],
+    /* O */
+    [185, 80], [230, 80], [230, 170], [185, 170],
+    /* V */
+    [275, 70], [305, 180], [335, 70],
+    /* E (angular, single stroke) */
+    [420, 70], [380, 70], [380, 125], [415, 125], [380, 180], [420, 180],
+    /* Y */
+    [80, 270], [120, 330], [160, 270], [120, 390],
+    /* O */
+    [210, 280], [255, 280], [255, 380], [210, 380],
+    /* U */
+    [305, 280], [305, 380], [350, 380], [350, 280]
+  ];
+
+  function dotsPage(p) {
+    const s = sheet("p-dots");
+    s.append(title(p.title, "ttl--hand"));
+
+    const W = 460, H = 430;
+    let circles = "";
+    ILY_DOTS.forEach(([x, y], i) => {
+      circles += '<circle class="dot" data-i="' + i + '" cx="' + x + '" cy="' + y + '" r="8"/>';
+      const right = x >= 235;
+      circles += '<text class="dot__n" text-anchor="' + (right ? "start" : "end") +
+        '" x="' + (x + (right ? 12 : -12)) + '" y="' + (y + 5) + '">' + (i + 1) + "</text>";
+    });
+
+    const wrap = el("div", "dotwrap");
+    const ssvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    ssvg.setAttribute("class", "dotsvg");
+    ssvg.setAttribute("viewBox", "34 52 416 372");
+    ssvg.innerHTML =
+      '<path class="dots__finish" d="" />' +
+      '<path class="dots__temp" d="" />' +
+      '<path class="dots__drawn" d="" />' +
+      circles;
+    wrap.append(ssvg);
+    s.append(wrap);
+
+    const reveal = el("p", "dots__reveal", p.reveal + " ♡");
+    s.append(reveal);
+
+    const hint = el("p", "dot-hint", p.hint);
+    s.append(hint);
+
+    scatter(s, [
+      { mk: STK.bow,       cls: "dots__stk dots__stk--bow" },
+      { mk: STK.heartTiny, cls: "dots__stk dots__stk--heart" },
+      { mk: STK.star,      cls: "dots__stk dots__stk--star" },
+      { mk: STK.sparkle,   cls: "dots__stk dots__stk--spark" }
+    ]);
+    s.append(el("span", "washi washi--mini washi--blush dots__washi"));
+
+    wireDotInteraction(ssvg, hint, W, H, reveal);
+    return s;
+  }
+
+  function wireDotInteraction(ssvg, hint, W, H, reveal) {
+    const dots = [...ssvg.querySelectorAll(".dot")];
+    const drawn = ssvg.querySelector(".dots__drawn");
+    const temp = ssvg.querySelector(".dots__temp");
+    const finish = ssvg.querySelector(".dots__finish");
+    const pts = ILY_DOTS;
+    let next = 0;
+    let fromIdx = null;
+    let selectedTap = null;
+
+    const ptOf = (evt) => {
+      const r = ssvg.getBoundingClientRect();
+      return [((evt.clientX - r.left) / r.width) * W, ((evt.clientY - r.top) / r.height) * H];
+    };
+
+    const commit = (a, b) => {
+      drawn.setAttribute("d", drawn.getAttribute("d") +
+        (drawn.getAttribute("d") ? " L" : "M") + pts[a][0] + " " + pts[a][1] +
+        " L" + pts[b][0] + " " + pts[b][1]);
+      dots[a].classList.add("dot--done");
+      next = b;
+      dots[b].classList.add("dot--next");
+      if (next === pts.length - 1 && a === pts.length - 2) {
+        finish.setAttribute("d", "M" + pts.map(([x, y]) => x + " " + y).join(" L"));
+        finish.style.opacity = "1";
+        dots.forEach(d => d.classList.add("dot--done"));
+        hint.textContent = "finished — there it is ♡";
+        if (reveal) reveal.classList.add("is-shown");
+        ssvg.classList.add("is-complete");
+      }
+    };
+
+    dots[0].classList.add("dot--next");
+
+    const dotAt = (evt) => {
+      const el2 = document.elementFromPoint(evt.clientX, evt.clientY);
+      return el2 && el2.classList && el2.classList.contains("dot") ? +el2.dataset.i : null;
+    };
+
+    ssvg.addEventListener("pointerdown", (e) => {
+      const i = dotAt(e);
+      if (i === null) return;
+      e.preventDefault();
+      if (i === next) {
+        fromIdx = i;
+        ssvg.setPointerCapture(e.pointerId);
+      } else if (i === next + 1 && selectedTap === next) {
+        commit(next, i);
+        selectedTap = null;
+      } else {
+        wiggle(dots[i]);
+        selectedTap = null;
+      }
+    });
+
+    ssvg.addEventListener("pointermove", (e) => {
+      if (fromIdx === null) return;
+      const [x, y] = ptOf(e);
+      temp.setAttribute("d", "M" + pts[fromIdx][0] + " " + pts[fromIdx][1] + " L" + x.toFixed(1) + " " + y.toFixed(1));
+    });
+
+    ssvg.addEventListener("pointerup", (e) => {
+      if (fromIdx === null) return;
+      const i = dotAt(e);
+      temp.setAttribute("d", "");
+      if (i === fromIdx + 1 && i < pts.length) {
+        commit(fromIdx, i);
+        selectedTap = null;
+      } else if (i === fromIdx) {
+        selectedTap = fromIdx;
+      } else if (i !== null) {
+        wiggle(dots[i]);
+      }
+      fromIdx = null;
+    });
+  }
+
+  function wiggle(dot) {
+    dot.classList.remove("dot--wiggle");
+    void dot.getBoundingClientRect();
+    dot.classList.add("dot--wiggle");
+    setTimeout(() => dot.classList.remove("dot--wiggle"), 450);
+  }
+
+  /* ================================================================
+     16 · THE FINAL LETTER — reserved stationery
+     ================================================================ */
+  function letter(p) {
+    const s = sheet("p-letter");
+
+    const lh = el("div", "letter__head");
+    lh.append(el("span", "letter__title", p.title));
+    lh.append(el("span", "letter__date", "__ / __ / ____"));
+    s.append(lh);
+
+    const body = el("div", "letter__body");
+    body.append(el("p", "letter__hint", p.hint));
+    body.append(el("div", "letter__lines"));
+    s.append(body);
+
+    const sig = el("div", "letter__sig");
+    sig.append(el("span", "letter__sig-line"));
+    sig.append(el("span", "letter__sig-t", p.signature));
+    s.append(sig);
+
+    s.append(svg("envelope", "0 0 140 96",
+      '<rect x="4" y="10" width="132" height="80" rx="5" fill="#f4e8d3" stroke="#96733c" stroke-width="2.4"/>' +
+      '<path d="M4 14 L70 58 L136 14" fill="none" stroke="#96733c" stroke-width="2.4"/>' +
+      '<path d="M4 88 L54 48 M136 88 L86 48" fill="none" stroke="#c8a05e" stroke-width="1.6"/>' +
+      '<circle cx="70" cy="56" r="13" fill="#b23a48" stroke="#8e2b37" stroke-width="2"/>' +
+      '<path d="M64 55 c0-4 6-5 8-1 c2-4 8-3 8 1 c0 5-8 9-8 9 s-8-4-8-9z" fill="rgba(251,244,231,.9)"/>'));
+
+    s.append(svg("pressed-flower", "0 0 60 74",
+      '<path d="M30 70 C30 52 30 40 30 30" fill="none" stroke="#9aa487" stroke-width="2.6"/>' +
+      '<path d="M30 46 C22 44 16 36 18 30 C26 30 30 38 30 46Z" fill="#9aa487"/>' +
+      '<g fill="#cf959b" stroke="#b23a48" stroke-width="1.4">' +
+      '<ellipse cx="30" cy="16" rx="7" ry="11"/>' +
+      '<ellipse cx="20" cy="24" rx="10" ry="7" transform="rotate(-30 20 24)"/>' +
+      '<ellipse cx="40" cy="24" rx="10" ry="7" transform="rotate(30 40 24)"/>' +
+      '<ellipse cx="24" cy="12" rx="7" ry="9" transform="rotate(-20 24 12)"/>' +
+      '<ellipse cx="36" cy="12" rx="7" ry="9" transform="rotate(20 36 12)"/></g>' +
+      '<circle cx="30" cy="20" r="5" fill="#e8cf9f"/>'));
+    return s;
+  }
+
+  /* ================================================================
+     17 · THE END — bittersweet finale
+     ================================================================ */
+  function theEnd(p) {
+    const s = sheet("p-end");
+
+    /* ambient falling petals */
+    if (!reduceMotion.matches) {
+      const fall = el("div", "end__fall");
+      for (let i = 0; i < 10; i++) {
+        const pt = el("span", "end__petal");
+        pt.style.left = (5 + (i * 17) % 90) + "%";
+        pt.style.background = ["#e8a7ab", "#ecc5c4", "#e8cf9f", "#cf959b"][i % 4];
+        pt.style.animationDelay = (i * 1.1) + "s";
+        pt.style.animationDuration = (7 + (i % 4)) + "s";
+        fall.append(pt);
+      }
+      s.append(fall);
+    }
+
+    const frame = el("div", "end-frame");
+    frame.append(svg("end-flourish", "0 0 200 30",
+      '<path d="M10 15 C50 2 70 26 100 15 C130 4 150 28 190 15" fill="none" stroke="#c8a05e" stroke-width="2.4" stroke-linecap="round"/>' +
+      '<circle cx="100" cy="15" r="4" fill="#b23a48"/>'));
+    frame.append(el("h2", "end-title", p.title));
+    frame.append(el("p", "end-sub", p.sub));
+    frame.append(svg("end-flourish end-flourish--b", "0 0 200 30",
+      '<path d="M10 15 C50 28 70 4 100 15 C130 26 150 2 190 15" fill="none" stroke="#c8a05e" stroke-width="2.4" stroke-linecap="round"/>' +
+      '<circle cx="100" cy="15" r="4" fill="#b23a48"/>'));
+    s.append(frame);
+
+    const lines = el("div", "end__lines");
+    p.lines.forEach((t, i) => lines.append(el("p", "end__line end__line--" + (i + 1), t)));
+    s.append(lines);
+
+    /* two little friends waving goodbye */
+    s.append(svg("end__bye", "0 0 200 110",
+      '<g stroke="#4b342a" stroke-width="2.2" stroke-linejoin="round">' +
+      '<circle cx="55" cy="40" r="18" fill="#e8c3c4"/>' +
+      '<circle cx="49" cy="38" r="2" fill="#4b342a" stroke="none"/><circle cx="61" cy="38" r="2" fill="#4b342a" stroke="none"/>' +
+      '<path d="M50 47 q5 4 10 0" fill="none" stroke-linecap="round"/>' +
+      '<path d="M55 58 L55 86 M55 66 L38 76 M55 66 L74 52 M55 86 L44 104 M55 86 L66 104" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="130" cy="40" r="18" fill="#c9d3e8"/>' +
+      '<circle cx="124" cy="38" r="2" fill="#4b342a" stroke="none"/><circle cx="136" cy="38" r="2" fill="#4b342a" stroke="none"/>' +
+      '<path d="M125 47 q5 4 10 0" fill="none" stroke-linecap="round"/>' +
+      '<path d="M130 58 L130 86 M130 66 L111 52 M130 66 L147 76 M130 86 L119 104 M130 86 L141 104" fill="none" stroke-linecap="round"/>' +
+      '<path d="M74 52 q6 -8 12 -4 M111 52 q-6 -8 -12 -4" fill="none" stroke="#c8a05e" stroke-linecap="round"/></g>' +
+      '<path d="M92 30 c-2.5 -4 -8 -2 -8 2.5 c0 4 5 6.5 8 9.5 c3 -3 8 -5.5 8 -9.5 c0 -4.5 -5.5 -6.5 -8 -2.5z" fill="#b23a48"/>' +
+      '<path d="M160 30 c1.6 2.4 2.4 4 2.4 5.4 a2.4 2.4 0 0 1 -4.8 0 c0 -1.4 .8 -3 2.4 -5.4z" fill="#7f92aa"/>'));
+
+    const seal = el("button", "end-seal");
+    seal.type = "button";
+    seal.setAttribute("aria-expanded", "false");
+    seal.setAttribute("aria-label", p.button);
+    seal.append(svg("end-seal__art", "0 0 90 90",
+      '<circle cx="45" cy="45" r="38" fill="#b23a48" stroke="#8e2b37" stroke-width="4"/>' +
+      '<circle cx="45" cy="45" r="28" fill="none" stroke="rgba(251,244,231,.55)" stroke-width="2" stroke-dasharray="3 6"/>' +
+      '<g fill="rgba(251,244,231,.9)">' +
+      '<path d="M43 42 C35 32 26 34 27 40 C28 45 37 45 43 42Z"/>' +
+      '<path d="M47 42 C55 32 64 34 63 40 C62 45 53 45 47 42Z"/>' +
+      '<path d="M44 45 C42 52 37 57 32 60 C38 59 43 55 46 50Z"/>' +
+      '<path d="M46 45 C48 52 53 57 58 60 C52 59 47 55 44 50Z"/>' +
+      '<ellipse cx="45" cy="43" rx="4" ry="3.4"/></g>'));
+    const sealLbl = el("span", "end-seal__lbl", p.button);
+    seal.append(sealLbl);
+    s.append(seal);
+
+    const reveal = el("div", "end-reveal");
+    reveal.hidden = true;
+    reveal.append(writeLine(p.reveal, "end-reveal__line"));
+    s.append(reveal);
+
+    seal.addEventListener("click", () => {
+      const open = reveal.hidden;
+      reveal.hidden = !open;
+      seal.setAttribute("aria-expanded", String(open));
+      seal.classList.toggle("is-open", open);
+      if (open) {
+        petalBurst(s);
+        sealLbl.textContent = "…";
+      } else {
+        sealLbl.textContent = p.button;
+      }
+    });
+
+    const again = el("button", "end-again", p.again);
+    again.type = "button";
+    again.addEventListener("click", () => window.Book.goTo(0));
+    s.append(again);
+
+    s.append(wiggleOnTap(STK.tissue()).cloneNode(true));
+    const tis = s.lastElementChild; tis.classList.add("end__tissue"); wiggleOnTap(tis);
+    s.append(wiggleOnTap(STK.envelope()).cloneNode(true));
+    const env = s.lastElementChild; env.classList.add("end__env"); wiggleOnTap(env);
+    return s;
+  }
+
+  function petalBurst(host) {
+    const hues = ["#e8a7ab", "#b23a48", "#e8cf9f", "#ecc5c4", "#c8a05e"];
+    for (let i = 0; i < 26; i++) {
+      const pt = el("span", "petal");
+      pt.style.left = (35 + Math.random() * 30) + "%";
+      pt.style.top = "38%";
+      pt.style.background = hues[i % hues.length];
+      pt.style.setProperty("--dx", (Math.random() * 340 - 170) + "px");
+      pt.style.setProperty("--dy", (120 + Math.random() * 220) + "px");
+      pt.style.setProperty("--spin", (Math.random() * 720 - 360) + "deg");
+      pt.style.setProperty("--d", (Math.random() * 0.25) + "s");
+      host.append(pt);
+      setTimeout(() => pt.remove(), 2200);
+    }
+  }
+
+  /* ================================================================
+     registry + surface rendering
+     ================================================================ */
+  const RENDERERS = {
+    calendar,
+    enough,
+    "songs-a": songsA,
+    "songs-b": songsB,
+    soulmate,
+    "little-things": littleThings,
+    "photo-booth": photoBooth,
+    "best-friend": bestFriend,
+    universes,
+    traffic,
+    "red-string": redString,
+    reminders,
+    hug,
+    quiz,
+    dots: dotsPage,
+    "the-end": theEnd,
+    letter
+  };
+
+  /* -------- stage-1 fallback sheet ---------------------- */
+  function placeholderSheet(page) {
+    const scrap = sheet("scrap--plain");
+    const tape = washi("tape tape--blush");
+    scrap.append(tape);
+    const body = el("div", "sheet");
+    body.append(el("h2", "sheet__title", page.title));
+    if (page.hint) body.append(el("p", "sheet__hint", page.hint));
+    const note = el("div", "sheet__note");
+    note.append(el("span", "sheet__note-line"));
+    note.append(el("span", "sheet__note-text", page.note || page.hint || "your words go here"));
+    body.append(note);
+    scrap.append(body);
+    return scrap;
+  }
+
+  /* -------- inside-cover surfaces (NOT numbered pages) --- */
+  function insideCover(side) {
+    const scrap = sheet("scrap--endpaper");
+    scrap.dataset.surface = "inside-" + side;
+
+    /* soft speckle texture */
+    scrap.append(el("span", "endpaper__speck"));
+
+    const label = el("div", "bookplate");
+    label.append(el("span", "bookplate__small", "this book belongs to"));
+    label.append(el("span", "bookplate__name", "Giffie ♡"));
+    scrap.append(label);
+
+    if (side === "front") {
+      const pocket = el("div", "endpocket");
+      pocket.append(el("span", "endpocket__tag", "tucked in for you ♡"));
+      scrap.append(pocket);
+
+      /* sticker garden — fills the cover, tap any to wiggle */
+      const placements = [
+        { mk: STK.bow, cls: "ep-stk ep-stk--1" },
+        { mk: STK.tulips, cls: "ep-stk ep-stk--2" },
+        { mk: STK.envelope, cls: "ep-stk ep-stk--3" },
+        { mk: STK.bear, cls: "ep-stk ep-stk--4" },
+        { mk: STK.star, cls: "ep-stk ep-stk--5" },
+        { mk: STK.heartTiny, cls: "ep-stk ep-stk--6" },
+        { mk: STK.sparkle, cls: "ep-stk ep-stk--7" },
+        { mk: STK.cake, cls: "ep-stk ep-stk--8" }
+      ];
+      placements.forEach((pl) => {
+        const n = wiggleOnTap(pl.mk());
+        pl.cls.split(" ").forEach((c) => n.classList.add(c));
+        scrap.append(n);
+      });
+
+      /* ambient floating hearts */
+      if (!reduceMotion.matches) {
+        const float = el("div", "ep-float");
+        for (let i = 0; i < 6; i++) {
+          const f = heartSvg("ep-float__h");
+          f.style.left = (10 + (i * 15) % 80) + "%";
+          f.style.animationDelay = (i * 1.4) + "s";
+          f.style.animationDuration = (6 + (i % 3) * 2) + "s";
+          float.append(f);
+        }
+        scrap.append(float);
+      }
+
+      scrap.append(el("p", "ep-note", "made just for you — every page, every word ♡"));
+    } else {
+      scrap.append(el("span", "endpaper__stamp", "the end of the pages, not of us ♡"));
+    }
+    return scrap;
+  }
+
+  /* -------- public API ------------------------------------- */
+  function renderPage(n) {
+    const page = CONTENT.pages[n - 1];
+    if (!page) return sheet();
+    const renderer = RENDERERS[page.key] || placeholderSheet;
+    const scrap = renderer(page);
+    scrap.dataset.page = n;
+    const num = el("div", "scrap__num", String(n).padStart(2, "0"));
+    scrap.append(num);
+    return scrap;
+  }
+
+  function renderSurface(id) {
+    if (id === "inside-front") return insideCover("front");
+    if (id === "inside-back") return insideCover("back");
+    if (typeof id === "number") return renderPage(id);
+    return sheet();
+  }
+
+  return { renderPage, renderSurface, el };
+})();
