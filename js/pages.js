@@ -440,10 +440,10 @@ window.Pages = (() => {
     wiggleOnTap(hs);
 
     /* bottom band — roses, hug, heart, arrow */
-    s.append(sticker("1775ae2a8718a489721decd4fd3f2d83.jpg", "en__p en__p--roses"));
-    s.append(sticker("2d49f0eb767593435c9ff56df489bec0.jpg", "en__p en__p--hug"));
-    s.append(sticker("310b90af033c68568b2347fbf88c6de3.jpg", "en__p en__p--heart"));
-    s.append(sticker("cd55b0d7f094b1cf1fe063b54416bb04.jpg", "en__p en__p--arrow"));
+    s.append(sticker("bday.png", "en__p en__p--roses"));
+    s.append(sticker("stk-hug.png", "en__p en__p--hug"));
+    s.append(sticker("stk-heart.png", "en__p en__p--heart"));
+    s.append(sticker("stk-arrow.png", "en__p en__p--arrow"));
     return s;
   }
 
@@ -1494,7 +1494,7 @@ window.Pages = (() => {
   }
 
   function handmadeStickers(host, seed) {
-    const library = STICKER_LIBRARY.length ? STICKER_LIBRARY : [{ jpg: "sitcker1.jpg" }];
+    const library = STICKER_LIBRARY.length ? STICKER_LIBRARY : [{ png: "stk-stars.png" }];
     const tiers = ["tier-md", "tier-sm", "tier-lg", "tier-sm", "tier-md", "tier-lg", "tier-xs"];
     host.querySelectorAll("svg.stk").forEach((old, i) => {
       const entry = library[(seed * 3 + i) % library.length];
