@@ -1,91 +1,81 @@
 /* ============================================================
    music.js · one persistent background track for the whole book
 
-   - tries to start on the closed-cover screen as soon as the
-     page loads, before the scrapbook is opened
-   - if the browser blocks autoplay (most phones do), it starts
-     on the user's first gesture instead — tapping the book,
-     pressing a key, anything
-   - a single <audio> element lives for the whole visit, so page
-     turns and overlays never restart or reload the track
-   - muting is remembered between visits via localStorage
+   - starts from the beginning with sound on for every visit
+   - tries to play on the closed-cover screen as soon as it loads
+   - if the browser blocks autoplay, starts on the first gesture
+   - keeps playing through page turns; the button mutes for this visit
    ============================================================ */
 
 (function () {
   "use strict";
 
-  var STORAGE_KEY = "giffie:music-muted";
   var GENTLE_VOLUME = 0.18;                 /* 18% — sits quietly under the writing */
   var GESTURE_EVENTS = ["pointerdown", "touchstart", "click", "keydown"];
 
   var audio = document.getElementById("bg-music");
   var btn = document.getElementById("music-toggle");
   if (!audio || !btn) return;
+  var tag = btn.querySelector(".music-btn__tag");
 
   var started = false;        /* playback has successfully begun at least once */
   var failed = false;         /* the track could not be loaded / decoded */
-  var muted = readMutePref();
-  var playInFlight = false;   /* a play() promise is still pending */
+  var muted = false;          /* each new visit starts with sound on */
   var gesturesArmed = false;
 
-  function readMutePref() {
-    try {
-      return window.localStorage.getItem(STORAGE_KEY) === "1";
-    } catch (e) {
-      return false;           /* private mode etc. — just default to sound on */
-    }
-  }
-
-  function writeMutePref() {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, muted ? "1" : "0");
-    } catch (e) {
-      /* preference simply won't persist if storage is unavailable */
-    }
-  }
-
-  /* gentle background level, looped forever */
+  /* Do not start muted: otherwise the song could be partway through before
+     the visitor ever hears it. Older saved mute preferences are not applied. */
   audio.volume = GENTLE_VOLUME;
-  audio.muted = muted;
+  audio.muted = false;
   audio.loop = true;
   audio.preload = "auto";
+  try { audio.currentTime = 0; } catch (e) { /* a new track already starts at 0 */ }
 
   function syncButton() {
     btn.classList.toggle("is-playing", started && !muted);
-    btn.classList.toggle("is-muted", muted || !started);
+    btn.classList.toggle("is-muted", muted);
     btn.classList.toggle("is-waiting", !started && !failed);
-    btn.setAttribute("aria-pressed", String(!muted));
+    btn.setAttribute("aria-pressed", String(started && !muted));
     btn.setAttribute(
       "aria-label",
-      muted ? "Turn background music on" : "Mute background music"
+      !started ? "Play background music" :
+        muted ? "Turn background music on" : "Mute background music"
     );
+    if (tag) tag.textContent = started ? "music" : "play music";
   }
 
   function markFailed() {
     if (failed) return;
     failed = true;
     started = false;
-    playInFlight = false;
     disarmGestures();
     btn.hidden = true;                  /* no dead control if the track is missing */
     try { audio.pause(); } catch (e) { /* noop */ }
   }
 
+  function markStarted() {
+    if (failed) return;
+    started = true;
+    disarmGestures();
+  }
+
   /* ---------------- autoplay-policy fallback ---------------- */
 
-  function onFirstGesture() {
+  function onFirstGesture(event) {
     if (started || failed) {
       disarmGestures();
       return;
     }
+    /* Let the button's click handler start playback itself. Otherwise the
+       pointerdown could start the song just before click immediately mutes it. */
+    if (event.target === btn || btn.contains(event.target)) return;
     requestPlay();
   }
 
   function armGestures() {
     if (gesturesArmed || failed || started) return;
     gesturesArmed = true;
-    /* capture + passive: we never block, prevent or swallow the gesture,
-       so the book's own open/turn handlers run exactly as before */
+    /* capture + passive: never block the book's own open/turn handlers */
     GESTURE_EVENTS.forEach(function (t) {
       window.addEventListener(t, onFirstGesture, { capture: true, passive: true });
     });
@@ -93,79 +83,72 @@
   }
 
   function disarmGestures() {
-    if (!gesturesArmed) { syncButton(); return; }
-    gesturesArmed = false;
-    GESTURE_EVENTS.forEach(function (t) {
-      window.removeEventListener(t, onFirstGesture, { capture: true });
-    });
+    if (gesturesArmed) {
+      gesturesArmed = false;
+      GESTURE_EVENTS.forEach(function (t) {
+        window.removeEventListener(t, onFirstGesture, { capture: true });
+      });
+    }
     syncButton();
   }
 
   /* ---------------- the one and only play path ---------------- */
 
+  function onPlayError(err) {
+    if (started || failed) return;       /* an earlier attempt may settle late */
+    if (err && err.name === "NotSupportedError") {
+      markFailed();                      /* file missing / codec unsupported */
+      return;
+    }
+    /* Autoplay blocked or interrupted: keep waiting for a real gesture. */
+    armGestures();
+  }
+
   function requestPlay() {
-    if (started || failed || playInFlight) return;
-    playInFlight = true;
+    if (started || failed) return;
 
     var p;
     try {
+      /* Allow a gesture to retry even while the initial autoplay promise is
+         pending: the browser needs play() to run within the gesture itself. */
       p = audio.play();
     } catch (e) {
-      playInFlight = false;
-      armGestures();
+      onPlayError(e);
       return;
     }
 
     /* old browsers that don't return a promise: assume it started */
     if (!p || typeof p.then !== "function") {
-      playInFlight = false;
-      started = true;
-      disarmGestures();
-      syncButton();
+      markStarted();
       return;
     }
 
-    p.then(function () {
-      playInFlight = false;
-      started = true;
-      disarmGestures();
-      syncButton();
-    }).catch(function (err) {
-      playInFlight = false;
-      if (err && err.name === "NotSupportedError") {
-        markFailed();                 /* file missing / codec unsupported */
-        return;
-      }
-      /* NotAllowedError (autoplay blocked) or AbortError (interrupted):
-         keep waiting quietly for a real user gesture */
-      armGestures();
-    });
+    p.then(markStarted, onPlayError);
   }
 
   /* ---------------- media element events ---------------- */
 
   audio.addEventListener("error", markFailed);
-  audio.addEventListener("playing", function () {
-    started = true;
-    disarmGestures();
-    syncButton();
-  });
+  audio.addEventListener("playing", markStarted);
 
   /* ---------------- the little mute/unmute button ---------------- */
 
   btn.addEventListener("click", function () {
     if (failed) return;
+    if (!started) {
+      requestPlay();                    /* first click starts, rather than mutes */
+      return;
+    }
     muted = !muted;
-    audio.muted = muted;              /* mute, never pause — playback position keeps flowing */
-    writeMutePref();
-    if (!muted) requestPlay();        /* unmuting is itself a trusted user gesture */
+    audio.muted = muted;                /* mute, never pause — position keeps flowing */
     syncButton();
   });
 
   /* ---------------- boot: try immediately on the cover screen ---------------- */
 
   btn.hidden = false;
-  syncButton();
+  /* Arm before play() settles, so an early gesture is never missed. */
+  armGestures();
   requestPlay();
 
   /* test/debug surface */
