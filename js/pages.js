@@ -1399,11 +1399,14 @@ window.Pages = (() => {
   }
 
   /* ================================================================
-     16–26 · THE FINAL LETTER — one continuous piece of writing.
-     Every ruled leaf paints the full letter and clips its own slice,
-     so the words run from page 16 onward without hand-balanced gaps.
-     Leaves past the end of the writing stay blank for later additions.
+     16 → the last letter page · THE FINAL LETTER — one continuous
+     piece of writing. Every ruled leaf paints the whole letter and
+     clips its own slice, so the words run on from page to page
+     without any hand-balanced gaps.
      ================================================================ */
+  const LETTER_PARTS = CONTENT.pages.filter(
+    (p) => p.key === "letter" || p.key === "letter-continuation").length;
+
   function letter(p) {
     return renderLetterPage(p.part || 0, true);
   }
@@ -1420,7 +1423,8 @@ window.Pages = (() => {
     const head = el("div", "letter__head");
     head.append(el("span", "letter__title", L.title));
     head.append(el("span", "letter__date",
-      first ? "__ / __ / ____" : "continued · " + part + " / 10"));
+      first ? "__ / __ / ____"
+            : "continued · " + part + " / " + (LETTER_PARTS - 1)));
     s.append(head);
 
     const body = el("div", "letter__body letter__body--written");
@@ -1436,6 +1440,19 @@ window.Pages = (() => {
       prose.append(el("p", "letter__paragraph", paragraph));
     });
 
+    /* the lines that get said louder, gathered in the middle */
+    if (L.shout && L.shout.length) {
+      const shout = el("div", "letter__shout");
+      L.shout.forEach((line) => {
+        /* keep the little heart glued to its last word */
+        shout.append(el("span", "letter__shout-line",
+          line.replace(/ (♡)$/, "\u00A0$1")));
+      });
+      prose.append(shout);
+    }
+
+    if (L.signOff) prose.append(el("p", "letter__signoff", L.signOff));
+
     const signature = el("div", "letter__sig letter__sig--written");
     signature.append(el("span", "letter__sig-line"));
     signature.append(el("span", "letter__sig-t", L.signature));
@@ -1444,6 +1461,25 @@ window.Pages = (() => {
     flow.append(prose);
     body.append(lines, flow);
     s.append(body);
+
+    /* keep the page break on a ruled line: once the leaf has a size,
+       shift the writing by whole lines instead of a raw percentage, so
+       no line is ever sliced in half at the top of a page */
+    const alignToRules = () => {
+      const pitch = parseFloat(window.getComputedStyle(prose).lineHeight);
+      const h = flow.clientHeight;
+      if (!pitch || !h) return;
+      /* one ruled line is left free at the foot of every leaf, so the
+         folio stamp never lands on the writing */
+      const perPage = Math.max(1, Math.floor(h / pitch) - 1);
+      prose.style.top = (-part * perPage * pitch) + "px";
+    };
+    if (window.ResizeObserver) {
+      new ResizeObserver(alignToRules).observe(flow);
+    } else {
+      window.addEventListener("resize", alignToRules);
+    }
+
     return s;
   }
 
@@ -1457,8 +1493,20 @@ window.Pages = (() => {
     lettering.src = A + "theend.jpg";
     lettering.alt = "The End";
     s.append(lettering, el("p", "end-sub", p.sub));
-    const portrait = el("label", "end-portrait");
-    portrait.append(el("span", "end-portrait__hint", "a little photo of me ♡\ntap to add your portrait"));
+    const portrait = el("label", "end-portrait has-photo");
+    /* the photo that was already waiting in assets/ — the placeholder
+       frame simply keeps it; tapping the frame can still swap it */
+    const portraitImage = el("img", "end-portrait__image");
+    portraitImage.src = A + "IMG_0946.JPG";
+    portraitImage.alt = "mie ♡";
+    portraitImage.loading = "lazy";
+    portraitImage.addEventListener("error", () => {
+      portrait.classList.remove("has-photo");
+      portraitImage.remove();
+      portrait.append(el("span", "end-portrait__hint",
+        "a little photo of me ♡\ntap to add your portrait"));
+    });
+    portrait.append(portraitImage);
     const input = el("input", "end-portrait__input");
     input.type = "file";
     input.accept = "image/*";
@@ -1468,8 +1516,10 @@ window.Pages = (() => {
       if (!file || !file.type.startsWith("image/")) return;
       const reader = new FileReader();
       reader.onload = () => {
-        let image = portrait.querySelector("img");
-        if (!image) { image = el("img", "end-portrait__image"); image.alt = "mie"; portrait.append(image); }
+        const hint = portrait.querySelector(".end-portrait__hint");
+        if (hint) hint.remove();
+        let image = portrait.querySelector(".end-portrait__image");
+        if (!image) { image = el("img", "end-portrait__image"); image.alt = "mie ♡"; portrait.append(image); }
         image.src = reader.result;
         portrait.classList.add("has-photo");
       };

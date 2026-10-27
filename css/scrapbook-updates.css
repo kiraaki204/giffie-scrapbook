@@ -635,8 +635,8 @@
   margin: 0;
   background: repeating-linear-gradient(
     to bottom,
-    transparent 0 calc(2.5em - 1px),
-    rgba(75, 52, 42, .27) calc(2.5em - 1px) 2.5em);
+    transparent 0 calc(2.2em - 1px),
+    rgba(75, 52, 42, .27) calc(2.2em - 1px) 2.2em);
 }
 
 .p-letter--continuation .letter__lines::before { left: 2.3em; }
@@ -1272,9 +1272,10 @@
   position: absolute;
   left: 3.1em;
   right: 1.15em;
-  margin: .15em 0 .4em;
-  font-size: 1.42em;
-  line-height: 1.76;
+  margin: 0;
+  --pitch: 1.61765;           /* line-height × font-size === the 2.2em rule pitch */
+  font-size: 1.36em;
+  line-height: var(--pitch);
 }
 
 .letter__flow .letter__lead,
@@ -1302,7 +1303,49 @@
   .letter__flow .letter__prose {
     left: 2.8em;
     right: .6em;
+    --pitch: 1.83333;
     font-size: 1.2em;
-    line-height: 1.9;
+    line-height: var(--pitch);
   }
 }
+
+/* ---------------- the letter · the louder lines ------------------- */
+.letter__shout {
+  display: block;
+  margin: 0;                    /* keeps the ruled pitch unbroken */
+  text-align: center;
+  font-family: var(--font-hand);
+  color: var(--cherry);
+}
+
+.letter__shout-line {
+  display: block;
+  font-size: 1.08em;
+  font-weight: 700;
+  line-height: calc(var(--pitch, 1.61765) / 1.08);  /* still one ruled line */
+  text-shadow: 0 .04em .12em rgba(178, 58, 72, .16);
+}
+
+.letter__signoff {
+  margin: 0;
+  text-indent: .7em;
+  font-style: italic;
+  color: rgba(111, 90, 78, .95);
+}
+
+.letter__flow .letter__signoff { text-indent: 0; }
+
+/* very short windows: the em base hits its clamp floor, so the letter
+   needs a touch less type to still finish inside its last leaf */
+@media (max-height: 560px) {
+  .letter__flow .letter__prose {
+    --pitch: 1.88034;
+    font-size: 1.17em;
+    line-height: var(--pitch);
+  }
+}
+
+/* letter leaves scale from their own height like every other page, but
+   with a lower floor: in short windows the writing must still fit on the
+   ruled leaves that exist instead of running off the last one */
+.p-letter { font-size: clamp(4.2px, 2.3cqh, 18px); }
