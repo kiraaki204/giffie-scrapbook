@@ -12,6 +12,85 @@ window.BOOK_CONTENT = {
   openHint: "tap to open",
 
   /* ----------------------------------------------------------
+     THE INTRODUCTION PAGE · the folded-paper fortune teller
+     (inside front cover, immediately before the calendar)
+
+     Edit colours, numbers, instructions and fortunes here.
+     The flap the paper nudges is (colour index + number) % 4,
+     so every one of the four fortunes is always reachable.
+     ---------------------------------------------------------- */
+  fortune: {
+    heading: "a little fortune for you… ♡",
+    note: "a collection of little things, for my favourite person ♡",
+    resultLabel: "your fortune",
+    colours: [
+      { id: "pink",     name: "pink",       tone: "#ecc5c4", ink: "#7d3644", doodle: "heart" },
+      { id: "cherry",   name: "cherry red", tone: "#b23a48", ink: "#fdf3e4", doodle: "star" },
+      { id: "cream",    name: "cream",      tone: "#f4e8d3", ink: "#8a6435", doodle: "flower" },
+      { id: "lavender", name: "lavender",   tone: "#c3b2d4", ink: "#4f3d63", doodle: "moon" }
+    ],
+    numbers: [1, 2, 3, 4],
+    steps: {
+      colour: "pick a colour — the paper is listening ♡",
+      colourPicked: "{colour} it is… mind the folds ♡",
+      number: "now a number, 1 to 4 ♡",
+      numberPicked: "{number}… turn it over once more ♡",
+      fortune: "the paper nudged one flap for you — open any of them ♡",
+      revealed: "there it is ♡"
+    },
+    fortunes: [
+      "unfortunately for you, you're stuck with me, sorry ♡",
+      "a lifetime of ridiculous memories awaits us.",
+      "no matter how many pages life turns, i'm glad you're in my story.",
+      "your next mission: turn the page, birthday girl →"
+    ],
+    controls: {
+      again: "play again ♡",
+      next: "turn the page →"
+    }
+  },
+
+  /* ----------------------------------------------------------
+     STICKERS · drop new transparent PNGs into assets/ and list
+     them here. Each entry tries the PNG first, then falls back
+     to the older jpg, so the book never shows a broken image.
+     ---------------------------------------------------------- */
+  stickers: {
+    named: {
+      favp:  { png: "favp.png",          fallback: "976d5c7bb460d587ae0580db19e69b65.jpg" },
+      bday:  { png: "bday.png",          fallback: "1775ae2a8718a489721decd4fd3f2d83.jpg" },
+      bday1: { png: "bday1.png",         fallback: "2e5b0227aa34495e8744b30146b1fb78.jpg" },
+      hand:  { png: "hand-removebg.png", fallback: "hand.jpg" }
+    },
+    library: [
+      { png: "favp.png",          jpg: "976d5c7bb460d587ae0580db19e69b65.jpg" },
+      { png: "bday.png",          jpg: "1775ae2a8718a489721decd4fd3f2d83.jpg" },
+      { png: "bday1.png",         jpg: "2e5b0227aa34495e8744b30146b1fb78.jpg" },
+      { jpg: "03087c3c7ec42ea017e125932366d4dc.jpg" },
+      { jpg: "07898c8fabd8c50047af31afffd9bb60.jpg" },
+      { jpg: "1ef728e7cd81d64903bddc5330c5d48c.jpg" },
+      { jpg: "310b90af033c68568b2347fbf88c6de3.jpg" },
+      { jpg: "312987af0984782fafad4243b761421a.jpg" },
+      { jpg: "44d26b2ee2704fe8c273e83730c1ec0e.jpg" },
+      { jpg: "48cd4401bdfa0ebe4c80fdeaffee11b2.jpg" },
+      { jpg: "5ab2e47e02d3dae411549c231aafa337.jpg" },
+      { jpg: "6711d24d4aa3a7a2ccab4701ec83b370.jpg" },
+      { jpg: "80170864e0b942580d87b520e9647670.jpg" },
+      { jpg: "93531682576dbb0ff07578ae32a43c69.jpg" },
+      { jpg: "9a30371b5059345faf779a2172b7f64b.jpg" },
+      { jpg: "ab77a76888df77924f4b18b90a4886a5.jpg" },
+      { jpg: "bc26229d8dd43fddb14b1963e1f32f5a.jpg" },
+      { jpg: "bd22102ef58d3dae000ce5e58b48cd69.jpg" },
+      { jpg: "cd55b0d7f094b1cf1fe063b54416bb04.jpg" },
+      { jpg: "d178aadd4723ef61824cda4784b01181.jpg" },
+      { jpg: "d449fa0f4adf7461e2b01b99a68fcc0b.jpg" },
+      { jpg: "f52d01dc3787797a0efca1cb6ba3f433.jpg" },
+      { jpg: "sitcker1.jpg" },
+      { jpg: "sticker.jpg" }
+    ]
+  },
+
+  /* ----------------------------------------------------------
      The 17 logical scrapbook pages.
      Order note: songs A + B sit side by side (spread 2|3… wait:
      spread map is [2,3],[4,5]… so songs are pages 4|5 together,
@@ -48,6 +127,7 @@ window.BOOK_CONTENT = {
     { n: 4,  key: "songs-a",
       title: "Songs that remind me of you :)",
       side: "side A",
+      intro: "And then there are the songs that i cannot listen to without hearing you",
       songs: [
         { title: "Love Me Not", artist: "Ravyn Lenae",
           img: "song.jpeg",
@@ -63,6 +143,7 @@ window.BOOK_CONTENT = {
     { n: 5,  key: "songs-b",
       title: "Songs that remind me of you :)",
       side: "side B",
+      intro: "…and the ones that still sound like you ♡",
       songs: [
         { title: "K", artist: "CAS",
           img: "song-1.jpeg",
