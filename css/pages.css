@@ -1070,14 +1070,6 @@
   box-shadow: 0 2px 4px rgba(75, 52, 42, .18);
 }
 
-.why__h1 {
-  position: absolute;
-  left: 3%;
-  top: 1%;
-  width: 2.3em;
-  z-index: 3;
-}
-
 .why__h2 {
   position: absolute;
   right: 4%;

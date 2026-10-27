@@ -846,24 +846,13 @@
 .p-why .banner { margin-top: 0; }
 .p-why .why__body { margin-top: .75em; }
 .p-why .why__p {
-  font-size: 1em;
-  line-height: 1.38;
-  margin-bottom: .68em;
+  font-size: 1.12em;
+  line-height: 1.32;
+  margin-bottom: .58em;
 }
 .p-why .why__p:last-child { margin-bottom: 0; }
 .p-why .photo--why { width: 34%; margin-bottom: .4em; }
 
-/* the little hand in the corner, now big enough to notice */
-.why__h1 {
-  left: -.9em;
-  top: auto;
-  bottom: 1.9em;
-  width: 8.1em;
-  max-width: none;
-  min-width: 0 !important;
-  z-index: 5;
-  transform: rotate(-9deg);
-}
 .why__h2 { width: 2.4em; right: 5.5%; bottom: 12%; }
 
 /* the certificate is a big keepsake once it appears, so the deco that
@@ -1170,4 +1159,150 @@
   .p-quiz .quiz { width: 92%; }
   .p-quiz .qopt { width: 96%; font-size: 1.28em; }
   .p-quiz .friend-certificate { width: 98%; }
+}
+
+/* ============================================================
+   LATEST HAND EDITS · signal word highlights, tucked quote placement,
+   lower string-theory artwork, even poem margins, and one continuous
+   letter that starts on page 16 and leaves unused leaves blank.
+   ============================================================ */
+
+/* ---------------- page 10 · highlight STOP · WAIT · GO ---------------- */
+.p-traffic .stamp--traffic { white-space: nowrap; }
+
+.stamp--traffic .stamp__word,
+.tpanel__word {
+  display: inline;
+  padding: .1em .28em .16em;
+  border-radius: .24em;
+  color: var(--ink);
+  font-weight: 800;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.stamp--traffic .stamp__word {
+  margin: 0 .08em;
+  letter-spacing: .12em;
+}
+
+.stamp--traffic .stamp__word--stop,
+.tpanel--stop .tpanel__word {
+  background: linear-gradient(transparent 12%, rgba(232, 167, 171, .96) 12% 88%, transparent 88%);
+}
+
+.stamp--traffic .stamp__word--wait,
+.tpanel--wait .tpanel__word {
+  background: linear-gradient(transparent 12%, rgba(239, 205, 120, .96) 12% 88%, transparent 88%);
+}
+
+.stamp--traffic .stamp__word--go,
+.tpanel--go .tpanel__word {
+  background: linear-gradient(transparent 12%, rgba(184, 206, 167, .96) 12% 88%, transparent 88%);
+}
+
+.tpanel__word {
+  margin-right: .12em;
+  padding: .04em .22em .1em;
+  letter-spacing: .04em;
+}
+
+/* the bold, highlighter-marked note sits between the lights and the coupon */
+.p-traffic .traffic__quote {
+  top: 43.5%;
+  bottom: auto;
+  left: 4%;
+  right: 4%;
+  z-index: 7;
+  text-decoration: none;
+  line-height: 1.14;
+}
+
+.traffic__quote-mark {
+  display: inline-block;
+  max-width: 100%;
+  padding: .22em .7em .27em;
+  background:
+    linear-gradient(180deg, transparent 6%, rgba(255, 230, 158, .96) 6% 94%, transparent 94%),
+    #fff7df;
+  border: 1px solid rgba(178, 58, 72, .32);
+  border-radius: .35em;
+  box-shadow: 1.5px 2px 0 rgba(75, 52, 42, .16);
+  color: var(--cherry);
+  font-size: 1.05em;
+  font-weight: 600;
+  transform: rotate(-.5deg);
+}
+
+.traffic__quote-mark strong { font-weight: 800; }
+
+/* give the moved quote a clear band of its own above the envelope */
+.coupon-pocket { top: 54.5%; }
+.p-traffic .flying-heart { bottom: 42%; }
+
+/* ---------------- page 11 · belief and hands lower; title unmoved ---------------- */
+.p-string .string__belief,
+.p-string .hands--upload {
+  top: .9em;
+}
+
+/* ---------------- page 13 · every stanza starts on the same margin ---------------- */
+.p-poem .poem__stanza {
+  margin-left: 0;
+  padding-left: 0;
+  text-indent: 0;
+}
+
+.p-poem .poem__stanza:nth-child(3n) {
+  margin-left: 0;
+  transform: rotate(-.5deg);
+}
+
+/* ---------------- pages 16–26 · one continuous flowing letter ---------------- */
+.p-letter--continuation .letter__body--written { overflow: hidden; }
+
+.letter__flow {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.letter__flow .letter__prose {
+  position: absolute;
+  left: 3.1em;
+  right: 1.15em;
+  margin: .15em 0 .4em;
+  font-size: 1.42em;
+  line-height: 1.76;
+}
+
+.letter__flow .letter__lead,
+.letter__flow .letter__paragraph {
+  margin: 0;
+  text-indent: .7em;
+}
+
+.letter__flow .letter__lead {
+  font-size: 1em;
+  font-weight: 700;
+  line-height: inherit;
+  color: var(--cherry);
+}
+
+.letter__flow .letter__sig--written {
+  margin: .45em 0 .5em;
+  text-align: right;
+}
+
+@media (max-width: 767px) {
+  .p-traffic .traffic__quote { top: 43%; }
+  .traffic__quote-mark { font-size: .96em; }
+  .coupon-pocket { top: 53%; }
+  .letter__flow .letter__prose {
+    left: 2.8em;
+    right: .6em;
+    font-size: 1.2em;
+    line-height: 1.9;
+  }
 }
