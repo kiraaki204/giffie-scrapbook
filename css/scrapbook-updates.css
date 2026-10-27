@@ -1349,3 +1349,36 @@
    with a lower floor: in short windows the writing must still fit on the
    ruled leaves that exist instead of running off the last one */
 .p-letter { font-size: clamp(4.2px, 2.3cqh, 18px); }
+
+/* ============================================================
+   page 26 · the big kitty pasted over the empty ruled space
+   after the letter's sign-off. pages.js measures the free space
+   and sets an explicit size; these rules are the fallback look.
+   ============================================================ */
+.letter__kitty-end {
+  position: absolute;
+  left: 50%;
+  bottom: 3%;
+  width: 62%;
+  height: auto;
+  max-height: 46%;
+  z-index: 2;                               /* above the rules, under the folio stamp */
+  transform: translateX(-50%) rotate(-3deg);
+  transform-origin: 50% 100%;
+  filter: drop-shadow(2px 5px 6px rgba(85, 51, 40, .32));
+}
+
+.letter__kitty-end.wiggle {
+  animation: letter-kitty-wiggle .5s ease;
+}
+
+@keyframes letter-kitty-wiggle {
+  0%, 100% { transform: translateX(-50%) rotate(-3deg) scale(1); }
+  25%      { transform: translateX(-50%) rotate(-11deg) scale(1.06); }
+  50%      { transform: translateX(-50%) rotate(6deg) scale(1.06); }
+  75%      { transform: translateX(-50%) rotate(-5deg) scale(1.03); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .letter__kitty-end.wiggle { animation: none; }
+}

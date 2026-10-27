@@ -1480,6 +1480,38 @@ window.Pages = (() => {
       window.addEventListener("resize", alignToRules);
     }
 
+    /* the final letter leaf (page 26): paste a big kitty over the
+       empty ruled space below the sign-off. Its size is measured from
+       the real end of the writing, so it can never cover the words. */
+    if (part === LETTER_PARTS - 1) {
+      const kitty = sticker("stk-kitty.png", "letter__kitty-end");
+      kitty.alt = "a little kitty sticker keeping the last letter page company";
+      body.append(kitty);
+
+      const placeKitty = () => {
+        const flowBox = flow.getBoundingClientRect();
+        if (!flowBox.height) return;
+        const free = flowBox.bottom - prose.getBoundingClientRect().bottom;
+        const h = Math.min(Math.max(free - 12, 0), flowBox.height * 0.52);
+        if (h < 56) { kitty.style.display = "none"; return; }
+        kitty.style.display = "";
+        kitty.style.maxHeight = "none";
+        kitty.style.height = Math.round(h) + "px";
+        kitty.style.width = "auto";
+        /* never stretch wider than the leaf itself */
+        if (kitty.getBoundingClientRect().width > flow.clientWidth * 0.84) {
+          kitty.style.height = "auto";
+          kitty.style.width = Math.round(flow.clientWidth * 0.84) + "px";
+        }
+      };
+      requestAnimationFrame(placeKitty);
+      if (window.ResizeObserver) new ResizeObserver(placeKitty).observe(flow);
+      window.addEventListener("load", placeKitty);
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(placeKitty).catch(() => {});
+      }
+    }
+
     return s;
   }
 

@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="css/fortune.css">
   <link rel="stylesheet" href="css/stickers.css">
   <link rel="stylesheet" href="css/scrapbook-updates.css">
+  <link rel="stylesheet" href="css/music.css">
 </head>
 <body>
 
@@ -159,10 +160,35 @@
     </div>
   </div>
 
+  <!-- ============================ background music ============================ -->
+  <!-- one persistent track for the whole visit; music.js handles autoplay,
+       the first-gesture fallback and the mute preference -->
+  <audio id="bg-music" src="assets/background-musicc.mp3" loop preload="auto"></audio>
+  <button type="button" id="music-toggle" class="music-btn is-muted" hidden
+          aria-label="Turn background music on" aria-pressed="false">
+    <span class="music-btn__tape" aria-hidden="true"></span>
+    <svg class="music-btn__icon music-btn__icon--sound" viewBox="0 0 24 24"
+         fill="none" aria-hidden="true">
+      <path d="M4 9.6v4.8h3.6L12 18.4V5.6L7.6 9.6H4z" fill="currentColor"/>
+      <path d="M15.2 9.4a3.8 3.8 0 0 1 0 5.2" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M17.6 7.2a7 7 0 0 1 0 9.6" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" opacity=".6"/>
+    </svg>
+    <svg class="music-btn__icon music-btn__icon--mute" viewBox="0 0 24 24"
+         fill="none" aria-hidden="true">
+      <path d="M4 9.6v4.8h3.6L12 18.4V5.6L7.6 9.6H4z" fill="currentColor"/>
+      <path d="M15.8 9.8l4.6 4.6M20.4 9.8l-4.6 4.6" stroke="currentColor"
+            stroke-width="1.9" stroke-linecap="round"/>
+    </svg>
+    <span class="music-btn__tag">music</span>
+  </button>
+
   <script src="js/content.js"></script>
   <script src="js/fortune.js"></script>
   <script src="js/pages.js"></script>
   <script src="js/book.js"></script>
+  <script src="js/music.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

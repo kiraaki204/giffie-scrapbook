@@ -1,0 +1,129 @@
+/* ============================================================
+   music.css · the little background-music toggle
+   cream paper pill, cherry ink, washi strip — pasted into the
+   corner of every scene like the rest of the ephemera
+   ============================================================ */
+
+.music-btn {
+  position: fixed;
+  left: max(16px, env(safe-area-inset-left));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 70;                 /* above both scenes + paper grain, below the rotate modal */
+
+  display: inline-flex;
+  align-items: center;
+  gap: .42em;
+  min-height: 44px;            /* comfortable touch target */
+  padding: .42em .95em .42em .62em;
+
+  border-radius: 999px;
+  border: 1.5px solid rgba(178, 58, 72, .55);
+  background:
+    linear-gradient(165deg, var(--ivory) 0%, var(--cream) 68%, var(--paper-deep) 100%);
+  color: var(--cherry);
+  box-shadow:
+    0 4px 12px rgba(75, 52, 42, .28),
+    inset 0 1px 0 rgba(255, 255, 255, .65);
+
+  transform: rotate(-2.5deg);
+  transition: transform .25s ease, box-shadow .25s ease, opacity .3s ease;
+}
+
+.music-btn:hover {
+  transform: rotate(0deg) translateY(-2px);
+  box-shadow:
+    0 7px 17px rgba(75, 52, 42, .33),
+    inset 0 1px 0 rgba(255, 255, 255, .65);
+}
+
+.music-btn:active {
+  transform: rotate(0deg) scale(.96);
+}
+
+.music-btn:focus-visible {
+  outline: 2px dashed var(--cherry);
+  outline-offset: 4px;
+}
+
+/* little strip of blush washi tape holding the pill down */
+.music-btn__tape {
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  width: 44px;
+  height: 13px;
+  transform: translateX(-50%) rotate(2deg);
+  background: rgba(236, 197, 196, .82);
+  border-left: 1px dashed rgba(110, 84, 62, .35);
+  border-right: 1px dashed rgba(110, 84, 62, .35);
+  box-shadow: 0 1px 2px rgba(75, 52, 42, .18);
+  pointer-events: none;
+}
+
+.music-btn__icon {
+  width: 1.5em;
+  height: 1.5em;
+  flex: none;
+}
+
+.music-btn__tag {
+  font-family: var(--font-hand);
+  font-size: 1.28em;
+  font-weight: 600;
+  letter-spacing: .03em;
+  color: var(--rose-dark);
+  line-height: 1;
+}
+
+/* swap the two little speaker drawings per state */
+.music-btn__icon--mute { display: none; }
+.music-btn.is-muted .music-btn__icon--sound { display: none; }
+.music-btn.is-muted .music-btn__icon--mute { display: block; }
+.music-btn.is-muted .music-btn__tag { color: var(--ink-soft); }
+
+/* autoplay blocked · waiting for the first tap — a soft heartbeat ring */
+.music-btn.is-waiting {
+  animation: music-heartbeat 2.2s ease-in-out infinite;
+}
+
+@keyframes music-heartbeat {
+  0%, 100% {
+    box-shadow:
+      0 4px 12px rgba(75, 52, 42, .28),
+      0 0 0 0 rgba(178, 58, 72, .35),
+      inset 0 1px 0 rgba(255, 255, 255, .65);
+  }
+  50% {
+    box-shadow:
+      0 4px 12px rgba(75, 52, 42, .28),
+      0 0 0 10px rgba(178, 58, 72, 0),
+      inset 0 1px 0 rgba(255, 255, 255, .65);
+  }
+}
+
+/* while the tune plays, the speaker gently sways */
+.music-btn.is-playing .music-btn__icon--sound {
+  animation: music-note-sway 2.6s ease-in-out infinite;
+  transform-origin: 50% 90%;
+}
+
+@keyframes music-note-sway {
+  0%, 100% { transform: rotate(-5deg); }
+  50%      { transform: rotate(6deg); }
+}
+
+/* on the narrowest phones keep just the speaker, still 44px to tap */
+@media (max-width: 420px) {
+  .music-btn { padding: .5em; }
+  .music-btn__tag { display: none; }
+}
+
+/* respect readers who ask for less motion */
+@media (prefers-reduced-motion: reduce) {
+  .music-btn,
+  .music-btn.is-waiting,
+  .music-btn.is-playing .music-btn__icon--sound {
+    animation: none;
+    transition: none;
+  }
+}
