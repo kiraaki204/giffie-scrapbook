@@ -1,7 +1,7 @@
 /* ============================================================
    book.js · Layer B — pagination + 3D leaf page-turn
    Spread map:  0 → [inside front cover | 1]   then
-                s → [2s | 2s+1]  for s = 1…8  (last: 16 | 17)
+                s → [2s | 2s+1]  for s = 1…13 (last: 26 | 27)
    Inside covers are physical surfaces, never numbered pages.
 
    Turn mechanics (physically derived):
@@ -14,13 +14,13 @@
    ============================================================ */
 
 window.Book = (() => {
-  const TOTAL_SPREADS = 9;
-  const TOTAL_PAGES = 17;
   const CONTENT = window.BOOK_CONTENT;
+  const TOTAL_PAGES = CONTENT.pages.length;
+  const TOTAL_SPREADS = Math.ceil((TOTAL_PAGES + 1) / 2);
 
   let spread = 0;
   let single = false;          /* portrait single-page mode */
-  let page = 1;                /* current page in single mode (1…17) */
+  let page = 1;                /* current page in single mode (1…27) */
   let turning = false;
   let cleanupScheduled = false;
 
@@ -290,7 +290,7 @@ window.Book = (() => {
   }
 
   /* page-number navigation: 0 = the unnumbered introduction page,
-     1 = the birthday calendar … 17 = the end. Works in the two-page
+     1 = the birthday calendar … 27 = the end. Works in the two-page
      reader and in single-page (portrait) mode alike. */
   function goToPage(n) {
     n = Math.max(0, Math.min(TOTAL_PAGES, Math.round(Number(n) || 0)));
