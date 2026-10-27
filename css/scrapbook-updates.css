@@ -1,0 +1,689 @@
+/*
+  Scrapbook-specific revisions: a little more readable type, calmer
+  sticker layouts, and the new letter / certificate / coupon pieces.
+  Loaded after the original page styles so these focused tweaks win.
+*/
+
+.scrap {
+  font-size: clamp(6.6px, 2.3cqh, 18px);
+}
+
+.ttl--hand,
+.letter__title,
+.poem__title,
+.friend-certificate__title {
+  text-decoration: underline;
+  text-decoration-style: wavy;
+  text-decoration-color: rgba(178, 58, 72, .42);
+  text-decoration-thickness: 1.4px;
+  text-underline-offset: .16em;
+}
+
+/* ---------------- intro: give the three corner stickers air ---------------- */
+.scrap--intro .intro-p--a.tier-sm {
+  left: 1%;
+  top: 7%;
+  width: 3.4em !important;
+  z-index: 5;
+  transform: rotate(-8deg);
+}
+
+.scrap--intro .intro-p--b.tier-md {
+  right: 1%;
+  top: 42%;
+  width: 3.8em !important;
+  z-index: 5;
+  transform: rotate(7deg);
+}
+
+.scrap--intro .intro-p--c.tier-lg {
+  left: 1%;
+  top: 68%;
+  bottom: auto;
+  width: 3.3em !important;
+  z-index: 5;
+  transform: rotate(-6deg);
+}
+
+/* ---------------- October 2026 calendar ---------------- */
+.cal__birthday-badge {
+  position: relative;
+  width: 100%;
+  height: 3.1em;
+  margin: .05em auto .05em;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.cal__garland,
+.cal__birthday-sticker {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  height: 100%;
+  object-fit: contain;
+  transform: translateX(-50%);
+}
+
+.cal__garland {
+  width: 9.5em;
+  z-index: 1;
+  opacity: .96;
+  transform: translateX(-50%) rotate(-1deg);
+}
+
+.cal__birthday-sticker {
+  top: .15em;
+  width: 3.1em;
+  z-index: 2;
+  transform: translateX(-50%) rotate(2deg);
+}
+
+.p-calendar .cal__frame {
+  margin: .15em auto 0;
+  padding: .65em .8em 1.35em;
+}
+
+.p-calendar .cal__favp {
+  position: absolute;
+  left: -3em;
+  top: -2.15em;
+  width: 4.35em;
+  min-width: 0 !important;
+  max-width: none;
+  transform: rotate(-8deg);
+  z-index: 7;
+  pointer-events: none;
+  filter: drop-shadow(1.5px 2px 2px rgba(85, 51, 40, .32));
+}
+
+.p-calendar .cal__hb { margin-top: .4em; }
+.p-calendar .cal__notes { margin-top: .35em; }
+
+/* ---------------- page 2: the spider and lily ---------------- */
+.enough__spider,
+.enough__lily {
+  position: absolute;
+  z-index: 4;
+  pointer-events: auto;
+}
+
+.enough__spider {
+  left: .5%;
+  top: 2%;
+  width: 2.8em;
+  transform: rotate(-8deg);
+}
+
+.enough__lily {
+  right: 2.2%;
+  bottom: 3%;
+  width: 3.8em;
+  transform: rotate(7deg);
+}
+
+/* ---------------- page 3: closer photos and picked keepsakes ---------------- */
+.sm-p1 { left: 6%; top: 4%; width: 27%; }
+.sm-p2 { right: 6%; top: 4%; width: 27%; }
+.sm-p3 { left: 2.5%; top: 42%; width: 20%; }
+.sm-p4 { right: 2.5%; top: 42%; width: 20%; }
+.sm-p5 { left: 10%; bottom: 2%; width: 27%; }
+.sm-p6 { right: 10%; bottom: 2%; width: 28%; }
+
+.photo__mat {
+  position: relative;
+  overflow: hidden;
+}
+
+.photo__image {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo__ph {
+  position: relative;
+  z-index: 1;
+}
+
+.sm-stk {
+  position: absolute;
+  z-index: 4;
+  pointer-events: auto;
+}
+
+.sm-stk--fingerprint {
+  left: 45%;
+  top: 8%;
+  width: 2.6em;
+  transform: rotate(-8deg);
+}
+
+.sm-stk--stars {
+  left: 1.5%;
+  top: 30%;
+  width: 2.3em;
+  transform: rotate(-8deg);
+}
+
+.sm-stk--planet {
+  right: 1.5%;
+  top: 30%;
+  width: 3.35em;
+  transform: rotate(8deg);
+}
+
+/* ---------------- page 4 and 5: song-page notes ---------------- */
+.songs__next-arrow {
+  position: absolute;
+  left: 63%;
+  top: 65%;
+  width: 3.6em;
+  z-index: 6;
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+
+.p-songs--a .songs__filler {
+  z-index: 5;
+  margin-right: .8em;
+}
+
+.songs__balloon {
+  position: absolute;
+  right: 1.5%;
+  bottom: 2.5%;
+  width: 3.6em;
+  z-index: 4;
+  transform: rotate(5deg);
+}
+
+.p-songs--b .songs__stack { height: 60%; }
+.p-songs--b .scrap__num { left: 4%; right: auto; }
+
+.songs__hug {
+  position: absolute;
+  right: 2.5%;
+  bottom: 3.5%;
+  width: 4.8em;
+  z-index: 4;
+  transform: rotate(-5deg);
+}
+
+/* ---------------- page 6: one visible bouquet ---------------- */
+.little__flower {
+  position: absolute;
+  right: 2.5%;
+  bottom: 2.5%;
+  width: 4.1em;
+  z-index: 4;
+  transform: rotate(5deg);
+}
+
+/* ---------------- page 7: the requested photo-booth stickers ---------------- */
+.pb__deco-sticker {
+  position: absolute;
+  z-index: 4;
+  pointer-events: auto;
+  filter: drop-shadow(1.5px 2.5px 2px rgba(58, 43, 38, .3));
+}
+
+.pb__doodle-sticker {
+  left: 1.5%;
+  top: 15%;
+  width: 3.3em;
+  transform: rotate(-5deg);
+}
+
+.pb__firefly-sticker {
+  right: 1.5%;
+  top: 15%;
+  width: 3.4em;
+  transform: rotate(5deg);
+}
+
+/* ---------------- page 10: a keepsake coupon and a handwritten note ---------------- */
+.p-traffic .lights-btn {
+  top: 17%;
+  width: 20%;
+  height: 47%;
+}
+
+.p-traffic .lights { height: 100%; }
+
+.p-traffic .tpanels {
+  top: 17%;
+  right: 5%;
+  width: 63%;
+  height: 48%;
+}
+
+.p-traffic .tpanel {
+  min-height: 0;
+  padding: .15em .4em;
+}
+
+.hug-coupon {
+  position: absolute;
+  left: 50%;
+  top: 67%;
+  width: 74%;
+  min-height: 5.8em;
+  padding: .55em 1em .72em;
+  transform: translateX(-50%) rotate(-1deg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background:
+    repeating-linear-gradient(135deg, rgba(178, 58, 72, .025) 0 5px, transparent 5px 10px),
+    #fff9ed;
+  border: 1.5px dashed rgba(142, 87, 97, .78);
+  outline: 1px solid rgba(200, 160, 94, .68);
+  outline-offset: -.36em;
+  box-shadow: 0 5px 12px rgba(75, 52, 42, .24);
+  z-index: 3;
+}
+
+.hug-coupon__eyebrow {
+  display: block;
+  margin-bottom: .12em;
+  font-family: var(--type);
+  font-size: .6em;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--rose-deep);
+}
+
+.hug-coupon__main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .55em;
+  line-height: 1;
+}
+
+.hug-coupon__one {
+  font-family: var(--font-display);
+  font-size: 2.4em;
+  font-weight: 700;
+  color: var(--cherry);
+  line-height: .9;
+}
+
+.hug-coupon__offer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .02em;
+}
+
+.hug-coupon__free {
+  font-family: var(--type);
+  font-size: .63em;
+  letter-spacing: .18em;
+  color: var(--rose-dark);
+}
+
+.hug-coupon__words {
+  font-family: var(--font-hand);
+  font-size: 1.4em;
+  font-weight: 600;
+  color: var(--choco);
+  text-decoration: underline wavy rgba(178, 58, 72, .5);
+  text-underline-offset: .12em;
+}
+
+.hug-coupon__redeem {
+  margin-top: .18em;
+  font-family: var(--font-hand);
+  font-size: .88em;
+  color: var(--rose-dark);
+}
+
+.hug-coupon__barcode {
+  position: absolute;
+  right: 1em;
+  bottom: .45em;
+  font-family: var(--type);
+  font-size: .58em;
+  letter-spacing: .08em;
+  color: rgba(75, 52, 42, .72);
+}
+
+.traffic__quote {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  bottom: 1.5%;
+  margin: 0;
+  text-align: center;
+  white-space: pre-line;
+  font-family: var(--font-hand);
+  font-size: 1.18em;
+  font-weight: 600;
+  line-height: 1.02;
+  color: var(--cherry);
+  text-decoration: underline wavy rgba(178, 58, 72, .4);
+  text-underline-offset: .14em;
+  z-index: 3;
+}
+
+/* ---------------- page 11: wrists reach the edges of the paper ---------------- */
+.p-string .hands--upload {
+  width: calc(100% + 3.6em);
+  max-width: none;
+  height: 45%;
+  max-height: 45%;
+  margin: .6em -1.8em 0;
+  object-fit: cover;
+  object-position: center 65%;
+  align-self: center;
+}
+
+/* ---------------- page 13: kitty, then Firefly below it ---------------- */
+.poem__kitty,
+.poem__firefly {
+  position: absolute;
+  z-index: 4;
+}
+
+.poem__kitty {
+  right: 3%;
+  top: 4%;
+  width: 3.5em;
+  transform: rotate(5deg);
+}
+
+.poem__firefly {
+  right: 3.5%;
+  top: 15%;
+  width: 3.8em;
+  transform: rotate(-4deg);
+}
+
+.p-poem .poem__body { padding-right: 4.1em; }
+
+/* ---------------- page 14: answer first, certificate appears beneath ---------------- */
+.p-quiz {
+  padding: 1.25em 1.8em 1.6em;
+  text-align: center;
+}
+
+.p-quiz .ttl--quiz {
+  font-size: 1.85em;
+  text-decoration: underline wavy rgba(178, 58, 72, .46);
+  text-underline-offset: .17em;
+}
+
+.quiz__intro {
+  margin: .1em 0 .45em;
+  font-family: var(--font-hand);
+  font-size: 1.08em;
+  color: var(--ink-soft);
+}
+
+.p-quiz .quiz {
+  width: 78%;
+  margin: .45em auto .4em;
+  padding: .85em 1em .7em;
+  background: linear-gradient(145deg, #fffaf0, #f4e8d3);
+  border: 1.5px dashed rgba(142, 87, 97, .72);
+  border-radius: 10px 3px 10px 3px;
+  box-shadow: 0 5px 11px rgba(75, 52, 42, .22), inset 0 0 0 4px rgba(236, 197, 196, .2);
+  transform: rotate(-.5deg);
+  text-align: center;
+}
+
+.quiz__qmark { top: .02em; right: .22em; font-size: 2.6em; color: rgba(178, 58, 72, .2); }
+
+.quiz__prompt {
+  margin: 0 0 .55em;
+  font-family: var(--font-serif);
+  font-size: .94em;
+  font-style: italic;
+  color: var(--ink-soft);
+}
+
+.p-quiz .quiz__opts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: .4em;
+}
+
+.p-quiz .qopt {
+  min-width: 0;
+  padding: .42em .28em .38em;
+  background: #fbf6ec !important;
+  border: 1px solid rgba(75, 52, 42, .38);
+  border-radius: 6px;
+  box-shadow: 0 2px 0 rgba(75, 52, 42, .2);
+  color: var(--cherry);
+  font-family: var(--font-hand);
+  font-size: 1.08em;
+  line-height: 1.08;
+}
+
+.p-quiz .qopt:hover,
+.p-quiz .qopt:focus-visible {
+  background: #f6e3e0 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 0 rgba(75, 52, 42, .2);
+}
+
+.p-quiz .quiz__fb {
+  min-height: 1.35em;
+  margin: .35em 0 0;
+  font-size: 1.08em;
+  line-height: 1.2;
+}
+
+.p-quiz .quiz__fb[hidden],
+.friend-certificate[hidden] { display: none; }
+
+.friend-certificate {
+  position: relative;
+  width: 70%;
+  min-height: 8.4em;
+  margin: .45em auto 0;
+  padding: .65em 1.05em .6em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background:
+    radial-gradient(120% 100% at 50% 0%, #fffaf0, #f5e8d4 85%);
+  border: 1.5px solid rgba(150, 115, 60, .78);
+  outline: 1px dashed rgba(178, 58, 72, .6);
+  outline-offset: -.45em;
+  border-radius: 7px 2px 8px 2px;
+  box-shadow: 0 5px 13px rgba(75, 52, 42, .23);
+  transform-origin: center top;
+  z-index: 2;
+}
+
+.friend-certificate.is-awarded {
+  animation: certificate-pop .58s cubic-bezier(.18, .83, .25, 1.12) both;
+}
+
+@keyframes certificate-pop {
+  0% { opacity: 0; transform: translateY(.7em) scale(.88) rotate(2deg); }
+  68% { opacity: 1; transform: translateY(-.15em) scale(1.02) rotate(-.5deg); }
+  100% { opacity: 1; transform: none; }
+}
+
+.friend-certificate__seal {
+  position: absolute;
+  top: .35em;
+  right: .7em;
+  font-size: 1.5em;
+  color: var(--cherry);
+}
+
+.friend-certificate__eyebrow {
+  font-family: var(--type);
+  font-size: .58em;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: var(--rose-dark);
+}
+
+.friend-certificate__title {
+  margin: .14em 0 .12em;
+  font-family: var(--font-display);
+  font-size: 1.12em;
+  font-style: italic;
+  color: var(--choco);
+}
+
+.friend-certificate__name {
+  margin: .08em 0;
+  font-family: var(--font-hand);
+  font-size: 1.15em;
+  color: var(--cherry);
+}
+
+.friend-certificate__copy {
+  margin: .08em 0 .25em;
+  max-width: 34em;
+  font-family: var(--font-serif);
+  font-size: .78em;
+  font-style: italic;
+  line-height: 1.23;
+  color: var(--ink);
+}
+
+.friend-certificate__ribbon {
+  display: inline-block;
+  padding: .2em 1em .24em;
+  color: #fff8ea;
+  background: linear-gradient(180deg, #c15563, #a53343);
+  clip-path: polygon(0 0, 100% 0, 94% 50%, 100% 100%, 0 100%, 6% 50%);
+  font-family: var(--font-hand);
+  font-size: .9em;
+  font-weight: 600;
+}
+
+.friend-certificate__signature {
+  margin-top: .15em;
+  font-family: var(--font-hand);
+  font-size: .78em;
+  color: var(--ink-soft);
+}
+
+.quiz__pony,
+.quiz__pair,
+.quiz__squiggle,
+.quiz__pixel-kitty {
+  position: absolute;
+  z-index: 4;
+}
+
+.quiz__pony { right: 2%; top: 5%; width: 4.2em; transform: rotate(7deg); }
+.quiz__pair { left: 2%; top: 17%; width: 4.5em; transform: rotate(-5deg); }
+.quiz__squiggle { right: 2.2%; top: 42%; width: 3.4em; transform: rotate(12deg); }
+.quiz__pixel-kitty { left: 2.2%; bottom: 7%; width: 3.7em; transform: rotate(-6deg); }
+.p-quiz .scrap__num { left: auto; right: 4%; }
+
+/* ---------------- page 15: bigger cat and bean in the open margins ---------------- */
+.p-dots .dotwrap {
+  width: 91%;
+  margin: .2em auto 0;
+}
+
+.dots__cat,
+.dots__bean {
+  position: absolute;
+  z-index: 4;
+}
+
+.dots__cat {
+  right: 2%;
+  bottom: 13%;
+  width: 4.4em;
+  transform: rotate(6deg);
+}
+
+.dots__bean {
+  left: 2%;
+  bottom: 6%;
+  width: 3.8em;
+  transform: rotate(-7deg);
+}
+
+.p-dots .scrap__num { left: auto; right: 4%; }
+
+/* ---------------- pages 16–26: matching ruled letter leaves ---------------- */
+.p-letter--continuation .letter__head { align-items: baseline; }
+.p-letter--continuation .letter__title { font-size: 1.48em; }
+.p-letter--continuation .letter__body--written {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: .55em;
+}
+
+.p-letter--continuation .letter__lines {
+  position: absolute;
+  inset: 0;
+  min-height: 0;
+  margin: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0 calc(1.62em - 1px),
+    rgba(75, 52, 42, .27) calc(1.62em - 1px) 1.62em);
+}
+
+.p-letter--continuation .letter__lines::before { left: 2.3em; }
+
+.letter__prose {
+  position: relative;
+  z-index: 1;
+  margin: .15em 1.15em .4em 3.1em;
+  font-family: var(--font-hand);
+  font-size: 1.13em;
+  line-height: 1.62;
+  color: var(--ink);
+}
+
+.letter__lead {
+  margin: 0 0 .55em;
+  font-family: var(--font-hand);
+  font-size: 1.06em;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--cherry);
+  text-decoration: underline wavy rgba(178, 58, 72, .5);
+  text-underline-offset: .14em;
+}
+
+.letter__paragraph {
+  margin: 0 0 .7em;
+  text-indent: .7em;
+}
+
+.letter__paragraph:last-child { margin-bottom: 0; }
+.letter__sig--written { flex: none; margin: .2em 1.3em .1em 0; }
+
+@media (max-width: 767px) {
+  .cal__birthday-badge { height: 2.8em; }
+  .cal__garland { width: 8.3em; }
+  .cal__birthday-sticker { width: 2.8em; }
+  .hug-coupon { width: 80%; top: 66%; }
+  .hug-coupon__words { font-size: 1.24em; }
+  .p-quiz .quiz { width: 82%; }
+  .p-quiz .qopt { font-size: 1em; }
+  .friend-certificate { width: 74%; }
+  .quiz__pony { width: 3.6em; }
+  .quiz__pair { width: 3.9em; }
+  .quiz__squiggle { width: 2.9em; }
+  .quiz__pixel-kitty { width: 3.25em; }
+  .p-letter--continuation .letter__title { font-size: 1.32em; }
+  .p-letter--continuation .letter__date { font-size: .62em; }
+  .letter__prose { margin-left: 2.8em; margin-right: .6em; font-size: 1.05em; }
+}

@@ -58,7 +58,7 @@ window.BOOK_CONTENT = {
      ---------------------------------------------------------- */
   stickers: {
     named: {
-      /* the "favorite person" label — it belongs ON October 28 */
+      /* the "favorite person" label — its arrow points to October 28 */
       favp:  { png: "favp.png",          fallback: "favp.png" },
       bday:  { png: "bday.png",          fallback: "bday.png" },
       bday1: { png: "bday1.png",         fallback: "bday1.png" },
@@ -95,15 +95,68 @@ window.BOOK_CONTENT = {
   },
 
   /* ----------------------------------------------------------
-     The 17 logical scrapbook pages.
-     Order note: songs A + B sit side by side (spread 2|3… wait:
-     spread map is [2,3],[4,5]… so songs are pages 4|5 together,
-     and the letter comes just before the finale.
+     The 10 letter leaves after page 16. The first eight have the
+     current letter; the final two stay open for more writing later.
+     ---------------------------------------------------------- */
+  letterPages: [
+    {
+      lead: "writing more than 8 pages for you because someone was upset bout it before :O:",
+      paragraphs: [
+        "so let me start off by saying that HAPPY BIRTHDAY, first of all! even tho we are the same age now, u will always stay younger than me. im happy that i am able to wish you this birthday as well, and ill remain grateful for every birthday that i get to wish you later (i hope i stay alive till your 95th birthday).",
+        "ill always remain grateful to ALLAH pak for making u a part of my life. you have taught me alot, from small to big things. your company has always brought out a better side of me, and i think knowing you has done more for me than i could ever properly put into words."
+      ]
+    },
+    {
+      paragraphs: [
+        "Thankyou so much for not letting me go and for continuing to make me a part of your life as well. and even tho ive said it alot, ill be saying it again: thankyou so much for doing every possible good for me that u could have done up to your limits.",
+        "thankyou so much for always trying your best for the people around you who are close to you and for holding onto them. thankyou so much for being the person through which i learned to deal with my feelings."
+      ]
+    },
+    {
+      paragraphs: [
+        "and ill remain grateful that even in the bad times you were the person my bad times went with. even when we were apart, a part of me was still carrying everything i had learned from knowing you. the distance didnt erase what you meant to me, and the difficult parts back then didnt make the good parts any less real."
+      ]
+    },
+    {
+      paragraphs: [
+        "everytime i still remember the memories we made—whether it was the time of assembly before the lecture when we used to come early and play badminton, or us standing behind each other in assembly; whether it was t. maria ka period when we didnt used to talk in her presence, or t. maham ka period when we used to go crazy tgt; whether it was breaktime when we used to go to pookie, or chuti time when we used to always stand and walk together or sit in that specific window. ill always treasure all of these memories forever. a part of my heart is filled with them and ill never forget them, because they mean sm to me and they are the only asset of us that is left with me now..."
+      ]
+    },
+    {
+      paragraphs: [
+        "whenever u get tired or bored or annoyed or struggling with anything, always remember that ill be there for you whenever i can. may ALLAH always remind you that your worth is never measured by how much u can accomplish in a day. may Allah reward you for every little effort you make on the days when you have absolutely nothing left to give yourself, and may you come home from college everyday feeling proud of yourself instead of simply relieved that its over."
+      ]
+    },
+    {
+      paragraphs: [
+        "may Allah pak help you with every tiniest inconvenience in your life and may Allah always surround you with the kind of people who never make you feel that you have to become smaller to be loved; people who celebrate the good in you without competing with it, correct you without humiliating you, and stay honest with you even when being honest becomes difficult for them.",
+        "may ALLAH take especially gentle care of you on the days you tell everyone you are doing fine when u are not, and may he know exactly what your heart needs on the days you dont even know how to ask for it."
+      ]
+    },
+    {
+      paragraphs: [
+        "may relief come to you before you have to explain your pain to anyone. may Allah make you a part of so many good moments that you forget to count the bad ones. may ALLAH always support you in taking your decisions and remaining firm on them.",
+        "may Allah keep goodness between us even when life gets hard or busy and the world takes us in different directions. may we always have the maturity to understand that growing doesnt have to mean growing apart."
+      ]
+    },
+    {
+      paragraphs: [
+        "and LASTLY may ALLAH turn your every bad day of college ahead of you into not just a good one but the best one. AMEEN.",
+        "ALLAH pak knows you in ways i dont, so everytime i think of you i always try to think of you in the way ALLAH pak does."
+      ]
+    },
+    { paragraphs: [] },
+    { paragraphs: [] }
+  ],
+
+  /* ----------------------------------------------------------
+     The scrapbook's 27 logical pages. The 10 letter leaves follow
+     page 16; the finale now lives on page 27.
      ---------------------------------------------------------- */
   pages: [
     { n: 1,  key: "calendar",
       title: "October",
-      year: "2024",
+      year: "2026",
       highlight: 28,
       note1: "A day worth celebrating ♡",
       note2: "A little calendar for the day the world got you." },
@@ -126,7 +179,15 @@ window.BOOK_CONTENT = {
     { n: 3,  key: "soulmate",
       title: "soulmate",
       hint: "[ soo-l-meyt ] n.",
-      definition: "The person destiny has chose for you. The missing piece that always puts up a smile on your face. A connection of minds and an unconditional, never-ending and effortless love" },
+      definition: "The person destiny has chose for you. The missing piece that always puts up a smile on your face. A connection of minds and an unconditional, never-ending and effortless love",
+      photoAssets: [
+        "IMG-20250227-WA0011.jpg",
+        "IMG-20250227-WA0032.jpg",
+        "IMG-20250227-WA0009.jpg",
+        "IMG-20250227-WA0034.jpg",
+        "IMG-20250227-WA0023.jpg",
+        "IMG-20250227-WA0035.jpg"
+      ] },
 
     { n: 4,  key: "songs-a",
       title: "Songs that remind me of you :)",
@@ -191,6 +252,11 @@ window.BOOK_CONTENT = {
       stripNo: "strip no. 01",
       date: "28 · 10",
       photos: ["pose 1 · be silly", "pose 2 · be soft", "pose 3 · be us"],
+      photoAssets: [
+        "IMG-20250227-WA0022.jpg",
+        "IMG-20250227-WA0031.jpg",
+        "IMG-20250227-WA0036.jpg"
+      ],
       caption: "three frames, one night",
       tapHint: "tap to flip ♡",
       addHint: "+ add a photo",
@@ -204,10 +270,11 @@ window.BOOK_CONTENT = {
       ticketSub: "a little night, kept forever",
       note: "the booth closes, the pictures stay ♡" },
 
-    { n: 8,  key: "best-friend",
+    { n: 8,  key: "dearest-friend",
       title: "Why you're my dearest friend ♡",
-      photo1: "our photo goes here",
-      photo2: "our photo goes here",
+      photo1: "one of my favourite little memories ♡",
+      photo2: "a moment worth keeping ♡",
+      photoAsset: "IMG-20250227-WA0035.jpg",
       paragraphs: [
         "there are many reasons why you're my dearest friend, and somehow i'm supposed to fit them all on one page, unfortunately. so let me start off by telling u reason number one, which would probably be the connection that i've always felt with you.",
         "i do think that whenever someone ends up becoming close to you, they leave a print on your soul that always stays with you, and i'm so grateful that YOU were the person who left a print on my soul. the person i am now, sometimes i wonder how many little parts of the person i am today exist because of something you said, something you did, or something you helped me understand without even realising you were teaching me anything.",
@@ -300,11 +367,11 @@ window.BOOK_CONTENT = {
 
     { n: 14, key: "quiz",
       title: "Do you love me?",
-      options: ["Yes", "1", "2"],
+      options: ["yes, always ♡", "a million times over", "obviously!"],
       feedback: [
-        "correct ♡ as expected of my best friend",
-        "correct ♡ knew you'd say that",
-        "correct ♡ option of the year"
+        "correct ♡ I knew it",
+        "correct ♡ there's no other answer",
+        "correct ♡ you're my favourite person"
       ] },
 
     { n: 15, key: "dots",
@@ -317,7 +384,18 @@ window.BOOK_CONTENT = {
       hint: "the real letter goes here",
       signature: "— your name here" },
 
-    { n: 17, key: "the-end",
+    { n: 17, key: "letter-continuation", part: 0 },
+    { n: 18, key: "letter-continuation", part: 1 },
+    { n: 19, key: "letter-continuation", part: 2 },
+    { n: 20, key: "letter-continuation", part: 3 },
+    { n: 21, key: "letter-continuation", part: 4 },
+    { n: 22, key: "letter-continuation", part: 5 },
+    { n: 23, key: "letter-continuation", part: 6 },
+    { n: 24, key: "letter-continuation", part: 7 },
+    { n: 25, key: "letter-continuation", part: 8 },
+    { n: 26, key: "letter-continuation", part: 9 },
+
+    { n: 27, key: "the-end",
       title: "THE END",
       sub: "…for the book, not for us",
       credit: "by mie ♡",
@@ -328,7 +406,7 @@ window.BOOK_CONTENT = {
         "but you? you're the whole story. ♡"
       ],
       button: "one more thing ♡",
-      reveal: "happy birthday, my best friend. i love you more than a scrapbook could ever say.",
+      reveal: "happy birthday, my dearest friend. i love you more than a scrapbook could ever say.",
       again: "read it again from the start ♡" }
   ]
 };
