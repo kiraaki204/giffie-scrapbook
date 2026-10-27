@@ -95,35 +95,71 @@ window.BOOK_CONTENT = {
   },
 
   /* ----------------------------------------------------------
-     The letter starts on page 16 and flows continuously through
-     pages 17–26. Add more paragraphs to `paragraphs` whenever
-     you like; the ruled leaves after the writing stay blank.
+     The letter starts on page 16 and flows continuously over the
+     ruled leaves that follow it — one long piece of writing,
+     page after page, so nothing has to be squeezed.
+     Edit ONLY the strings below; page breaks happen by themselves.
      ---------------------------------------------------------- */
   letter: {
     title: "for later, from me",
     lead: "writing more than 8 pages for you because someone was upset bout it before :O:",
     paragraphs: [
-      "so let me start off by saying that HAPPY BIRTHDAY, first of all! even tho we are the same age now, u will always stay younger than me.",
-      "im happy that i am able to wish you this birthday as well, and ill remain grateful for every birthday that i get to wish you later (i hope i stay alive till your 95th birthday). ill always remain grateful to ALLAH pak for making u a part of my life. you have taught me alot, from small to big things.",
-      "your company has always brought out a better side of me, and i think knowing you has done more for me than i could ever properly put into words. Thankyou so much for not letting me go and for continuing to make me a part of your life as well.",
-      "and even tho ive said it alot, ill be saying it again: thankyou so much for doing every possible good for me that u could have done up to your limits.",
-      "thankyou so much for always trying your best for the people around you who are close to you and for holding onto them. thankyou so much for being the person through which i learned to deal with my feelings.",
-      "and ill remain grateful that even in the bad times you were the person my bad times went with. even when we were apart, a part of me was still carrying everything i had learned from knowing you.",
-      "the distance didnt erase what you meant to me, and the difficult parts back then didnt make the good parts any less real.",
-      "everytime i still remember the memories we made—whether it was the time of assembly before the lecture when we used to come early and play badminton, or us standing behind each other in assembly; whether it was t.",
-      "maria ka period when we didnt used to talk in her presence, or t.",
-      "maham ka period when we used to go crazy tgt; whether it was breaktime when we used to go to pookie, or chuti time when we used to always stand and walk together or sit in that specific window. ill always treasure all of these memories forever.",
-      "a part of my heart is filled with them and ill never forget them, because they mean sm to me and they are the only asset of us that is left with me now...",
-      "whenever u get tired or bored or annoyed or struggling with anything, always remember that ill be there for you whenever i can.",
-      "may ALLAH always remind you that your worth is never measured by how much u can accomplish in a day.",
-      "may Allah reward you for every little effort you make on the days when you have absolutely nothing left to give yourself, and may you come home from college everyday feeling proud of yourself instead of simply relieved that its over.",
-      "may Allah pak help you with every tiniest inconvenience in your life and may Allah always surround you with the kind of people who never make you feel that you have to become smaller to be loved; people who celebrate the good in you without competing with it, correct you without humiliating you, and stay honest with you even when being honest becomes difficult for them.",
-      "may ALLAH take especially gentle care of you on the days you tell everyone you are doing fine when u are not, and may he know exactly what your heart needs on the days you dont even know how to ask for it.",
-      "may relief come to you before you have to explain your pain to anyone. may Allah make you a part of so many good moments that you forget to count the bad ones. may ALLAH always support you in taking your decisions and remaining firm on them.",
-      "may Allah keep goodness between us even when life gets hard or busy and the world takes us in different directions. may we always have the maturity to understand that growing doesnt have to mean growing apart.",
-      "and LASTLY may ALLAH turn your every bad day of college ahead of you into not just a good one but the best one. AMEEN. ALLAH pak knows you in ways i dont, so everytime i think of you i always try to think of you in the way ALLAH pak does."
+      "so let me start off by saying that HAPPY BIRTHDAY first of all even tho we are same age now but u will always stay younger than me ♡",
+      "im happy that i am able to wish you this birthday as well and ill remain grateful for ervery birthday that i will got to wish you later ( i hope i stay alive till you 95th birthday )",
+      "ill always remain grateful for ALLAH pak for making u a part of my life you have taught me alot from small to the big things",
+      "Your company has always brought out a better side of me and i think knowing you has done more for me than I could ever properly put into words",
+      "Thankyou so much for not letting me go and for continuing to make me a part of you life as well and even tho ive said it alot ill be saying it again Thankyou so much for doing every possible good for me that u could have done upto your limits",
+      "thankyou so much for always trying your best for the people around you who are close to you and for holding onto them",
+      "thankyou so much for being the person through which i learned to deal with my feelings",
+      "and and ill remain grateful that even in the bad times you were the person my bad times went with because even when we were apart a part of me was still carrying everything i had learned from knowing you",
+      "the distance didnt erase what you meant to me and the difficult parts back then didnt make the good parts any less real",
+      "everytime i still remember the memories we made wether it was the time of assembly before the lecture when we used to come early and play badminton or wether it was us standing behind eachother in assembly wether it was t.maria ka period when we didnt used to talk in her presence or t maham ka period when we used to go crazy tgt wether it was breaktime when we used to go to pookie or chuti time when we used to always stand and walk together or sit in that specific window",
+      "ill always treasure all of these memories forever a part of my heart is filled with them and ill never forget them because they mean sm to me and they are the only asset of us that is left with me now...",
+      "ill always remember those specific personnel memories u created for me",
+      "i still remember the time u came to school at the defence day in september in 9th class to see me just because i told u to come and u stayed for me that day even when u could have taken a chuti that day",
+      "ill always remember when u bunked the english lecture to come see me at the practice or when you stayed with me late at offtime for me even when abbaji came to get you ( im sry that guard scolded you :( ... )",
+      "ill always remember when u cooked sphegetti for me for the first time",
+      "ill always remember when u gave me the longest hug of the century",
+      "ill always remember how we started wearing the coats in school at the same time",
+      "ill always remember that THE LAZY IFRA made a handmade gift for me everytime on my bday",
+      "ill always remember that we werent used to being grossed out by eachother",
+      "ill always remember that mehendi i put on your hands using pen or the drawing u made for me from rose petals at the back seat of the class or the time i actually wore the school shalwar backwards :) and u waited for me outside washroom",
+      "ill always remember u tying my shoe lases for me everytime",
+      "ill always remember everytime u were with me when i was on my periods",
+      "ill always remember u giving me tiny handmade things wether it was that tissue letter or those handmade butterflies or that paper cat candy",
+      "ill always keep these things closest to my heart",
+      "whenever u get tired or bored or annoyed or sturggling in anything always remmeber that ill be there for you whenever i could",
+      "may ALLAH always remind you that worth is never mentioned by how much can u accomplish in a day",
+      "may Allah reward you for every little effort you make on the days when you have absolutely nothing left to give yourself and may you come home from college everyday feeling proud of yourself instead of being simply relieved that its over",
+      "may Allah pak help you in every tiniest inconvenience in your life and may Allah always surround you with the kind of people who never make you feel that you have to become smaller to be loved and people who celebrate the good in you without competing with it and correct you without humiliating you, and stay honest with you even when being honest becomes difficult for them",
+      "may ALLAH take especially gentle care of you on the days you tell everyone you are doing fine when u are not and may he know exactly what your heart needs on the days you don't even know how to ask for it",
+      "and may relief comesto you before you have to explain your pain to anyone",
+      "may Allah make you a part of so many good moments that you forget to count the bad ones",
+      "and may ALLAH always supports you in taking your decisions and reaming firm on them",
+      "may Allah keep goodness between us even when life gets hard or busy and the world takes us in different directions",
+      "may we always have the maturity to understand that growing doesnt have to mean growing apart",
+      "and LASTLY may ALLAH converts your every bad day of college ahead of you into not just a good one but the best one AMEEN",
+      "ALLAH pak knows you in ways i dont so everytime i think of you i always trying thinking of you in the way ALLAH pak does .",
+      "please remember that no matter what hardship u will be going through in the future ill be always praying for u everytime my heart remembers my most dearest and most closest friend",
+      "u are allowed to share anything with me and i promise that ill always try to give u the best advice i could",
+      "and remember that u dont have to try your best while talking with me ur all responsibilities on me are forgiven :O",
+      "ill always try to never make you uncomfortable ever again and get a rest OKAY get a deeeeeeepp wala rest",
+      "i hope apki long wali trip sbse achi jaye apki qawali night bhi boht achi jaye apka ane wala har event SBSEEEEEEE ZZADAAAA acha jaye",
+      "i hope u are always surrounded by people who loves u and treasures you i hope you leaves a imprint on their souls as well cuz in the end how can someone be as kind and worthy as you not be remebered by anyone",
+      "THANKYOU for teaching me how to be kind and merciful to the people around me and thankyou for staying with me until the time it was possible thankyou for getting to know me thankyou for loving me thankyou for always trying to do the best for me",
+      "OH GAUDD it wasnt supposed to be emotional at all i swr i wanted to write a happy letter for you idk bout u but my eyes almost fill with tears ervytime i remember you deeply everytime i think bout my old GIFFIE that loved me endlessly and i just wish the best for you",
+      "ALL THE BEST THAT COULD EVER EXIST FOR YOU I HOPE EVERY SINGLE OF THAT BEST COMES TO YOU MAY YOU NEVER EVER GO THROUGH ANY KIND OF PAIN EVER EVER AGAIN and"
     ],
-    signature: "— always, mie ♡"
+    /* the four lines that had to be said out loud — rendered a
+       little bigger, in the middle of the page */
+    shout: [
+      "I JUST LOVE YOU SO MUCH GIFFIE ♡",
+      "I LOVE YOU SO MUCH IFRA ♡",
+      "I LOVE YOU SO MUCH mera bacha ♡",
+      "I LOVE YOU SO SO SO SO MUCH my cp ♡"
+    ],
+    signOff: "i could write everything i ever called you but i shouldnt..",
+    signature: "Your MIE ♡"
   },
   /* ----------------------------------------------------------
      The scrapbook's 27 logical pages (plus the unnumbered intro on
