@@ -86,6 +86,21 @@ window.Pages = (() => {
     return wiggleOnTap(im);
   }
 
+  const REAL_STICKERS = [
+    "03087c3c7ec42ea017e125932366d4dc.jpg", "07898c8fabd8c50047af31afffd9bb60.jpg",
+    "1775ae2a8718a489721decd4fd3f2d83.jpg", "1ef728e7cd81d64903bddc5330c5d48c.jpg",
+    "2d49f0eb767593435c9ff56df489bec0.jpg", "2e5b0227aa34495e8744b30146b1fb78.jpg",
+    "310b90af033c68568b2347fbf88c6de3.jpg", "312987af0984782fafad4243b761421a.jpg",
+    "44d26b2ee2704fe8c273e83730c1ec0e.jpg", "48cd4401bdfa0ebe4c80fdeaffee11b2.jpg",
+    "5ab2e47e02d3dae411549c231aafa337.jpg", "6711d24d4aa3a7a2ccab4701ec83b370.jpg",
+    "80170864e0b942580d87b520e9647670.jpg", "93531682576dbb0ff07578ae32a43c69.jpg",
+    "976d5c7bb460d587ae0580db19e69b65.jpg", "9a30371b5059345faf779a2172b7f64b.jpg",
+    "ab77a76888df77924f4b18b90a4886a5.jpg", "bc26229d8dd43fddb14b1963e1f32f5a.jpg",
+    "bd22102ef58d3dae000ce5e58b48cd69.jpg", "cd55b0d7f094b1cf1fe063b54416bb04.jpg",
+    "d178aadd4723ef61824cda4784b01181.jpg", "d449fa0f4adf7461e2b01b99a68fcc0b.jpg",
+    "f52d01dc3787797a0efca1cb6ba3f433.jpg", "sitcker1.jpg", "sticker.jpg"
+  ];
+
   function heartSvg(cls, fill, stroke) {
     return svg(cls, "0 0 40 36",
       '<path d="M20 33 C10 25 3 19 3 11 C3 5 8 2 13 3 C17 4 19 7 20 10 C21 7 23 4 27 3 C32 2 37 5 37 11 C37 19 30 25 20 33Z" ' +
@@ -341,42 +356,6 @@ window.Pages = (() => {
   /* ================================================================
      4/5 · SONGS — spotify share-card style, 3 per page
      ================================================================ */
-  const ALBUM_ART = {
-    "Love Me Not":
-      '<rect width="60" height="60" fill="#8a5a52"/>' +
-      '<path d="M8 42 C16 34 22 30 28 30" fill="none" stroke="#f1e4cc" stroke-width="3" stroke-linecap="round"/>' +
-      '<path d="M52 42 C44 34 38 30 32 30" fill="none" stroke="#f1e4cc" stroke-width="3" stroke-linecap="round"/>' +
-      '<circle cx="28" cy="30" r="2.4" fill="#f1e4cc"/><circle cx="32" cy="30" r="2.4" fill="#f1e4cc"/>' +
-      '<path d="M30 14 c-2.5 -3.5 -8 -1.5 -8 3 c0 4 5 6.5 8 9 c3 -2.5 8 -5 8 -9 c0 -4.5 -5.5 -6.5 -8 -3z" fill="#e8a7ab"/>',
-    "we fell in love in october":
-      '<rect width="60" height="60" fill="#a8703f"/>' +
-      '<path d="M18 12 C12 18 12 26 18 30 C24 26 24 18 18 12Z" fill="#e8cf9f"/>' +
-      '<path d="M40 20 C34 26 34 34 40 38 C46 34 46 26 40 20Z" fill="#f2d0d2"/>' +
-      '<path d="M26 38 C21 43 21 50 26 53 C31 50 31 43 26 38Z" fill="#e8a7ab"/>' +
-      '<path d="M30 24 c-3 -4.5 -9 -2 -9 3.5 c0 5 6 8 9 11 c3 -3 9 -6 9 -11 c0 -5.5 -6 -8 -9 -3.5z" fill="#b23a48"/>',
-    "It's You":
-      '<rect width="60" height="60" fill="#9a6b7a"/>' +
-      '<rect x="12" y="18" width="36" height="26" rx="3" fill="#fbf4e7"/>' +
-      '<path d="M12 21 L30 34 L48 21" fill="none" stroke="#96733c" stroke-width="2.2"/>' +
-      '<path d="M30 40 c-2 -3 -6.5 -1.5 -6.5 2.2 c0 3.4 4.3 5.5 6.5 7.3 c2.2 -1.8 6.5 -3.9 6.5 -7.3 c0 -3.7 -4.5 -5.2 -6.5 -2.2z" fill="#e8a7ab"/>',
-    "K":
-      '<rect width="60" height="60" fill="#5a5468"/>' +
-      '<path d="M38 12 A16 16 0 1 0 38 48 A13 16 0 1 1 38 12Z" fill="#e8cf9f"/>' +
-      '<path d="M46 16 l1.6 4 4 1.6 -4 1.6 -1.6 4 -1.6 -4 -4 -1.6 4 -1.6z" fill="#f1e4cc"/>' +
-      '<circle cx="18" cy="40" r="1.8" fill="#f1e4cc"/><circle cx="26" cy="18" r="1.4" fill="#f1e4cc"/>',
-    "Blue":
-      '<rect width="60" height="60" fill="#6d87a3"/>' +
-      '<path d="M16 28 C12 28 10 24 13 21 C13 16 20 14 23 18 C26 14 34 15 34 21 C38 21 38 28 33 28 Z" fill="#f1e4cc"/>' +
-      '<path d="M20 34 L17 42 M28 34 L25 44 M36 34 L33 42" stroke="#cfe0ee" stroke-width="2.4" stroke-linecap="round"/>' +
-      '<path d="M30 46 c-2 -3 -6 -1.5 -6 2 c0 3 4 5 6 6.6 c2 -1.6 6 -3.6 6 -6.6 c0 -3.5 -4 -5 -6 -2z" fill="#e8a7ab"/>',
-    "Something About You":
-      '<rect width="60" height="60" fill="#7d6b84"/>' +
-      '<path d="M30 12 C18 12 10 22 10 30 C10 38 18 48 30 48 C42 48 50 38 50 30 C50 22 42 12 30 12Z" fill="none" stroke="#f1e4cc" stroke-width="2.4"/>' +
-      '<circle cx="30" cy="30" r="8" fill="#e8cf9f"/>' +
-      '<circle cx="30" cy="30" r="3.4" fill="#4b342a"/>' +
-      '<path d="M44 12 l1.4 3.6 3.6 1.4 -3.6 1.4 -1.4 3.6 -1.4 -3.6 -3.6 -1.4 3.6 -1.4z" fill="#f1e4cc"/>'
-  };
-
   function spotifyLogo() {
     return svg("spot", "0 0 24 24",
       '<circle cx="12" cy="12" r="11" fill="#191414"/>' +
@@ -386,25 +365,12 @@ window.Pages = (() => {
   }
 
   function songCard(song, idx) {
-    const card = el("div", "songcard");
-    card.style.background = song.tint;
-    card.style.setProperty("--rot", ((idx % 3) - 1) * 0.8 + "deg");
-
-    const top = el("div", "songcard__top");
-    const art = svg("songcard__art", "0 0 60 60", ALBUM_ART[song.title] || ALBUM_ART["K"]);
-    top.append(art);
-    const meta = el("div", "songcard__meta");
-    meta.append(el("span", "songcard__title", song.title));
-    meta.append(el("span", "songcard__artist", song.artist));
-    top.append(meta);
-    card.append(top);
-
-    card.append(el("p", "songcard__big", song.big));
-
-    const bot = el("div", "songcard__bot");
-    bot.append(spotifyLogo());
-    bot.append(el("span", "songcard__brand", "Spotify"));
-    card.append(bot);
+    const card = el("figure", "song-print");
+    card.style.setProperty("--rot", [-3, 2, -1][idx % 3] + "deg");
+    const image = el("img", "song-print__image");
+    image.src = A + song.img;
+    image.alt = song.title + " — " + song.artist + ": " + song.big;
+    card.append(image, washi("washi--photo"));
     return card;
   }
 
@@ -556,20 +522,12 @@ window.Pages = (() => {
 
     const f1 = photo(p.photo1, "photo--why photo--why-1", 2.5);
     const f2 = photo(p.photo2, "photo--why photo--why-2", -3);
-    body.append(f1, f2);
+
 
     p.paragraphs.forEach((t, i) => {
       const para = el("p", "why__p", t);
       body.append(para);
-      if (i === 1) {
-        const tape = el("div", "why__tape");
-        tape.append(svg("why__tape-art", "0 0 220 22",
-          '<rect width="220" height="22" fill="#f2d0d2" opacity=".9"/>' +
-          Array.from({ length: 11 }, (_, k) =>
-            '<path d="M' + (10 + k * 20) + ' 17 C' + (5 + k * 20) + ' 12 ' + (5 + k * 20) + ' 6 ' + (10 + k * 20) + ' 4 C' +
-            (15 + k * 20) + ' 6 ' + (15 + k * 20) + ' 12 ' + (10 + k * 20) + ' 17Z" fill="#b23a48"/>').join("")));
-        body.append(tape);
-      }
+
     });
     s.append(body);
 
@@ -591,114 +549,6 @@ window.Pages = (() => {
   /* ================================================================
      9 · US IN EVERY UNIVERSE — 9 doodle pairs
      ================================================================ */
-  const PAIR_ART = {
-    spider: () =>
-      '<g stroke="#4b342a" stroke-width="2" stroke-linejoin="round">' +
-      '<path d="M14 30 C14 16 22 8 32 8 C42 8 50 16 50 30 C50 42 42 50 32 50 C22 50 14 42 14 30Z" fill="#c4505c"/>' +
-      '<path d="M22 26 C24 20 30 18 32 22 C34 18 40 20 42 26 C40 32 34 32 32 28 C30 32 24 32 22 26Z" fill="#f1e4cc" stroke="none"/>' +
-      '<path d="M62 30 C62 16 70 8 80 8 C90 8 98 16 98 30 C98 42 90 50 80 50 C70 50 62 42 62 30Z" fill="#cf7d95"/>' +
-      '<path d="M70 26 C72 20 78 18 80 22 C82 18 88 20 90 26 C88 32 82 32 80 28 C78 32 72 32 70 26Z" fill="#f1e4cc" stroke="none"/>' +
-      '<path d="M80 8 L80 2 M74 6 L80 2 L86 6" fill="none" stroke-linecap="round"/></g>',
-    alien: () =>
-      '<g stroke="#4b342a" stroke-width="2">' +
-      '<ellipse cx="30" cy="32" rx="16" ry="20" fill="#b8c9a0"/>' +
-      '<ellipse cx="24" cy="28" rx="4" ry="6" fill="#4b342a" stroke="none"/>' +
-      '<ellipse cx="36" cy="28" rx="4" ry="6" fill="#4b342a" stroke="none"/>' +
-      '<path d="M26 40 q4 3 8 0" fill="none" stroke-linecap="round"/>' +
-      '<path d="M22 14 L18 6 M38 14 L42 6" fill="none" stroke-linecap="round"/>' +
-      '<circle cx="18" cy="5" r="2.5" fill="#e8a7ab"/><circle cx="42" cy="5" r="2.5" fill="#e8a7ab"/>' +
-      '<ellipse cx="72" cy="34" rx="14" ry="18" fill="#e8c3c4"/>' +
-      '<ellipse cx="67" cy="30" rx="3.4" ry="5" fill="#4b342a" stroke="none"/>' +
-      '<ellipse cx="77" cy="30" rx="3.4" ry="5" fill="#4b342a" stroke="none"/>' +
-      '<path d="M68 41 q4 3 8 0" fill="none" stroke-linecap="round"/>' +
-      '<path d="M65 18 L61 10 M79 18 L83 10" fill="none" stroke-linecap="round"/>' +
-      '<circle cx="61" cy="9" r="2.5" fill="#e8cf9f"/><circle cx="83" cy="9" r="2.5" fill="#e8cf9f"/></g>',
-    toothless: () =>
-      '<g stroke="#4b342a" stroke-width="2" stroke-linejoin="round">' +
-      '<path d="M12 40 C12 24 22 14 34 14 C46 14 54 24 54 38 C54 48 46 54 34 54 C22 54 12 50 12 40Z" fill="#3a2b26"/>' +
-      '<path d="M20 16 L16 4 M30 12 L28 2 M42 14 L46 4" fill="none" stroke-linecap="round"/>' +
-      '<ellipse cx="26" cy="32" rx="5" ry="7" fill="#9aa487" stroke="none"/>' +
-      '<ellipse cx="42" cy="32" rx="5" ry="7" fill="#9aa487" stroke="none"/>' +
-      '<circle cx="26" cy="34" r="2" fill="#4b342a" stroke="none"/><circle cx="42" cy="34" r="2" fill="#4b342a" stroke="none"/>' +
-      '<path d="M30 44 q4 3 8 0" fill="none" stroke-linecap="round"/>' +
-      '<path d="M68 36 L84 30 L84 42 Z" fill="#fbf4e7"/>' +
-      '<path d="M62 34 C58 28 64 24 68 28 C68 22 76 22 76 28 C80 26 84 32 78 36 Z" fill="#f1e4cc"/>' +
-      '<path d="M74 20 L76 14 M78 22 L84 20" fill="none" stroke="#c8a05e" stroke-linecap="round"/>' +
-      '<circle cx="86" cy="12" r="2.4" fill="#e8cf9f"/></g>',
-    pony: () =>
-      '<g stroke="#4b342a" stroke-width="2" stroke-linejoin="round">' +
-      '<path d="M10 44 C10 30 18 22 30 22 C42 22 48 30 48 40 C48 48 42 52 30 52 C18 52 10 50 10 44Z" fill="#e8c3c4"/>' +
-      '<path d="M40 24 C48 12 56 16 52 26 C50 32 44 30 40 32" fill="#e8a7ab"/>' +
-      '<path d="M14 44 L8 52 M24 52 L24 60 M38 52 L38 60 M44 46 L50 54" fill="none" stroke-linecap="round"/>' +
-      '<circle cx="34" cy="32" r="2.2" fill="#4b342a" stroke="none"/>' +
-      '<path d="M60 44 C60 30 68 22 80 22 C92 22 98 30 98 40 C98 48 92 52 80 52 C68 52 60 50 60 44Z" fill="#c9d3e8"/>' +
-      '<path d="M90 24 C98 12 106 16 102 26 C100 32 94 30 90 32" fill="#a9b8d8"/>' +
-      '<path d="M64 44 L58 52 M74 52 L74 60 M88 52 L88 60 M94 46 L100 54" fill="none" stroke-linecap="round"/>' +
-      '<circle cx="84" cy="32" r="2.2" fill="#4b342a" stroke="none"/></g>',
-    ghost: () =>
-      '<g stroke="#4b342a" stroke-width="2" stroke-linejoin="round">' +
-      '<path d="M14 46 L14 26 C14 14 24 8 32 8 C40 8 50 14 50 26 L50 46 L44 40 L38 46 L32 40 L26 46 L20 40 Z" fill="#fbf4e7"/>' +
-      '<circle cx="26" cy="24" r="2.6" fill="#4b342a" stroke="none"/><circle cx="38" cy="24" r="2.6" fill="#4b342a" stroke="none"/>' +
-      '<path d="M28 32 q4 4 8 0" fill="none" stroke-linecap="round"/>' +
-      '<circle cx="20" cy="30" r="3.4" fill="#e8c3c4" stroke="none" opacity=".8"/>' +
-      '<circle cx="44" cy="30" r="3.4" fill="#e8c3c4" stroke="none" opacity=".8"/>' +
-      '<path d="M62 46 L62 26 C62 14 72 8 80 8 C88 8 98 14 98 26 L98 46 L92 40 L86 46 L80 40 L74 46 L68 40 Z" fill="#f2e8f4"/>' +
-      '<circle cx="74" cy="24" r="2.6" fill="#4b342a" stroke="none"/><circle cx="86" cy="24" r="2.6" fill="#4b342a" stroke="none"/>' +
-      '<path d="M76 32 q4 4 8 0" fill="none" stroke-linecap="round"/>' +
-      '<path d="M50 30 C56 26 56 26 62 30" fill="none" stroke-linecap="round"/></g>',
-    cats: () =>
-      '<g stroke="#4b342a" stroke-width="2" stroke-linejoin="round">' +
-      '<path d="M14 34 L10 16 L24 26 C28 24 36 24 40 26 L54 16 L50 34 C54 42 48 52 32 52 C16 52 10 42 14 34Z" fill="#e2c49a"/>' +
-      '<circle cx="24" cy="36" r="2.4" fill="#4b342a" stroke="none"/><circle cx="40" cy="36" r="2.4" fill="#4b342a" stroke="none"/>' +
-      '<path d="M32 42 L32 45 M28 46 q4 3 8 0" fill="none" stroke-linecap="round"/>' +
-      '<path d="M16 40 L4 38 M16 44 L6 46 M48 40 L60 38 M48 44 L58 46" fill="none" stroke-linecap="round"/>' +
-      '<path d="M66 34 L62 16 L76 26 C80 24 88 24 92 26 L106 16 L102 34 C106 42 100 52 84 52 C68 52 62 42 66 34Z" fill="#cf959b"/>' +
-      '<circle cx="76" cy="36" r="2.4" fill="#4b342a" stroke="none"/><circle cx="92" cy="36" r="2.4" fill="#4b342a" stroke="none"/>' +
-      '<path d="M84 42 L84 45 M80 46 q4 3 8 0" fill="none" stroke-linecap="round"/>' +
-      '<path d="M68 40 L56 38 M68 44 L58 46 M100 40 L112 38 M100 44 L110 46" fill="none" stroke-linecap="round"/></g>',
-    roblox: () =>
-      '<g stroke="#4b342a" stroke-width="2" stroke-linejoin="round">' +
-      '<rect x="20" y="12" width="16" height="14" rx="2" fill="#e8cf9f"/>' +
-      '<rect x="22" y="30" width="12" height="16" rx="2" fill="#7f92aa"/>' +
-      '<rect x="12" y="30" width="8" height="12" rx="2" fill="#e8cf9f"/>' +
-      '<rect x="36" y="30" width="8" height="12" rx="2" fill="#e8cf9f"/>' +
-      '<rect x="22" y="48" width="5" height="10" rx="2" fill="#4b342a"/>' +
-      '<rect x="29" y="48" width="5" height="10" rx="2" fill="#4b342a"/>' +
-      '<circle cx="25" cy="18" r="1.6" fill="#4b342a" stroke="none"/><circle cx="31" cy="18" r="1.6" fill="#4b342a" stroke="none"/>' +
-      '<rect x="68" y="12" width="16" height="14" rx="2" fill="#e8c3c4"/>' +
-      '<rect x="70" y="30" width="12" height="16" rx="2" fill="#b23a48"/>' +
-      '<rect x="60" y="30" width="8" height="12" rx="2" fill="#e8c3c4"/>' +
-      '<rect x="84" y="30" width="8" height="12" rx="2" fill="#e8c3c4"/>' +
-      '<rect x="70" y="48" width="5" height="10" rx="2" fill="#4b342a"/>' +
-      '<rect x="77" y="48" width="5" height="10" rx="2" fill="#4b342a"/>' +
-      '<circle cx="73" cy="18" r="1.6" fill="#4b342a" stroke="none"/><circle cx="79" cy="18" r="1.6" fill="#4b342a" stroke="none"/>' +
-      '<path d="M52 24 L56 28 M56 24 L52 28" stroke="#c8a05e" stroke-linecap="round"/></g>',
-    dumpling: () =>
-      '<g stroke="#8a6a48" stroke-width="2" stroke-linejoin="round">' +
-      '<path d="M12 40 C12 26 22 18 32 18 C42 18 52 26 52 40 C52 48 44 52 32 52 C20 52 12 48 12 40Z" fill="#fbf4e7"/>' +
-      '<path d="M18 30 q4 -6 8 0 q4 -6 8 0 q4 -6 8 0" fill="none" stroke-linecap="round"/>' +
-      '<circle cx="26" cy="40" r="2" fill="#4b342a" stroke="none"/><circle cx="38" cy="40" r="2" fill="#4b342a" stroke="none"/>' +
-      '<path d="M28 45 q4 3 8 0" fill="none" stroke-linecap="round"/>' +
-      '<circle cx="20" cy="44" r="3" fill="#e8c3c4" stroke="none" opacity=".8"/>' +
-      '<circle cx="44" cy="44" r="3" fill="#e8c3c4" stroke="none" opacity=".8"/>' +
-      '<path d="M62 40 C62 26 72 18 82 18 C92 18 102 26 102 40 C102 48 94 52 82 52 C70 52 62 48 62 40Z" fill="#f7e3d2"/>' +
-      '<path d="M68 30 q4 -6 8 0 q4 -6 8 0 q4 -6 8 0" fill="none" stroke-linecap="round"/>' +
-      '<circle cx="76" cy="40" r="2" fill="#4b342a" stroke="none"/><circle cx="88" cy="40" r="2" fill="#4b342a" stroke="none"/>' +
-      '<path d="M78 45 q4 3 8 0" fill="none" stroke-linecap="round"/>' +
-      '<circle cx="70" cy="44" r="3" fill="#e8c3c4" stroke="none" opacity=".8"/>' +
-      '<circle cx="94" cy="44" r="3" fill="#e8c3c4" stroke="none" opacity=".8"/></g>',
-    sunmoon: () =>
-      '<g stroke="#c8a05e" stroke-width="2.2" stroke-linejoin="round">' +
-      '<circle cx="32" cy="30" r="14" fill="#e8cf9f"/>' +
-      '<path d="M32 8 L32 2 M32 58 L32 52 M10 30 L4 30 M60 30 L54 30 M16 14 L12 10 M48 14 L52 10 M16 46 L12 50 M48 46 L52 50" fill="none" stroke-linecap="round"/>' +
-      '<circle cx="27" cy="28" r="1.8" fill="#4b342a" stroke="none"/><circle cx="37" cy="28" r="1.8" fill="#4b342a" stroke="none"/>' +
-      '<path d="M28 35 q4 3 8 0" fill="none" stroke="#b23a48" stroke-linecap="round"/>' +
-      '<path d="M92 16 A16 18 0 1 0 92 48 A13 18 0 1 1 92 16Z" fill="#f1e4cc" stroke="#96733c"/>' +
-      '<circle cx="80" cy="28" r="1.8" fill="#4b342a" stroke="none"/>' +
-      '<path d="M74 36 q3 2 6 0" fill="none" stroke="#b23a48" stroke-linecap="round"/>' +
-      '<path d="M70 18 l1.2 3 3 1.2 -3 1.2 -1.2 3 -1.2 -3 -3 -1.2 3 -1.2z" fill="#e8cf9f"/></g>'
-  };
-
   function universes(p) {
     const s = sheet("p-universe");
     s.append(title(p.title, "ttl--star"));
@@ -707,8 +557,10 @@ window.Pages = (() => {
     const grid = el("div", "uni__grid");
     p.pairs.forEach((pair, i) => {
       const card = el("div", "uni-card uni-card--" + (i % 3));
-      card.style.setProperty("--rot", (((i * 5) % 5) - 2) * 0.9 + "deg");
-      const art = svg("uni-art", "0 0 112 64", (PAIR_ART[pair.id] || PAIR_ART.alien)());
+      card.style.setProperty("--rot", (((i * 7) % 5) - 2) * 0.9 + "deg");
+      const art = el("img", "uni-art");
+      art.src = A + pair.img;
+      art.alt = pair.label;
       card.append(art);
       card.append(el("span", "uni-label", pair.label));
       wiggleOnTap(card);
@@ -804,32 +656,10 @@ window.Pages = (() => {
     s.append(title(p.title, "ttl--hand ttl--string"));
     s.append(el("p", "string__belief", p.belief));
 
-    /* two sketchy hands reaching for each other + the thread */
-    s.append(svg("hands", "0 0 420 300",
-      /* left hand, palm down, index reaching right */
-      '<g fill="#f6ecd7" stroke="#4b342a" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round">' +
-      '<path d="M18 150 C18 138 30 130 52 128 L120 124 C132 123 138 128 138 134 C138 140 132 144 122 145 L96 148 ' +
-      'C110 148 140 148 158 150 C172 152 178 158 176 164 C174 170 164 172 152 171 L120 168 ' +
-      'C134 170 150 174 158 180 C164 185 160 192 150 192 C142 192 128 188 116 184 L92 178 ' +
-      'C104 182 116 190 118 197 C120 204 112 209 102 206 C88 202 70 192 58 182 C40 168 18 164 18 150Z"/>' +
-      /* right hand, palm down, index reaching left */
-      '<path d="M402 150 C402 138 390 130 368 128 L300 124 C288 123 282 128 282 134 C282 140 288 144 298 145 L324 148 ' +
-      'C310 148 280 148 262 150 C248 152 242 158 244 164 C246 170 256 172 268 171 L300 168 ' +
-      'C286 170 270 174 262 180 C256 185 260 192 270 192 C278 192 292 188 304 184 L328 178 ' +
-      'C316 182 304 190 302 197 C300 204 308 209 318 206 C332 202 350 192 362 182 C380 168 402 164 402 150Z"/></g>' +
-      /* sketch shading strokes */
-      '<g fill="none" stroke="#4b342a" stroke-width="1" opacity=".45" stroke-linecap="round">' +
-      '<path d="M40 152 C60 146 90 144 110 146"/><path d="M46 162 C66 156 92 154 112 158"/>' +
-      '<path d="M380 152 C360 146 330 144 310 146"/><path d="M374 162 C354 156 328 154 308 158"/>' +
-      '<path d="M30 144 C34 138 42 134 52 133"/><path d="M390 144 C386 138 378 134 368 133"/></g>' +
-      /* the cherry thread: wraps left index, sags across, wraps right wrist */
-      '<path d="M52 196 C40 186 44 170 60 168 C78 166 92 178 96 190 ' +
-      'C104 176 118 168 134 170 C120 158 124 144 140 142 C156 140 168 152 166 164 ' +
-      'C190 158 230 156 254 164 C252 152 264 140 280 142 C296 144 300 158 286 170 ' +
-      'C302 168 316 176 324 190 C328 178 342 166 360 168 C376 170 380 186 368 196" ' +
-      'fill="none" stroke="#b23a48" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>' +
-      /* little heart where the threads would meet */
-      '<path d="M210 196 c-5 -7 -13 -3 -13 4 c0 6 8 10 13 14 c5 -4 13 -8 13 -14 c0 -7 -8 -11 -13 -4z" fill="#b23a48"/>'));
+    const hands = el("img", "hands hands--upload");
+    hands.src = A + "hand.jpg";
+    hands.alt = "Two reaching hands connected by a red thread";
+    s.append(hands);
 
     s.append(el("p", "string__note", p.note));
 
@@ -906,29 +736,12 @@ window.Pages = (() => {
      13 · A HUG FOR YOU
      ================================================================ */
   function hug(p) {
-    const s = sheet("p-hug");
-
-    const ribbonTitle = el("div", "hug__ribbon");
-    ribbonTitle.append(el("span", null, p.title));
-    s.append(ribbonTitle);
-
-    s.append(svg("heart-big", "0 0 300 270",
-      '<path d="M150 246 C40 166 12 118 12 74 C12 34 42 10 78 14 C112 18 138 44 150 70 ' +
-      'C162 44 188 18 222 14 C258 10 288 34 288 74 C288 118 260 166 150 246Z" ' +
-      'fill="#ecc5c4" stroke="#b23a48" stroke-width="5"/>' +
-      '<path d="M150 70 C146 130 148 190 150 246" fill="none" stroke="#c77b80" stroke-width="3" ' +
-      'stroke-dasharray="7 9" opacity=".8"/>'));
-
-    const voucher = el("div", "voucher");
-    voucher.append(el("span", "voucher__stub", "HUG"));
-    const vb = el("div", "voucher__body");
-    vb.append(el("span", "voucher__text", p.voucher));
-    vb.append(writeLine(null, "wline--short"));
-    voucher.append(vb);
-    s.append(voucher);
-
-    s.append(writeLine(p.note, "hug__note"));
-    s.append(el("span", "hug__perf", "✂ - - - - - - - - - - - -"));
+    const s = sheet("p-poem");
+    s.append(el("p", "poem__eyebrow", "my version of"));
+    s.append(title(p.title, "poem__title"));
+    const body = el("div", "poem__body");
+    p.stanzas.forEach(stanza => body.append(el("p", "poem__stanza", stanza.t)));
+    s.append(body, el("p", "poem__scroll-hint", "keep reading ↓ a little more of my heart"));
     return s;
   }
 
@@ -1201,49 +1014,33 @@ window.Pages = (() => {
   function theEnd(p) {
     const s = sheet("p-end");
 
-    /* ambient falling petals */
-    if (!reduceMotion.matches) {
-      const fall = el("div", "end__fall");
-      for (let i = 0; i < 10; i++) {
-        const pt = el("span", "end__petal");
-        pt.style.left = (5 + (i * 17) % 90) + "%";
-        pt.style.background = ["#e8a7ab", "#ecc5c4", "#e8cf9f", "#cf959b"][i % 4];
-        pt.style.animationDelay = (i * 1.1) + "s";
-        pt.style.animationDuration = (7 + (i % 4)) + "s";
-        fall.append(pt);
-      }
-      s.append(fall);
-    }
-
-    const frame = el("div", "end-frame");
-    frame.append(svg("end-flourish", "0 0 200 30",
-      '<path d="M10 15 C50 2 70 26 100 15 C130 4 150 28 190 15" fill="none" stroke="#c8a05e" stroke-width="2.4" stroke-linecap="round"/>' +
-      '<circle cx="100" cy="15" r="4" fill="#b23a48"/>'));
-    frame.append(el("h2", "end-title", p.title));
-    frame.append(el("p", "end-sub", p.sub));
-    frame.append(svg("end-flourish end-flourish--b", "0 0 200 30",
-      '<path d="M10 15 C50 28 70 4 100 15 C130 26 150 2 190 15" fill="none" stroke="#c8a05e" stroke-width="2.4" stroke-linecap="round"/>' +
-      '<circle cx="100" cy="15" r="4" fill="#b23a48"/>'));
-    s.append(frame);
-
+    const lettering = el("img", "end-lettering");
+    lettering.src = A + "theend.jpg";
+    lettering.alt = "The End";
+    s.append(lettering, el("p", "end-sub", p.sub));
+    const portrait = el("label", "end-portrait");
+    portrait.append(el("span", "end-portrait__hint", "a little photo of me ♡\ntap to add your portrait"));
+    const input = el("input", "end-portrait__input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.setAttribute("aria-label", "Add mie’s portrait");
+    input.addEventListener("change", () => {
+      const file = input.files[0];
+      if (!file || !file.type.startsWith("image/")) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        let image = portrait.querySelector("img");
+        if (!image) { image = el("img", "end-portrait__image"); image.alt = "mie"; portrait.append(image); }
+        image.src = reader.result;
+        portrait.classList.add("has-photo");
+      };
+      reader.readAsDataURL(file);
+    });
+    portrait.append(input, washi("washi--photo"));
+    s.append(portrait, el("p", "end-credit", "made with love, by mie ♡"));
     const lines = el("div", "end__lines");
-    p.lines.forEach((t, i) => lines.append(el("p", "end__line end__line--" + (i + 1), t)));
+    p.lines.forEach(t => lines.append(el("p", "end__line", t)));
     s.append(lines);
-
-    /* two little friends waving goodbye */
-    s.append(svg("end__bye", "0 0 200 110",
-      '<g stroke="#4b342a" stroke-width="2.2" stroke-linejoin="round">' +
-      '<circle cx="55" cy="40" r="18" fill="#e8c3c4"/>' +
-      '<circle cx="49" cy="38" r="2" fill="#4b342a" stroke="none"/><circle cx="61" cy="38" r="2" fill="#4b342a" stroke="none"/>' +
-      '<path d="M50 47 q5 4 10 0" fill="none" stroke-linecap="round"/>' +
-      '<path d="M55 58 L55 86 M55 66 L38 76 M55 66 L74 52 M55 86 L44 104 M55 86 L66 104" fill="none" stroke-linecap="round"/>' +
-      '<circle cx="130" cy="40" r="18" fill="#c9d3e8"/>' +
-      '<circle cx="124" cy="38" r="2" fill="#4b342a" stroke="none"/><circle cx="136" cy="38" r="2" fill="#4b342a" stroke="none"/>' +
-      '<path d="M125 47 q5 4 10 0" fill="none" stroke-linecap="round"/>' +
-      '<path d="M130 58 L130 86 M130 66 L111 52 M130 66 L147 76 M130 86 L119 104 M130 86 L141 104" fill="none" stroke-linecap="round"/>' +
-      '<path d="M74 52 q6 -8 12 -4 M111 52 q-6 -8 -12 -4" fill="none" stroke="#c8a05e" stroke-linecap="round"/></g>' +
-      '<path d="M92 30 c-2.5 -4 -8 -2 -8 2.5 c0 4 5 6.5 8 9.5 c3 -3 8 -5.5 8 -9.5 c0 -4.5 -5.5 -6.5 -8 -2.5z" fill="#b23a48"/>' +
-      '<path d="M160 30 c1.6 2.4 2.4 4 2.4 5.4 a2.4 2.4 0 0 1 -4.8 0 c0 -1.4 .8 -3 2.4 -5.4z" fill="#7f92aa"/>'));
 
     const seal = el("button", "end-seal");
     seal.type = "button";
@@ -1361,9 +1158,9 @@ window.Pages = (() => {
     scrap.append(label);
 
     if (side === "front") {
-      const pocket = el("div", "endpocket");
-      pocket.append(el("span", "endpocket__tag", "tucked in for you ♡"));
-      scrap.append(pocket);
+
+
+      scrap.append(el("p", "ep-dedication", "a collection of little things, for my favourite person. ♡"));
 
       /* sticker garden — fills the cover, tap any to wiggle */
       const placements = [
@@ -1399,7 +1196,17 @@ window.Pages = (() => {
     } else {
       scrap.append(el("span", "endpaper__stamp", "the end of the pages, not of us ♡"));
     }
+    handmadeStickers(scrap, 0);
     return scrap;
+  }
+
+  function handmadeStickers(host, seed) {
+    host.querySelectorAll("svg.stk").forEach((old, i) => {
+      const image = sticker(REAL_STICKERS[(seed * 3 + i) % REAL_STICKERS.length]);
+      image.setAttribute("class", old.getAttribute("class") + " real-sticker");
+      image.style.cssText = old.style.cssText;
+      old.replaceWith(image);
+    });
   }
 
   /* -------- public API ------------------------------------- */
@@ -1408,6 +1215,7 @@ window.Pages = (() => {
     if (!page) return sheet();
     const renderer = RENDERERS[page.key] || placeholderSheet;
     const scrap = renderer(page);
+    handmadeStickers(scrap, n);
     scrap.dataset.page = n;
     const num = el("div", "scrap__num", String(n).padStart(2, "0"));
     scrap.append(num);
