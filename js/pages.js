@@ -864,7 +864,6 @@ window.Pages = (() => {
     });
     s.append(body);
 
-    s.append(sticker("hand-removebg-preview.png", "why__h1"));
     s.append(wiggleOnTap(STK.star()).cloneNode(true));
     const h2 = s.lastElementChild; h2.classList.add("why__h2"); wiggleOnTap(h2);
 
@@ -945,7 +944,14 @@ window.Pages = (() => {
      ================================================================ */
   function traffic(p) {
     const s = sheet("p-traffic");
-    s.append(stamp(p.title, "stamp--traffic"));
+
+    /* the three signal words get their own little highlighter marks */
+    const trafficStamp = stamp("", "stamp--traffic");
+    p.title.split(/\s*·\s*/).forEach((word, i) => {
+      if (i) trafficStamp.append(el("span", "stamp__dot", " · "));
+      trafficStamp.append(el("mark", "stamp__word stamp__word--" + word.toLowerCase(), word));
+    });
+    s.append(trafficStamp);
 
     const lightBtn = el("button", "lights-btn");
     lightBtn.type = "button";
@@ -982,7 +988,15 @@ window.Pages = (() => {
     data.forEach((d) => {
       const pan = el("div", "tpanel tpanel--" + d.cls);
       pan.append(el("span", "tpanel__chip", d.word));
-      pan.append(writeLine(d.text));
+
+      /* highlight only the signal word, keeping the rest of the line plain */
+      const line = writeLine("", "tpanel__line");
+      const lineText = el("span", "wline__t");
+      lineText.append(el("mark", "tpanel__word", d.word));
+      lineText.append(document.createTextNode(d.text.slice(d.word.length)));
+      line.append(lineText);
+      pan.append(line);
+
       const st = wiggleOnTap(d.stk());
       st.classList.add("tpanel__stk");
       pan.append(st);
@@ -1040,8 +1054,10 @@ window.Pages = (() => {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pullCoupon(); }
     });
 
-    const quote = el("p", "traffic__quote",
-      "i miss you more than i show\ni love u more than you know");
+    const quote = el("p", "traffic__quote");
+    const quoteMark = el("mark", "traffic__quote-mark");
+    quoteMark.append(el("strong", "", p.quote));
+    quote.append(quoteMark);
     s.append(quote);
     return s;
   }
@@ -1383,77 +1399,51 @@ window.Pages = (() => {
   }
 
   /* ================================================================
-     16 · THE FINAL LETTER — reserved stationery
+     16–26 · THE FINAL LETTER — one continuous piece of writing.
+     Every ruled leaf paints the full letter and clips its own slice,
+     so the words run from page 16 onward without hand-balanced gaps.
+     Leaves past the end of the writing stay blank for later additions.
      ================================================================ */
   function letter(p) {
-    const s = sheet("p-letter");
-
-    const lh = el("div", "letter__head");
-    lh.append(el("span", "letter__title", p.title));
-    lh.append(el("span", "letter__date", "__ / __ / ____"));
-    s.append(lh);
-
-    const body = el("div", "letter__body");
-    body.append(el("p", "letter__hint", p.hint));
-    body.append(el("div", "letter__lines"));
-    s.append(body);
-
-    const sig = el("div", "letter__sig");
-    sig.append(el("span", "letter__sig-line"));
-    sig.append(el("span", "letter__sig-t", p.signature));
-    s.append(sig);
-
-    s.append(svg("envelope", "0 0 140 96",
-      '<rect x="4" y="10" width="132" height="80" rx="5" fill="#f4e8d3" stroke="#96733c" stroke-width="2.4"/>' +
-      '<path d="M4 14 L70 58 L136 14" fill="none" stroke="#96733c" stroke-width="2.4"/>' +
-      '<path d="M4 88 L54 48 M136 88 L86 48" fill="none" stroke="#c8a05e" stroke-width="1.6"/>' +
-      '<circle cx="70" cy="56" r="13" fill="#b23a48" stroke="#8e2b37" stroke-width="2"/>' +
-      '<path d="M64 55 c0-4 6-5 8-1 c2-4 8-3 8 1 c0 5-8 9-8 9 s-8-4-8-9z" fill="rgba(251,244,231,.9)"/>'));
-
-    s.append(svg("pressed-flower", "0 0 60 74",
-      '<path d="M30 70 C30 52 30 40 30 30" fill="none" stroke="#9aa487" stroke-width="2.6"/>' +
-      '<path d="M30 46 C22 44 16 36 18 30 C26 30 30 38 30 46Z" fill="#9aa487"/>' +
-      '<g fill="#cf959b" stroke="#b23a48" stroke-width="1.4">' +
-      '<ellipse cx="30" cy="16" rx="7" ry="11"/>' +
-      '<ellipse cx="20" cy="24" rx="10" ry="7" transform="rotate(-30 20 24)"/>' +
-      '<ellipse cx="40" cy="24" rx="10" ry="7" transform="rotate(30 40 24)"/>' +
-      '<ellipse cx="24" cy="12" rx="7" ry="9" transform="rotate(-20 24 12)"/>' +
-      '<ellipse cx="36" cy="12" rx="7" ry="9" transform="rotate(20 36 12)"/></g>' +
-      '<circle cx="30" cy="20" r="5" fill="#e8cf9f"/>'));
-    return s;
+    return renderLetterPage(p.part || 0, true);
   }
 
-  /* ================================================================
-     17–26 · LETTER CONTINUATION — ten matching ruled leaves;
-     the unused leaves stay blank for later additions.
-     ================================================================ */
   function letterContinuation(p) {
-    const s = sheet("p-letter p-letter--continuation");
-    const content = CONTENT.letterPages[p.part] || { paragraphs: [] };
+    return renderLetterPage(p.part, false);
+  }
+
+  function renderLetterPage(part, first) {
+    const L = CONTENT.letter;
+    const s = sheet("p-letter p-letter--continuation" +
+      (first ? " p-letter--first" : ""));
 
     const head = el("div", "letter__head");
-    head.append(el("span", "letter__title", "for later, from me"));
-    head.append(el("span", "letter__date", "continued · " + (p.part + 1) + " / 10"));
+    head.append(el("span", "letter__title", L.title));
+    head.append(el("span", "letter__date",
+      first ? "__ / __ / ____" : "continued · " + part + " / 10"));
     s.append(head);
 
     const body = el("div", "letter__body letter__body--written");
     const lines = el("div", "letter__lines");
+    const flow = el("div", "letter__flow");
     const prose = el("div", "letter__prose");
-    if (content.lead) prose.append(el("p", "letter__lead", content.lead));
-    (content.paragraphs || []).forEach((paragraph) => {
+
+    /* a whole ruled leaf of writing per slice, with the page below it
+       picking up exactly where this one stops */
+    prose.style.top = (-part * 100) + "%";
+    if (L.lead) prose.append(el("p", "letter__lead", L.lead));
+    (L.paragraphs || []).forEach((paragraph) => {
       prose.append(el("p", "letter__paragraph", paragraph));
     });
-    body.append(lines, prose);
+
+    const signature = el("div", "letter__sig letter__sig--written");
+    signature.append(el("span", "letter__sig-line"));
+    signature.append(el("span", "letter__sig-t", L.signature));
+    prose.append(signature);
+
+    flow.append(prose);
+    body.append(lines, flow);
     s.append(body);
-
-    if (p.part === CONTENT.letterPages.length - 1 &&
-        content.paragraphs && content.paragraphs.length) {
-      const signature = el("div", "letter__sig letter__sig--written");
-      signature.append(el("span", "letter__sig-line"));
-      signature.append(el("span", "letter__sig-t", "— always, mie ♡"));
-      s.append(signature);
-    }
-
     return s;
   }
 
@@ -1680,7 +1670,8 @@ window.Pages = (() => {
     if (!page) return sheet();
     const renderer = RENDERERS[page.key] || placeholderSheet;
     const scrap = renderer(page);
-    const used = new Set();
+    /* page 8 keeps its random stickers, but never the red-thread hands */
+    const used = new Set(n === 8 ? ["hand-removebg-preview.png"] : []);
     handmadeStickers(scrap, n, used);
     const override = SCATTER_OVERRIDES[n];
     scatterStickers(scrap, n + 1.31, SCATTER_COUNTS[n], override, used);
