@@ -34,7 +34,7 @@ window.Book = (() => {
 
   function spreadLabel(s) {
     const [l, r] = sidesOf(s);
-    if (s === 0) return "p. 1";
+    if (s === 0) return "intro · p. 1";
     return l + "–" + r;
   }
 
@@ -59,11 +59,11 @@ window.Book = (() => {
 
   function renderSingle() {
     els.underLeft.replaceChildren();
-    els.underRight.replaceChildren(surface(page));
-    els.pageTab.textContent = "p. " + page;
+    els.underRight.replaceChildren(surface(page === 0 ? "inside-front" : page));
+    els.pageTab.textContent = page === 0 ? "intro" : "p. " + page;
     document.getElementById("page-tab").setAttribute(
-      "aria-label", "showing page " + page);
-    els.prevBtn.disabled = page <= 1;
+      "aria-label", page === 0 ? "showing the introduction page" : "showing page " + page);
+    els.prevBtn.disabled = page <= 0;
     els.nextBtn.disabled = page >= TOTAL_PAGES;
   }
 
@@ -77,7 +77,9 @@ window.Book = (() => {
     document.body.classList.toggle("is-single", single);
     if (single) {
       const [, r] = sidesOf(spread);
-      page = (typeof r === "number" && r >= 1 && r <= TOTAL_PAGES) ? r : 1;
+      page = spread === 0
+        ? 0
+        : (typeof r === "number" && r >= 1 && r <= TOTAL_PAGES) ? r : 1;
       renderSingle();
     } else {
       spread = page <= 1 ? 0 : Math.floor(page / 2);
@@ -263,7 +265,7 @@ window.Book = (() => {
     if (single) {
       if (turning) return false;
       const target = page + dir;
-      if (target < 1 || target > TOTAL_PAGES) return false;
+      if (target < 0 || target > TOTAL_PAGES) return false;
       fadeToPage(target);
       return true;
     }
@@ -275,13 +277,31 @@ window.Book = (() => {
     if (target < 0 || target >= TOTAL_SPREADS) return false;
     if (single) {
       const [, r] = sidesOf(target);
-      page = (typeof r === "number") ? r : 1;
+      const next = (typeof r === "number") ? r : 1;
+      if (next === page) return true;
+      page = next;
       renderSingle();
       return true;
     }
+    if (target === spread) return true;      /* already here — don't rebuild */
     spread = target;
     renderSpread();
     return true;
+  }
+
+  /* page-number navigation: 0 = the unnumbered introduction page,
+     1 = the birthday calendar … 17 = the end. Works in the two-page
+     reader and in single-page (portrait) mode alike. */
+  function goToPage(n) {
+    n = Math.max(0, Math.min(TOTAL_PAGES, Math.round(Number(n) || 0)));
+    if (turning) return false;
+    if (single) {
+      if (page === n) return true;
+      page = n;
+      renderSingle();
+      return true;
+    }
+    return goTo(n <= 1 ? 0 : Math.floor(n / 2));
   }
 
   /* ---------------- lifecycle ---------------- */
@@ -313,6 +333,17 @@ window.Book = (() => {
       if (drag.active) { drag.active = false; document.body.style.userSelect = ""; if (drag.moved) cancelTurn(); }
     });
 
+    /* the fortune teller on the intro page asks for the calendar;
+       in two-page mode it is already facing us, so say "here" */
+    window.addEventListener("scrapbook:calendar", () => {
+      const leaf = document.querySelector(".leaf--right");
+      if (!leaf) return;
+      leaf.classList.remove("is-flash");
+      void leaf.offsetWidth;
+      leaf.classList.add("is-flash");
+      setTimeout(() => leaf.classList.remove("is-flash"), 1600);
+    });
+
     renderSpread();
   }
 
@@ -320,6 +351,7 @@ window.Book = (() => {
     init,
     step,
     goTo,
+    goToPage,
     setSingle,
     get spread() { return spread; },
     get page() { return page; },

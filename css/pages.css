@@ -1790,9 +1790,13 @@
 
 .dot__n {
   font-family: var(--type);
-  font-size: 15px;
-  fill: rgba(75, 52, 42, .6);
+  font-size: 13px;
+  fill: rgba(75, 52, 42, .55);
   pointer-events: none;
+  paint-order: stroke;
+  stroke: #f6ebd6;
+  stroke-width: 3px;
+  stroke-linejoin: round;
 }
 
 .dots__drawn, .dots__temp {

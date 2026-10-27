@@ -75,31 +75,49 @@ window.Pages = (() => {
   }
 
   const A = "assets/";
+  const STICKERS = CONTENT.stickers || {};
+  const NAMED_STICKERS = STICKERS.named || {};
+  const STICKER_LIBRARY = STICKERS.library || [];
 
-  /* real-photo sticker from the user's own sticker folder */
-  function sticker(src, cls) {
+  /* a sticker key resolves to [new transparent png, older jpg] */
+  function stickerSources(key) {
+    if (Array.isArray(key)) return key.filter(Boolean);
+    const entry = NAMED_STICKERS[key];
+    if (entry) return [entry.png, entry.fallback].filter(Boolean);
+    return [key];
+  }
+
+  /* set an image source with graceful fallbacks: if the new PNG has
+     not been dropped into assets/ yet, the older file is used, and if
+     that is missing too the image simply hides instead of breaking. */
+  function softImage(node, sources) {
+    let at = 0;
+    const next = () => {
+      if (at >= sources.length) {
+        node.classList.add("is-missing");
+        node.removeAttribute("src");
+        return;
+      }
+      node.src = A + sources[at++];
+    };
+    node.addEventListener("error", next);
+    node.addEventListener("load", () => {
+      const file = (node.getAttribute("src") || "").toLowerCase();
+      if (file.slice(-4) === ".png") node.classList.add("is-png");
+    });
+    next();
+    return node;
+  }
+
+  /* real-photo sticker from the sticker folder */
+  function sticker(key, cls) {
     const im = el("img", "pstk " + (cls || ""));
-    im.src = A + src;
     im.alt = "";
     im.draggable = false;
     im.loading = "lazy";
+    softImage(im, stickerSources(key));
     return wiggleOnTap(im);
   }
-
-  const REAL_STICKERS = [
-    "03087c3c7ec42ea017e125932366d4dc.jpg", "07898c8fabd8c50047af31afffd9bb60.jpg",
-    "1775ae2a8718a489721decd4fd3f2d83.jpg", "1ef728e7cd81d64903bddc5330c5d48c.jpg",
-    "2d49f0eb767593435c9ff56df489bec0.jpg", "2e5b0227aa34495e8744b30146b1fb78.jpg",
-    "310b90af033c68568b2347fbf88c6de3.jpg", "312987af0984782fafad4243b761421a.jpg",
-    "44d26b2ee2704fe8c273e83730c1ec0e.jpg", "48cd4401bdfa0ebe4c80fdeaffee11b2.jpg",
-    "5ab2e47e02d3dae411549c231aafa337.jpg", "6711d24d4aa3a7a2ccab4701ec83b370.jpg",
-    "80170864e0b942580d87b520e9647670.jpg", "93531682576dbb0ff07578ae32a43c69.jpg",
-    "976d5c7bb460d587ae0580db19e69b65.jpg", "9a30371b5059345faf779a2172b7f64b.jpg",
-    "ab77a76888df77924f4b18b90a4886a5.jpg", "bc26229d8dd43fddb14b1963e1f32f5a.jpg",
-    "bd22102ef58d3dae000ce5e58b48cd69.jpg", "cd55b0d7f094b1cf1fe063b54416bb04.jpg",
-    "d178aadd4723ef61824cda4784b01181.jpg", "d449fa0f4adf7461e2b01b99a68fcc0b.jpg",
-    "f52d01dc3787797a0efca1cb6ba3f433.jpg", "sitcker1.jpg", "sticker.jpg"
-  ];
 
   function heartSvg(cls, fill, stroke) {
     return svg(cls, "0 0 40 36",
@@ -253,13 +271,6 @@ window.Pages = (() => {
     notes.append(el("p", "cal__note2", p.note2));
     s.append(notes);
 
-    /* sticker scatter — fills the corners, reference-style */
-    const bear = wiggleOnTap(STK.bear());   bear.classList.add("cal__stk", "cal__stk--bear");
-    const cake = wiggleOnTap(STK.cake());   cake.classList.add("cal__stk", "cal__stk--cake");
-    const tulips = wiggleOnTap(STK.tulips()); tulips.classList.add("cal__stk", "cal__stk--tulips");
-    const env = wiggleOnTap(STK.envelope());  env.classList.add("cal__stk", "cal__stk--env");
-    s.append(bear, cake, tulips, env);
-
     const hb = el("div", "cal__hb");
     hb.append(el("span", null, "HAPPY"));
     hb.append(el("span", null, "BIRTHDAY"));
@@ -273,10 +284,18 @@ window.Pages = (() => {
       '<circle cx="50" cy="80" r="2.4" fill="#cf959b"/><circle cx="120" cy="30" r="2" fill="#c8a05e"/>' +
       '<circle cx="90" cy="105" r="2" fill="#e8a7ab"/>'));
 
-    /* real stickers filling the lower band */
-    s.append(sticker("976d5c7bb460d587ae0580db19e69b65.jpg", "cal__p cal__p--tulips"));
-    s.append(sticker("2e5b0227aa34495e8744b30146b1fb78.jpg", "cal__p cal__p--flowers"));
-    s.append(sticker("sitcker1.jpg", "cal__p cal__p--stars"));
+    /* the favourite sticker, pinned on the two blank leading days,
+       right above the 28th */
+    frame.append(sticker("favp", "cal__favp"));
+
+    /* birthday stickers + friends in a little row along the bottom */
+    const band = el("div", "cal__band");
+    ["bday", "1ef728e7cd81d64903bddc5330c5d48c.jpg", "sitcker1.jpg",
+     "bday1", "07898c8fabd8c50047af31afffd9bb60.jpg",
+     "bd22102ef58d3dae000ce5e58b48cd69.jpg"].forEach((key, i) => {
+      band.append(sticker(key, "cal__band-p cal__band-p--" + i));
+    });
+    s.append(band);
     return s;
   }
 
@@ -364,9 +383,17 @@ window.Pages = (() => {
       '<path d="M7.6 15.4 C10 14.5 13.2 14.7 15.4 16" fill="none" stroke="#f1e4cc" stroke-width="1.3" stroke-linecap="round"/>');
   }
 
-  function songCard(song, idx) {
+  /* a stable, tiny tilt so the cards never sit in a straight line
+     (same card = same angle every time the page is turned) */
+  function tinyTilt(seed) {
+    const raw = Math.sin(seed * 12.9898 + 4.1414) * 43758.5453;
+    const unit = raw - Math.floor(raw);
+    return ((unit * 2 - 1) * 3.1).toFixed(2);
+  }
+
+  function songCard(song, idx, seed) {
     const card = el("figure", "song-print");
-    card.style.setProperty("--rot", [-3, 2, -1][idx % 3] + "deg");
+    card.style.setProperty("--rot", tinyTilt(seed + idx * 3.7) + "deg");
     const image = el("img", "song-print__image");
     image.src = A + song.img;
     image.alt = song.title + " — " + song.artist + ": " + song.big;
@@ -390,8 +417,19 @@ window.Pages = (() => {
     s.append(el("span", "side-tag" + (side === "B" ? " side-tag--b" : ""), p.side));
     s.append(title(p.title, "ttl--hand"));
 
+    if (p.intro) s.append(el("p", "songs__intro", p.intro));
+
     const stack = el("div", "songs__stack");
-    p.songs.forEach((song, i) => stack.append(songCard(song, i)));
+    const seed = side === "B" ? 9.2 : 2.4;
+    p.songs.forEach((song, i) => stack.append(songCard(song, i, seed)));
+    if (p.songs.length % 2 === 1) {
+      const filler = el("div", "songs__filler");
+      filler.append(washi("washi--mini washi--blush songs__filler-tape"));
+      filler.append(el("span", "songs__filler-t",
+        side === "A" ? "…more on the next page ♡" : "…and a hundred more ♡"));
+      filler.append(heartSvg("songs__filler-h"));
+      stack.append(filler);
+    }
     s.append(stack);
 
     s.append(wiggleOnTap(STK.headphones()).cloneNode(true));
@@ -657,7 +695,7 @@ window.Pages = (() => {
     s.append(el("p", "string__belief", p.belief));
 
     const hands = el("img", "hands hands--upload");
-    hands.src = A + "hand.jpg";
+    softImage(hands, stickerSources("hand"));
     hands.alt = "Two reaching hands connected by a red thread";
     s.append(hands);
 
@@ -711,6 +749,14 @@ window.Pages = (() => {
     });
     pad.append(el("div", "pad__foot", "· · · keep this list close · · ·"));
     s.append(pad);
+
+    /* a taped little note fills the space under the pad */
+    const foot = el("div", "remind__note");
+    foot.append(washi("washi--mini washi--blush remind__note-tape"));
+    foot.append(el("span", "remind__note-t",
+      "read this on the days you forget how loved you are ♡"));
+    foot.append(heartSvg("remind__note-h"));
+    s.append(foot);
 
     const p1 = pin("#b23a48").cloneNode(true);
     p1.classList.add("pad__pin");
@@ -848,15 +894,15 @@ window.Pages = (() => {
     let circles = "";
     ILY_DOTS.forEach(([x, y], i) => {
       circles += '<circle class="dot" data-i="' + i + '" cx="' + x + '" cy="' + y + '" r="8"/>';
-      const right = x >= 235;
-      circles += '<text class="dot__n" text-anchor="' + (right ? "start" : "end") +
-        '" x="' + (x + (right ? 12 : -12)) + '" y="' + (y + 5) + '">' + (i + 1) + "</text>";
+      /* the number sits just above its dot, clear of its neighbours */
+      circles += '<text class="dot__n" text-anchor="middle" x="' + x +
+        '" y="' + (y - 14) + '">' + (i + 1) + "</text>";
     });
 
     const wrap = el("div", "dotwrap");
     const ssvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     ssvg.setAttribute("class", "dotsvg");
-    ssvg.setAttribute("viewBox", "34 52 416 372");
+    ssvg.setAttribute("viewBox", "26 36 434 396");
     ssvg.innerHTML =
       '<path class="dots__finish" d="" />' +
       '<path class="dots__temp" d="" />' +
@@ -1079,7 +1125,10 @@ window.Pages = (() => {
 
     const again = el("button", "end-again", p.again);
     again.type = "button";
-    again.addEventListener("click", () => window.Book.goTo(0));
+    again.addEventListener("click", () => {
+      if (typeof window.Book.goToPage === "function") window.Book.goToPage(0);
+      else window.Book.goTo(0);
+    });
     s.append(again);
 
     s.append(wiggleOnTap(STK.tissue()).cloneNode(true));
@@ -1152,57 +1201,50 @@ window.Pages = (() => {
     /* soft speckle texture */
     scrap.append(el("span", "endpaper__speck"));
 
+    if (side === "front") return introductionPage(scrap);
+
     const label = el("div", "bookplate");
     label.append(el("span", "bookplate__small", "this book belongs to"));
     label.append(el("span", "bookplate__name", "Giffie ♡"));
     scrap.append(label);
-
-    if (side === "front") {
-
-
-      scrap.append(el("p", "ep-dedication", "a collection of little things, for my favourite person. ♡"));
-
-      /* sticker garden — fills the cover, tap any to wiggle */
-      const placements = [
-        { mk: STK.bow, cls: "ep-stk ep-stk--1" },
-        { mk: STK.tulips, cls: "ep-stk ep-stk--2" },
-        { mk: STK.envelope, cls: "ep-stk ep-stk--3" },
-        { mk: STK.bear, cls: "ep-stk ep-stk--4" },
-        { mk: STK.star, cls: "ep-stk ep-stk--5" },
-        { mk: STK.heartTiny, cls: "ep-stk ep-stk--6" },
-        { mk: STK.sparkle, cls: "ep-stk ep-stk--7" },
-        { mk: STK.cake, cls: "ep-stk ep-stk--8" }
-      ];
-      placements.forEach((pl) => {
-        const n = wiggleOnTap(pl.mk());
-        pl.cls.split(" ").forEach((c) => n.classList.add(c));
-        scrap.append(n);
-      });
-
-      /* ambient floating hearts */
-      if (!reduceMotion.matches) {
-        const float = el("div", "ep-float");
-        for (let i = 0; i < 6; i++) {
-          const f = heartSvg("ep-float__h");
-          f.style.left = (10 + (i * 15) % 80) + "%";
-          f.style.animationDelay = (i * 1.4) + "s";
-          f.style.animationDuration = (6 + (i % 3) * 2) + "s";
-          float.append(f);
-        }
-        scrap.append(float);
-      }
-
-      scrap.append(el("p", "ep-note", "made just for you — every page, every word ♡"));
-    } else {
-      scrap.append(el("span", "endpaper__stamp", "the end of the pages, not of us ♡"));
-    }
+    scrap.append(el("span", "endpaper__stamp", "the end of the pages, not of us ♡"));
     handmadeStickers(scrap, 0);
     return scrap;
   }
 
+  /* ================================================================
+     THE INTRODUCTION PAGE · bookplate + the folded-paper fortune
+     teller. Not a numbered page — it lives on the inside front
+     cover, immediately before the birthday calendar.
+     ================================================================ */
+  function introductionPage(scrap) {
+    scrap.classList.add("scrap--intro");
+    const F = CONTENT.fortune;
+
+    const plate = el("div", "bookplate");
+    plate.append(el("span", "bookplate__small", "this book belongs to"));
+    plate.append(el("span", "bookplate__name", "Giffie ♡"));
+    scrap.append(plate);
+
+    const pasted = el("div", "ft-sheet");
+    pasted.append(el("span", "ft-sheet__tape ft-sheet__tape--a"));
+    pasted.append(el("span", "ft-sheet__tape ft-sheet__tape--b"));
+    pasted.append(heartSvg("ft-doodle-heart ft-doodle-heart--a"));
+    pasted.append(heartSvg("ft-doodle-heart ft-doodle-heart--b"));
+    pasted.append(sticker("bd22102ef58d3dae000ce5e58b48cd69.jpg", "intro-p intro-p--a"));
+    pasted.append(sticker("9a30371b5059345faf779a2172b7f64b.jpg", "intro-p intro-p--b"));
+    pasted.append(sticker("sticker.jpg", "intro-p intro-p--c"));
+    pasted.append(window.Fortune.build(F));
+    scrap.append(pasted);
+
+    return scrap;
+  }
+
   function handmadeStickers(host, seed) {
+    const library = STICKER_LIBRARY.length ? STICKER_LIBRARY : [{ jpg: "sitcker1.jpg" }];
     host.querySelectorAll("svg.stk").forEach((old, i) => {
-      const image = sticker(REAL_STICKERS[(seed * 3 + i) % REAL_STICKERS.length]);
+      const entry = library[(seed * 3 + i) % library.length];
+      const image = sticker([entry.png, entry.jpg].filter(Boolean));
       image.setAttribute("class", old.getAttribute("class") + " real-sticker");
       image.style.cssText = old.style.cssText;
       old.replaceWith(image);
