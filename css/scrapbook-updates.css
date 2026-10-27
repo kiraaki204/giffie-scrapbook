@@ -625,7 +625,7 @@
   position: relative;
   flex: 1 1 auto;
   min-height: 0;
-  margin-top: .55em;
+  margin-top: .4em;
 }
 
 .p-letter--continuation .letter__lines {
@@ -635,8 +635,8 @@
   margin: 0;
   background: repeating-linear-gradient(
     to bottom,
-    transparent 0 calc(1.62em - 1px),
-    rgba(75, 52, 42, .27) calc(1.62em - 1px) 1.62em);
+    transparent 0 calc(2.5em - 1px),
+    rgba(75, 52, 42, .27) calc(2.5em - 1px) 2.5em);
 }
 
 .p-letter--continuation .letter__lines::before { left: 2.3em; }
@@ -646,15 +646,15 @@
   z-index: 1;
   margin: .15em 1.15em .4em 3.1em;
   font-family: var(--font-hand);
-  font-size: 1.13em;
-  line-height: 1.62;
+  font-size: 1.42em;
+  line-height: 1.76;
   color: var(--ink);
 }
 
 .letter__lead {
-  margin: 0 0 .55em;
+  margin: 0 0 .45em;
   font-family: var(--font-hand);
-  font-size: 1.06em;
+  font-size: 1.1em;
   font-weight: 600;
   line-height: 1.25;
   color: var(--cherry);
@@ -685,5 +685,489 @@
   .quiz__pixel-kitty { width: 3.25em; }
   .p-letter--continuation .letter__title { font-size: 1.32em; }
   .p-letter--continuation .letter__date { font-size: .62em; }
-  .letter__prose { margin-left: 2.8em; margin-right: .6em; font-size: 1.05em; }
+  .letter__prose { margin-left: 2.8em; margin-right: .6em; font-size: 1.2em; line-height: 1.9; }
+}
+
+/* ============================================================
+   ROUND FOUR · the last round of hand adjustments
+   (page 1 heading, page 3 holders, page 4/5/6 stickers, page 8
+   fit, page 10 tucked coupon, page 11 type, page 13 spacing,
+   page 14 the big quiz + certificate)
+   ============================================================ */
+
+/* ---------------- page 1 · the lettering IS the heading ---------------- */
+.p-calendar { padding-top: 1.1em; }
+
+.p-calendar .cal__head { align-items: center; }
+.p-calendar .cal__year { font-size: .72em; margin-bottom: 0; }
+.p-calendar .ttl--cal { font-size: 1.62em; line-height: 1; }
+
+/* bunting over the watercolour lettering, both much bigger than before */
+.p-calendar .cal__birthday-badge {
+  position: relative;
+  width: 100%;
+  height: auto;
+  margin: .1em auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.p-calendar .cal__garland,
+.p-calendar .cal__birthday-sticker {
+  position: relative;
+  left: auto;
+  top: auto;
+  height: auto;
+  object-fit: contain;
+  min-width: 0;
+}
+
+.p-calendar .cal__garland {
+  width: 15.2em;
+  max-width: 92%;
+  transform: rotate(-1.4deg);
+}
+
+.p-calendar .cal__birthday-sticker {
+  width: 10.8em;
+  max-width: 74%;
+  margin-top: -.55em;
+  transform: rotate(-1.2deg);
+}
+
+/* the sticker already says happy birthday — the extra type block went */
+.p-calendar .cal__hb { display: none; }
+
+.p-calendar .cal__frame {
+  margin: .25em auto 0;
+  width: 91%;
+  padding: .5em .7em .75em;
+}
+
+.p-calendar .cal__grid { gap: .2em; }
+.p-calendar .cal__dow { padding-bottom: .15em; }
+.p-calendar .cal__notes { margin-top: .5em; }
+.p-calendar .cal__note1 { font-size: 1.28em; }
+.p-calendar .cal__note2 { font-size: .88em; margin-top: .12em; }
+
+/* the 28th is written INSIDE its box, same hand and same size as every
+   other date — no separate little bubble for it any more */
+.p-calendar .cal__cell.is-bday .cal__num {
+  position: static;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  font-family: var(--type);
+  font-size: .8em;
+  font-weight: 700;
+  color: var(--cherry);
+  z-index: auto;
+}
+
+.p-calendar .cal__cell.is-bday .cal__ring { opacity: .42; }
+.p-calendar .cal__bday-note { display: none; }
+.p-calendar .cal__cell.is-bday { z-index: 2; }
+
+/* ---------------- page 12 · the pad's corners stay clean ---------------- */
+.p-remind .remind__heart,
+.p-remind .remind__stk--env { display: none; }
+
+/* ---------------- page 3 · the two holders move inward ---------------- */
+.sm-p3 { left: 8.5%; top: 37%; width: 19%; }
+.sm-p4 { right: 8.5%; top: 37%; width: 19%; }
+.sm-p1 { left: 7%;  top: 3%; width: 26%; }
+.sm-p2 { right: 7%; top: 3%; width: 26%; }
+.sm-p5 { left: 13.5%; bottom: 2%; width: 26%; }
+.sm-p6 { right: 13.5%; bottom: 2%; width: 26%; }
+/* a slightly narrower definition column so nothing sits on the words */
+.p-soulmate .sm-mid { left: 28%; right: 28%; }
+
+.photo__image.is-missing,
+.pb__photo.is-missing { opacity: 0; }
+
+/* ---------------- page 4 · the two star stickers by the song-4 card ---------------- */
+/* the felt star sits right beside the "It's You" (song-4) card */
+.p-songs--a .songs__stack { margin-left: 1.6em; width: 91%; }
+
+.songs__bigstar {
+  position: absolute;
+  left: -.15em;
+  top: 55%;
+  width: 4.2em;
+  max-width: none;
+  z-index: 6;
+  transform: rotate(-8deg);
+}
+
+/* the little star cluster is tucked into the top-right corner */
+.songs__cluster {
+  position: absolute;
+  right: .3em;
+  top: 1.2%;
+  width: 4.6em;
+  max-width: none;
+  z-index: 6;
+  transform: rotate(7deg);
+}
+
+/* ---------------- page 5 · no "side B" tag, a much bigger hug ---------------- */
+.p-songs--b .side-tag { display: none; }
+.p-songs--b .ttl--hand   { max-width: 100%; }
+
+.songs__hug {
+  right: 2.6%;
+  bottom: 7.4%;
+  width: 10.2em;
+  max-width: none;
+  transform: rotate(-6deg);
+}
+
+/* ---------------- page 6 · a kitty keeping the bouquet company ---------------- */
+.little__kitty {
+  position: absolute;
+  right: calc(2.5% + 4.5em);
+  bottom: 4.5%;
+  width: 3.9em;
+  z-index: 4;
+  transform: rotate(-7deg);
+}
+
+/* ---------------- page 8 · squeeze the letter into the leaf ---------------- */
+.p-why { padding-bottom: 1.9em; }
+.p-why .banner { margin-top: 0; }
+.p-why .why__body { margin-top: .75em; }
+.p-why .why__p {
+  font-size: 1em;
+  line-height: 1.38;
+  margin-bottom: .68em;
+}
+.p-why .why__p:last-child { margin-bottom: 0; }
+.p-why .photo--why { width: 34%; margin-bottom: .4em; }
+
+/* the little hand in the corner, now big enough to notice */
+.why__h1 {
+  left: -.9em;
+  top: auto;
+  bottom: 1.9em;
+  width: 8.1em;
+  max-width: none;
+  min-width: 0 !important;
+  z-index: 5;
+  transform: rotate(-9deg);
+}
+.why__h2 { width: 2.4em; right: 5.5%; bottom: 12%; }
+
+/* the certificate is a big keepsake once it appears, so the deco that
+   sat beside the quiz politely steps aside */
+.p-quiz .quiz__pair,
+.p-quiz .quiz__squiggle { display: none; }
+
+/* ---------------- page 10 · carried up, coupon tucked in an envelope ---------------- */
+.p-traffic .stamp--traffic { top: 1.6%; }
+.p-traffic .lights-btn { top: 6%; height: 36.5%; }
+.p-traffic .tpanels { top: 6%; height: 36.5%; }
+.p-traffic .tpanel .wline__t { font-size: 1.3em; }
+
+.coupon-pocket {
+  position: absolute;
+  left: 50%;
+  top: 50.5%;
+  width: 92%;
+  height: 18.6em;
+  transform: translateX(-50%);
+  z-index: 4;
+}
+
+/* the envelope body behind the coupon */
+.coupon-pocket__back {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 6.1em;
+  bottom: 0;
+  background:
+    repeating-linear-gradient(135deg, rgba(150, 115, 60, .05) 0 6px, transparent 6px 12px),
+    #f7eedb;
+  border: 1.5px solid rgba(150, 115, 60, .6);
+  border-radius: 4px 4px 5px 5px;
+  box-shadow: 0 6px 14px rgba(75, 52, 42, .26);
+  z-index: 1;
+}
+
+/* the coupon itself: bigger than before, and it slides up out of the pocket */
+.coupon-pocket .hug-coupon {
+  position: absolute;
+  left: 4.5%;
+  right: 4.5%;
+  top: .2em;
+  width: auto;
+  min-height: 10.6em;
+  margin: 0;
+  padding: .6em 1.1em .8em;
+  transform: translateY(4.6em) rotate(-1.2deg) scale(.96);
+  transform-origin: 50% 0;
+  transition: transform .55s cubic-bezier(.2, .8, .25, 1.05);
+  z-index: 2;
+  cursor: pointer;
+}
+
+.coupon-pocket .hug-coupon__main { margin: .18em 0 .3em; gap: .7em; }
+.coupon-pocket .hug-coupon__one { font-size: 3.6em; line-height: 1; }
+.coupon-pocket .hug-coupon__offer { gap: .18em; }
+.coupon-pocket .hug-coupon__free { font-size: .7em; }
+.coupon-pocket .hug-coupon__words { font-size: 2.15em; line-height: 1.12; }
+.coupon-pocket .hug-coupon__redeem { font-size: 1.14em; margin-top: .3em; }
+.coupon-pocket .hug-coupon__eyebrow { font-size: .72em; }
+.coupon-pocket .hug-coupon__barcode { font-size: .64em; }
+
+.coupon-pocket.is-out .hug-coupon {
+  transform: translateY(-1.7em) rotate(-1.2deg) scale(1);
+  z-index: 6;
+}
+
+/* the envelope front tucks over the coupon, with the folds drawn in */
+.coupon-pocket__front {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 7.6em;
+  bottom: 0;
+  background: linear-gradient(180deg, #fffaf0, #f2e5cc);
+  border: 1.5px solid rgba(150, 115, 60, .6);
+  border-radius: 3px 3px 6px 6px;
+  box-shadow: 0 -1px 0 rgba(255, 255, 255, .8) inset, 0 6px 14px rgba(75, 52, 42, .22);
+  z-index: 4;
+  pointer-events: none;
+}
+
+.coupon-pocket__front::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom right, transparent calc(50% - 1px), rgba(150, 115, 60, .45) 50%, transparent calc(50% + 1px)),
+    linear-gradient(to bottom left,  transparent calc(50% - 1px), rgba(150, 115, 60, .45) 50%, transparent calc(50% + 1px));
+  clip-path: polygon(0 0, 50% 62%, 100% 0, 100% 100%, 0 100%);
+  opacity: .9;
+}
+
+.coupon-pocket__seam {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  bottom: .45em;
+  border-top: 1.5px dashed rgba(150, 115, 60, .5);
+}
+
+.coupon-pocket__stamp {
+  position: absolute;
+  right: .8em;
+  top: .7em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.6em;
+  height: 2.1em;
+  font-size: 1em;
+  color: var(--cherry);
+  background: #f6e3e0;
+  border: 1.5px dashed rgba(178, 58, 72, .55);
+  border-radius: 3px;
+  transform: rotate(-6deg);
+}
+
+.coupon-pocket__hint {
+  position: absolute;
+  left: 50%;
+  top: 67%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .05em;
+  padding: .3em .9em .35em;
+  background: rgba(255, 250, 240, .92);
+  border: 1px dashed rgba(178, 58, 72, .5);
+  border-radius: 4px;
+  color: var(--cherry);
+  font-family: var(--font-hand);
+  cursor: pointer;
+  z-index: 6;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.coupon-pocket__tap { font-size: 1.22em; font-weight: 600; line-height: 1.05; }
+.coupon-pocket__tap2 { font-size: .84em; color: var(--rose-dark); line-height: 1.1; }
+.coupon-pocket__hint:hover,
+.coupon-pocket__hint:focus-visible { background: #fff; border-color: var(--cherry); }
+
+/* the little swoosh of hearts when it comes out stays clear of the coupon */
+.p-traffic .flying-heart { bottom: 46%; }
+
+/* ---------------- page 11 · the string theory fills the leaf ---------------- */
+.p-string { padding-top: 1.25em; }
+.p-string .ttl--string { font-size: 2.05em; }
+.p-string .string__belief {
+  font-size: 1.42em;
+  line-height: 1.42;
+  width: 96%;
+  margin-top: .4em;
+}
+.p-string .hands--upload {
+  height: 34%;
+  max-height: 34%;
+  margin: .45em -1.8em 0;
+  object-position: center 62%;
+}
+.p-string .string__note {
+  font-size: 1.62em;
+  line-height: 1.3;
+  width: 94%;
+  margin-bottom: .1em;
+}
+.p-string .string__flourish { width: 62%; margin: .25em auto .1em; }
+.p-string .string__washi { margin-bottom: .5em; }
+
+/* ---------------- page 13 · both stickers bigger, with air between them ---------------- */
+.poem__kitty {
+  right: 2.5%;
+  top: 1.8%;
+  width: 5.4em;
+  transform: rotate(6deg);
+}
+
+.poem__firefly {
+  right: 3.8%;
+  top: 18.5%;
+  width: 5.1em;
+  transform: rotate(-5deg);
+}
+
+.p-poem .poem__body { padding-right: 6.6em; }
+
+/* ---------------- page 14 · a big three-option quiz, certificate hidden ---------------- */
+.p-quiz { padding: 1em 1.4em 1.3em; }
+.p-quiz .ttl--quiz { font-size: 1.95em; }
+.p-quiz .quiz__intro { font-size: 1.14em; margin: .1em 0 .55em; }
+
+.p-quiz .quiz {
+  width: 94%;
+  min-height: 74%;
+  margin: .2em auto .4em;
+  padding: 1.2em 1.2em 1em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: .15em;
+}
+
+.p-quiz .quiz__prompt {
+  font-size: 1.3em;
+  margin: 0 0 .8em;
+}
+
+.p-quiz .quiz__opts {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: .85em;
+  width: 100%;
+}
+
+.p-quiz .qopt {
+  display: flex;
+  align-items: baseline;
+  gap: .55em;
+  width: 94%;
+  margin: 0 auto;
+  flex: 1 1 0;
+  align-items: center;
+  padding: .75em 1.15em;
+  text-align: left;
+  font-size: 2.3em;
+  line-height: 1.05;
+}
+
+.p-quiz .qopt__mark {
+  flex: none;
+  font-family: var(--type);
+  font-size: .82em;
+  letter-spacing: .06em;
+  color: var(--rose-dark);
+}
+
+.p-quiz .qopt.is-picked {
+  background: #f6e3e0 !important;
+  box-shadow: 0 0 0 2px var(--cherry), 2.5px 3px 0 rgba(75, 52, 42, .45);
+}
+
+.p-quiz .qopt.is-picked .qopt__mark { color: var(--cherry); }
+
+.p-quiz .quiz__fb { margin: .7em 0 .15em; font-size: 1.24em; }
+
+/* once she answers, the quiz steps back so the certificate has room */
+.p-quiz.is-answered .quiz {
+  min-height: 0;
+  padding: .55em .8em .5em;
+}
+.p-quiz.is-answered .quiz__prompt { display: none; }
+.p-quiz.is-answered .quiz__opts { gap: .4em; }
+.p-quiz.is-answered .qopt {
+  padding: .42em .9em .38em;
+  font-size: 1.4em;
+}
+.p-quiz.is-answered .quiz__fb { margin: .3em 0 0; font-size: 1.1em; }
+.p-quiz.is-answered .quiz__qmark { font-size: 1.8em; top: -.05em; }
+
+.certificate-locked {
+  margin: .55em 0 0;
+  text-align: center;
+  font-family: var(--font-hand);
+  font-size: 1.02em;
+  color: var(--rose-deep);
+}
+
+.certificate-locked[hidden] { display: none; }
+
+.p-quiz .friend-certificate {
+  width: 94%;
+  min-height: 21.6em;
+  margin: .35em auto .2em;
+  padding: 1.5em 1.4em 1.4em;
+  gap: .3em;
+}
+
+.p-quiz .friend-certificate__eyebrow { font-size: .66em; letter-spacing: .16em; }
+.p-quiz .friend-certificate__title { font-size: 1.95em; margin: .25em 0 .22em; }
+.p-quiz .friend-certificate__name { font-size: 1.66em; }
+.p-quiz .friend-certificate__copy { font-size: 1.06em; line-height: 1.42; max-width: 24em; }
+.p-quiz .friend-certificate__ribbon { font-size: 1.2em; padding: .3em 1.5em .34em; margin-top: .35em; }
+.p-quiz .friend-certificate__signature { font-size: 1.02em; margin-top: .4em; }
+.p-quiz .friend-certificate__seal { top: .3em; right: .5em; font-size: 2.1em; }
+.p-quiz .friend-certificate[hidden] { display: none; }
+
+/* stickers move out of the certificate's way */
+.p-quiz .quiz__pony { right: 1.5%; top: 1.5%; width: 4.6em; }
+.p-quiz .quiz__pair { left: 1.5%; top: 12%; width: 4.6em; }
+.p-quiz .quiz__squiggle { right: 1.6%; top: 30%; width: 3.2em; }
+
+@media (max-width: 767px) {
+  .p-calendar .cal__garland { width: 15.4em; }
+  .p-calendar .cal__birthday-sticker { width: 10em; }
+  .p-songs--b .songs__hug { width: 7em; }
+  .coupon-pocket { top: 48%; height: 19.5em; }
+  .coupon-pocket__tap { font-size: 1.1em; }
+  .p-quiz .quiz { width: 92%; }
+  .p-quiz .qopt { width: 96%; font-size: 1.28em; }
+  .p-quiz .friend-certificate { width: 98%; }
 }

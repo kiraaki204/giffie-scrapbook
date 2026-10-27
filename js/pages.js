@@ -39,20 +39,21 @@ window.Pages = (() => {
     return el("span", "washi " + (cls || "washi--blush"));
   }
 
+  /* a photo offers a list of candidates in order: the browser shows the
+     first one it can actually decode and quietly skips the rest — that is
+     how the .xcf names can stay first in the list without breaking the
+     page (browsers cannot paint GIMP files, so the jpg behind it shows) */
   function photo(label, cls, tilt, source) {
     const fig = el("figure", "photo " + (cls || ""));
     if (tilt) fig.style.setProperty("--tilt", tilt + "deg");
     fig.append(washi("washi--photo"));
     const mat = el("div", "photo__mat");
-    if (source) {
+    const sources = (Array.isArray(source) ? source : [source]).filter(Boolean);
+    if (sources.length) {
       const image = el("img", "photo__image");
-      image.src = A + source;
       image.alt = label;
       image.loading = "lazy";
-      image.addEventListener("error", () => {
-        image.remove();
-        mat.append(el("span", "photo__ph", label + " · " + source.replace(/\.jpg$/i, "") + " not in assets yet"));
-      }, { once: true });
+      softImage(image, sources);
       mat.append(image);
     } else {
       mat.append(el("span", "photo__ph", label));
@@ -201,16 +202,26 @@ window.Pages = (() => {
     return layer;
   }
 
-  function scatterStickers(host, seed, count, slots) {
+  function scatterStickers(host, seed, count, slots, used) {
     if (!STICKER_LIBRARY.length) return null;
     const layer = scatterLayer(host);
     const pool = slots || SCATTER_SLOTS;
     const total = Math.min(count == null ? 6 : count, pool.length);
     const start = slots ? 0 : Math.floor(noise(seed * 1.7) * pool.length);
     const step = slots ? 1 : 5;
+    const seen = used || new Set();
+    let pick = 0;
     for (let i = 0; i < total; i++) {
       const slot = pool[(start + i * step) % pool.length];
-      const entry = STICKER_LIBRARY[(Math.floor(seed * 5) + i * 7) % STICKER_LIBRARY.length];
+      /* walk the library until we find a drawing this page hasn't used
+         yet, so the same little sticker never shows up twice */
+      let entry = null;
+      for (let tries = 0; tries < STICKER_LIBRARY.length; tries++) {
+        const candidate = STICKER_LIBRARY[(Math.floor(seed * 5) + (i + pick + tries) * 7) % STICKER_LIBRARY.length];
+        if (!seen.has(candidate.png)) { entry = candidate; pick += tries; break; }
+      }
+      if (!entry) entry = STICKER_LIBRARY[(Math.floor(seed * 5) + i * 7) % STICKER_LIBRARY.length];
+      seen.add(entry.png);
       pastedSticker(layer, [entry.png, entry.jpg].filter(Boolean), {
         x: slot.x + (noise(seed + i * 3.1) * 3 - 1.5),
         y: slot.y + (noise(seed + i * 7.7) * 3 - 1.5),
@@ -225,7 +236,7 @@ window.Pages = (() => {
   /* some pages have a lot of writing — fewer stickers there */
   const SCATTER_COUNTS = {
     1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 2, 9: 5,
-    10: 0, 11: 5, 12: 3, 13: 0, 14: 0, 15: 0, 16: 0,
+    10: 0, 11: 5, 12: 2, 13: 0, 14: 0, 15: 0, 16: 0,
     17: 0, 18: 0, 19: 0, 20: 0, 21: 0, 22: 0, 23: 0, 24: 0,
     25: 0, 26: 0, 27: 6
   };
@@ -240,6 +251,10 @@ window.Pages = (() => {
   ];
   const SCATTER_OVERRIDES = {
     6: EDGE_SLOTS,
+    8: [
+      { x: 86, y: 89, s: "sm", r: -8 },
+      { x: 12, y: 89, s: "xs", r: 9 }
+    ],
     7: [
       { x: 0,  y: 2,  s: "sm", r: -11 },
       { x: 92, y: 1,  s: "xs", r: 12 },
@@ -252,7 +267,10 @@ window.Pages = (() => {
       { x: 0,  y: 47, s: "xs", r: 6 },
       { x: 94, y: 55, s: "xs", r: -9 }
     ],
-    12: EDGE_SLOTS,
+    12: [
+      { x: 1.5, y: 78, s: "xs", r: -8 },
+      { x: 91,  y: 84, s: "sm", r: 10 }
+    ],
     13: EDGE_SLOTS,
     27: [
       { x: .5, y: 3,  s: "xs", r: -10 },
@@ -350,10 +368,12 @@ window.Pages = (() => {
     head.append(hWrap);
     s.append(head);
 
+    /* the two big watercolour bits act as the page heading: the bunting
+       garland with the "happy birthday" lettering tucked under it */
     const birthdayBadge = el("div", "cal__birthday-badge");
     birthdayBadge.setAttribute("aria-hidden", "true");
-    birthdayBadge.append(sticker("confetti.png", "cal__garland"));
-    birthdayBadge.append(sticker("1.png", "cal__birthday-sticker"));
+    birthdayBadge.append(sticker("confetti-garland.png", "cal__garland"));
+    birthdayBadge.append(sticker("1-happy-birthday.png", "cal__birthday-sticker"));
     s.append(birthdayBadge);
 
     /* dashed stitched frame like the reference */
@@ -419,15 +439,18 @@ window.Pages = (() => {
     /* birthday stickers tumble around the edges of the page instead of
        standing in one straight row — little, normal, and a bit bigger */
     const calStickers = scatterLayer(s, "sticker-scatter--cal");
+    /* the calendar takes up most of the leaf, so every sticker lives in
+       the two side gutters (or the margins above / below it) and never
+       sits on top of a date */
     [
-      { key: "bow.png",                 x: 88, y: 22, s: "md", r: 8,  w: 3.1, z: 7 },
-      { key: "cake.png",                x: 87, y: 70, s: "md", r: -8, w: 3.4, z: 6 },
-      { key: "bday",                    x: 1,  y: 39, s: "md", r: -12 },
-      { key: "bday1",                   x: 1,  y: 59, s: "sm", r: 8 },
-      { key: "stk-stars.png",           x: 92, y: 5,  s: "xs", r: 9 },
-      { key: "stk-pixel-heart.png",     x: 36, y: 88, s: "sm", r: -6 },
-      { key: "tulips",                  x: 73, y: 78, s: "md", r: -9, w: 3.1 },
-      { key: "stk-heart.png",           x: 55, y: 92, s: "xs", r: 12 }
+      { key: "stk-stars.png",        x: 90,  y: 1,    s: "xs", r: 9,  w: 2.1, z: 7 },
+      { key: "bow.png",              x: 90.5, y: 8,   s: "md", r: 8,  w: 2.7, z: 7 },
+      { key: "bday",                 x: -1.9, y: 40,  s: "md", r: -12, w: 3.1 },
+      { key: "bday1",                x: -1.6, y: 56,  s: "sm", r: 8,  w: 2.4 },
+      { key: "cake.png",             x: 90.6, y: 43,  s: "md", r: -8, w: 3.2, z: 6 },
+      { key: "tulips",               x: 89.6, y: 59,  s: "md", r: -9, w: 3.3 },
+      { key: "stk-pixel-heart.png",  x: 90.5, y: 74,  s: "xs", r: -6, w: 2.1 },
+      { key: "stk-heart.png",        x: 2,    y: 92,  s: "xs", r: 12, w: 1.8 }
     ].forEach((o) => pastedSticker(calStickers, o.key, o));
     return s;
   }
@@ -570,9 +593,13 @@ window.Pages = (() => {
     s.append(stack);
 
     if (side === "A") {
+      /* asked for: the red star at the left of the song-4 card and the
+         little star cluster tucked into the top-right corner */
       s.append(sticker("cd55b0d7f094b1cf1fe063b54416bb04-removebg-preview.png",
         "songs__next-arrow"));
       s.append(sticker("stk-heart-balloon.png", "songs__balloon"));
+      s.append(sticker("Firefly (10).png", "songs__bigstar"));
+      s.append(sticker("sitcker1-removebg-preview.png", "songs__cluster"));
     } else {
       s.append(sticker("stk-hug.png", "songs__hug"));
     }
@@ -632,6 +659,7 @@ window.Pages = (() => {
     });
     s.append(grid);
     s.append(sticker("fower .png", "little__flower"));
+    s.append(sticker("stk-kitty.png", "little__kitty"));
 
     s.append(el("span", "little-flourish", "· · · every tiny bit of us · · ·"));
     return s;
@@ -676,9 +704,9 @@ window.Pages = (() => {
       image.loading = "lazy";
       const photoAsset = p.photoAssets && p.photoAssets[i];
       if (photoAsset) {
+        const candidates = (Array.isArray(photoAsset) ? photoAsset : [photoAsset]).filter(Boolean);
         image.addEventListener("load", () => frame.classList.add("has-photo"), { once: true });
-        image.addEventListener("error", () => image.removeAttribute("src"), { once: true });
-        image.src = A + photoAsset;
+        softImage(image, candidates);
       }
       front.append(image, el("span", "pb__ph", ph),
                    el("span", "pb__tap", p.tapHint));
@@ -836,8 +864,7 @@ window.Pages = (() => {
     });
     s.append(body);
 
-    s.append(wiggleOnTap(STK.heartTiny()).cloneNode(true));
-    const h1 = s.lastElementChild; h1.classList.add("why__h1"); wiggleOnTap(h1);
+    s.append(sticker("hand-removebg-preview.png", "why__h1"));
     s.append(wiggleOnTap(STK.star()).cloneNode(true));
     const h2 = s.lastElementChild; h2.classList.add("why__h2"); wiggleOnTap(h2);
 
@@ -963,6 +990,10 @@ window.Pages = (() => {
     });
     s.append(panels);
 
+    /* the coupon is tucked inside an envelope pocket — tap it and the
+       coupon slides out of the envelope */
+    const pocket = el("div", "coupon-pocket");
+
     const coupon = el("section", "hug-coupon");
     coupon.setAttribute("aria-label", "one free hug and kisses coupon, redeemable anytime");
     coupon.append(el("span", "hug-coupon__eyebrow", "a little something, just for you"));
@@ -975,7 +1006,39 @@ window.Pages = (() => {
     coupon.append(couponMain);
     coupon.append(el("span", "hug-coupon__redeem", "redeemable anytime · no expiration ♡"));
     coupon.append(el("span", "hug-coupon__barcode", "|||| ||| || ||||"));
-    s.append(coupon);
+
+    const pocketBack = el("span", "coupon-pocket__back");
+    const pocketFront = el("span", "coupon-pocket__front");
+    pocketFront.append(el("span", "coupon-pocket__seam"));
+    pocketFront.append(el("span", "coupon-pocket__stamp", "♡"));
+    const pocketHint = el("button", "coupon-pocket__hint");
+    pocketHint.type = "button";
+    pocketHint.setAttribute("aria-expanded", "false");
+    pocketHint.append(el("span", "coupon-pocket__tap", "tap the coupon ♡"));
+    pocketHint.append(el("span", "coupon-pocket__tap2", "pull it out of the envelope"));
+    pocketFront.append(pocketHint);
+
+    pocket.append(pocketBack, coupon, pocketFront);
+    s.append(pocket);
+
+    let couponOut = false;
+    const pullCoupon = () => {
+      couponOut = !couponOut;
+      pocket.classList.toggle("is-out", couponOut);
+      pocketHint.setAttribute("aria-expanded", String(couponOut));
+      pocketHint.querySelector(".coupon-pocket__tap").textContent =
+        couponOut ? "there it is ♡" : "tap the coupon ♡";
+      pocketHint.querySelector(".coupon-pocket__tap2").textContent =
+        couponOut ? "tap again to tuck it back" : "pull it out of the envelope";
+      if (couponOut) burstHearts(s, 7);
+    };
+    coupon.addEventListener("click", pullCoupon);
+    pocketHint.addEventListener("click", pullCoupon);
+    coupon.setAttribute("role", "button");
+    coupon.setAttribute("tabindex", "0");
+    coupon.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pullCoupon(); }
+    });
 
     const quote = el("p", "traffic__quote",
       "i miss you more than i show\ni love u more than you know");
@@ -1097,23 +1160,37 @@ window.Pages = (() => {
   function quiz(p) {
     const s = sheet("p-quiz");
     s.append(title(p.title, "ttl--quiz"));
-    s.append(el("p", "quiz__intro", "one tiny question, with one very obvious answer ♡"));
+    s.append(el("p", "quiz__intro", "one tiny question · one very obvious answer ♡"));
 
     const card = el("div", "quiz");
     card.append(el("span", "quiz__qmark", "?"));
     card.append(el("p", "quiz__prompt", "choose the answer your heart already knows"));
 
+    /* one option on its own line, each in a little handwritten letter
+       bubble — the quiz owns roughly half the page */
     const opts = el("div", "quiz__opts");
+    const marks = ["a", "b", "c", "d"];
     p.options.forEach((label, i) => {
       const b = el("button", "qopt");
       b.type = "button";
-      b.textContent = label;
       b.setAttribute("aria-label", "answer " + label);
+      b.append(el("span", "qopt__mark", marks[i] + "."));
+      b.append(el("span", "qopt__t", label));
       b.addEventListener("click", () => {
+        opts.querySelectorAll(".qopt").forEach((other) => {
+          other.classList.remove("is-picked");
+          other.setAttribute("aria-pressed", "false");
+        });
+        b.classList.add("is-picked");
+        b.setAttribute("aria-pressed", "true");
         fb.hidden = false;
         fb.className = "quiz__fb is-yes";
         fb.textContent = p.feedback[i] || p.feedback[0];
+        hiddenNote.hidden = true;
+        s.classList.add("is-answered");
         certificate.hidden = false;
+        certificate.classList.remove("is-awarded");
+        void certificate.offsetWidth;
         requestAnimationFrame(() => certificate.classList.add("is-awarded"));
         burstHearts(s, 10);
       });
@@ -1127,23 +1204,25 @@ window.Pages = (() => {
     card.append(fb);
     s.append(card);
 
+    /* hidden until she picks an answer — that's when the certificate
+       unrolls underneath the quiz */
     const certificate = el("section", "friend-certificate");
     certificate.hidden = true;
     certificate.setAttribute("aria-live", "polite");
     certificate.append(el("span", "friend-certificate__seal", "♡"));
-    certificate.append(el("span", "friend-certificate__eyebrow", "a little keepsake, made official"));
     certificate.append(el("h3", "friend-certificate__title", "Dearest Friend Certificate"));
     certificate.append(el("p", "friend-certificate__name", "awarded to Giffie"));
     certificate.append(el("p", "friend-certificate__copy",
       "for being the most amazing, supportive, honest, and caring person in my life"));
     certificate.append(el("span", "friend-certificate__ribbon", "officially my dearest friend ♡"));
     certificate.append(el("span", "friend-certificate__signature", "with all my love · mie"));
-    s.append(certificate);
+    const hiddenNote = el("p", "certificate-locked",
+      "pick an answer above — a little something is waiting under it ♡");
+    s.append(hiddenNote, certificate);
 
     s.append(sticker("stk-pony.png", "quiz__pony"));
     s.append(sticker("bc26229d8dd43fddb14b1963e1f32f5a-removebg-preview.png", "quiz__pair"));
     s.append(sticker("stk-squiggle.png", "quiz__squiggle"));
-    s.append(sticker("stk-pixel-kitty.png", "quiz__pixel-kitty"));
     return s;
   }
 
@@ -1367,7 +1446,8 @@ window.Pages = (() => {
     body.append(lines, prose);
     s.append(body);
 
-    if (p.part === 7 && content.paragraphs && content.paragraphs.length) {
+    if (p.part === CONTENT.letterPages.length - 1 &&
+        content.paragraphs && content.paragraphs.length) {
       const signature = el("div", "letter__sig letter__sig--written");
       signature.append(el("span", "letter__sig-line"));
       signature.append(el("span", "letter__sig-t", "— always, mie ♡"));
@@ -1565,15 +1645,27 @@ window.Pages = (() => {
     return scrap;
   }
 
-  function handmadeStickers(host, seed) {
+  function handmadeStickers(host, seed, used) {
     /* these layouts have deliberately hand-picked sticker sets; leave
        their small inline SVG doodles alone instead of swapping in
        unpredictable library stickers. */
     if ([2, 4, 5, 14, 15].includes(seed)) return;
     const library = STICKER_LIBRARY.length ? STICKER_LIBRARY : [{ png: "stk-stars.png" }];
     const tiers = ["tier-md", "tier-sm", "tier-lg", "tier-sm", "tier-md", "tier-lg", "tier-xs"];
+    const seen = used || new Set();
+    /* every sticker already painted on this page counts as used */
+    host.querySelectorAll("img.pstk").forEach((im) => {
+      const src = (im.getAttribute("src") || "").split("/").pop();
+      if (src) seen.add(src);
+    });
     host.querySelectorAll("svg.stk").forEach((old, i) => {
-      const entry = library[(seed * 3 + i) % library.length];
+      let entry = null;
+      for (let tries = 0; tries < library.length; tries++) {
+        const candidate = library[(seed * 3 + i + tries) % library.length];
+        if (!seen.has(candidate.png)) { entry = candidate; break; }
+      }
+      if (!entry) entry = library[(seed * 3 + i) % library.length];
+      seen.add(entry.png);
       const image = sticker([entry.png, entry.jpg].filter(Boolean));
       image.setAttribute("class",
         old.getAttribute("class") + " real-sticker " + tiers[(seed + i) % tiers.length]);
@@ -1588,9 +1680,10 @@ window.Pages = (() => {
     if (!page) return sheet();
     const renderer = RENDERERS[page.key] || placeholderSheet;
     const scrap = renderer(page);
-    handmadeStickers(scrap, n);
+    const used = new Set();
+    handmadeStickers(scrap, n, used);
     const override = SCATTER_OVERRIDES[n];
-    scatterStickers(scrap, n + 1.31, SCATTER_COUNTS[n], override);
+    scatterStickers(scrap, n + 1.31, SCATTER_COUNTS[n], override, used);
     scrap.dataset.page = n;
     const num = el("div", "scrap__num", String(n).padStart(2, "0"));
     scrap.append(num);
